@@ -1,0 +1,114 @@
+/* Base Reset */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #222;
+  background-color: #fdfdfd;
+  padding: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Header */
+header {
+  border-bottom: 2px solid #ccc;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+}
+
+header h1 {
+  font-size: 2em;
+  margin-bottom: 0.3em;
+}
+
+header p {
+  font-style: italic;
+  margin-bottom: 1em;
+}
+
+/* Navigation */
+nav ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+nav ul li {
+  display: inline-block;
+  margin-right: 15px;
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: #005577;
+}
+
+nav ul li a:hover {
+  text-decoration: underline;
+}
+
+/* Main content */
+div p {
+  margin-bottom: 1em;
+  text-align: justify;
+}
+
+/* Images */
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 20px 0;
+  border: 1px solid #ccc;
+  padding: 4px;
+  background-color: #fff;
+}
+
+/* Video */
+video {
+  display: block;
+  max-width: 100%;
+  margin: 20px 0;
+}
+
+/* Section headers */
+h2 {
+  font-size: 1.5em;
+  margin-top: 30px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+/* Lists */
+ul {
+  padding-left: 20px;
+  margin-bottom: 1em;
+}
+
+ul li {
+  margin-bottom: 0.5em;
+}
+
+/* Footer/contact */
+body > div:last-of-type p {
+  margin-top: 30px;
+  font-weight: bold;
+  border-top: 1px solid #ccc;
+  padding-top: 10px;
+}
+
+/* Links */
+a {
+  color: #0066cc;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
