@@ -3,28 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Pokémon Display</title>
-  <style>
-    #pokemonContainer {
-      width: 300px;
-      padding: 20px;
-      border: 2px solid #333;
-      text-align: center;
-      margin: 0 auto;
-      background-color: #ccc; /* Default background */
-    }
-
-    #pokemonImage {
-      width: 200px;
-      height: auto;
-      margin-top: 10px;
-    }
-
-    label, select, input {
-      display: block;
-      margin: 10px auto;
-      text-align: center;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css" >
 </head>
 <body>
   <div id="pokemonContainer">
@@ -38,7 +17,7 @@
     <label for="rarityInput">Rarity:</label>
     <input type="text" id="rarityInput" placeholder="Starter, Wild, Legendary">
 
-    <img id="pokemonImage" src="Unknown.png" alt="Selected Pokémon">
+    <img id="pokemonImage" src="pokeball.png" alt="Selected Pokémon">
   </div>
 
   <script src="main.js"></script>

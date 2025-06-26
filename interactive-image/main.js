@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const rarityRaw = rarityInput.value.trim();
     const rarity = capitalizeFirstWord(rarityRaw);
     
-    let imageSrc = "Unknown.png";
+    let imageSrc = "pokeball.png";
     let bgColor = "#ccc";
 
     if (type === "Fire") {
@@ -24,7 +24,10 @@ document.addEventListener("DOMContentLoaded", function () {
         imageSrc = "houndour.jpg";
       } else if (rarity === "Legendary") {
         imageSrc = "groudon.png";
+      } else {
+        imageSrc = "unown.png";
       }
+
     } else if (type === "Grass") {
       bgColor = "green";
       if (rarity === "Starter") {
@@ -33,6 +36,8 @@ document.addEventListener("DOMContentLoaded", function () {
         imageSrc = "cherubi.png";
       } else if (rarity === "Legendary") {
         imageSrc = "shaymin.png";
+      } else {
+        imageSrc = "unown.png";
       }
     } else if (type === "Water") {
       bgColor = "blue";
@@ -42,6 +47,8 @@ document.addEventListener("DOMContentLoaded", function () {
         imageSrc = "Mantine.png";
       } else if (rarity === "Legendary") {
         imageSrc = "manaphy.png";
+      } else {
+        imageSrc = "unown.png";
       }
     }
 
