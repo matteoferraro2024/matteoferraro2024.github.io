@@ -1,0 +1,152 @@
+/* Base Reset */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Playfair Display", serif;
+  font-size: 17px;
+  line-height: 1.85;
+  color: #1c1c1c;
+  background-color: #f2f1ed; /* Sculptural matte plaster tone */
+  padding: 60px 40px;
+  max-width: 860px;
+  margin: 0 auto;
+  letter-spacing: 0.1px;
+}
+
+/* Header */
+header {
+  border-bottom: 1px dashed #aaa;
+  margin-bottom: 50px;
+  padding-bottom: 20px;
+}
+
+header h1 {
+  font-size: 2.6em;
+  margin-bottom: 0.25em;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #222;
+  font-weight: 600;
+}
+
+header p {
+  font-style: italic;
+  color: #666;
+  margin-bottom: 1.5em;
+  font-size: 1em;
+  max-width: 80%;
+}
+
+/* Navigation */
+nav ul {
+  list-style-type: none;
+  padding-left: 0;
+  margin-bottom: 40px;
+}
+
+nav ul li {
+  display: inline-block;
+  margin-right: 25px;
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: #4a5a66; /* oxidized steel blue */
+  font-weight: 500;
+  padding: 4px 8px;
+  border-bottom: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+nav ul li a:hover,
+nav ul li a:focus {
+  border-bottom: 1px solid #4a5a66;
+  background-color: #e5e4df;
+  outline: none;
+}
+
+/* Main content */
+div p {
+  margin-bottom: 1.5em;
+  text-align: justify;
+  font-size: 1.08em;
+}
+
+/* Images */
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 40px 0;
+  border: 2px solid #ccc;
+  padding: 6px;
+  background-color: #fff;
+  filter: grayscale(30%);
+  transition: filter 0.4s ease, box-shadow 0.3s ease;
+}
+
+img:hover {
+  filter: grayscale(0%);
+  box-shadow: 2px 4px 12px rgba(0,0,0,0.1);
+}
+
+/* Video */
+video {
+  display: block;
+  max-width: 100%;
+  margin: 40px 0;
+  border: 1px solid #bbb;
+  background-color: #e7e6e0;
+}
+
+/* Section headers */
+h2 {
+  font-size: 1.7em;
+  margin-top: 50px;
+  margin-bottom: 20px;
+  color: #2b2b2b;
+  border-left: 4px solid #bbb;
+  padding-left: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+/* Lists */
+ul {
+  padding-left: 24px;
+  margin-bottom: 1.5em;
+}
+
+ul li {
+  margin-bottom: 0.6em;
+}
+
+/* Footer/contact */
+body > div:last-of-type p {
+  margin-top: 50px;
+  font-weight: 600;
+  border-top: 1px solid #ccc;
+  padding-top: 14px;
+  font-size: 1.1em;
+  color: #1a1a1a;
+}
+
+/* Links */
+a {
+  color: #3b3b3b;
+  text-decoration: none;
+  border-bottom: 1px dotted #999;
+  transition: all 0.2s ease-in-out;
+}
+
+a:hover,
+a:focus {
+  color: #111;
+  background-color: #e0dfdb;
+  border-bottom: 1px solid #111;
+  outline: none;
+}
