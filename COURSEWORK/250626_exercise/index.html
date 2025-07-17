@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Coordinate Image Selector</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-6">
+  <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md text-center space-y-6">
+    <h1 class="text-2xl font-semibold text-gray-800">Coordinate Image Selector</h1>
+
+    <div class="space-y-4">
+      <div class="flex flex-col space-y-2">
+        <label for="x-coord" class="text-left font-medium text-gray-700">X Coordinate</label>
+        <select id="x-coord" class="coord-select border rounded-lg p-2 text-gray-800 bg-white shadow-sm">
+          <option value="00">Zeroth</option>
+          <option value="01">First</option>
+          <option value="02">Second</option>
+          <option value="03">Third</option>
+          <option value="04">Fourth</option>
+          <option value="05">Fifth</option>
+          <option value="06">Sixth</option>
+          <option value="07">Seventh</option>
+          <option value="08">Eighth</option>
+          <option value="09">Ninth</option>
+          <option value="10">Tenth</option>
+          <option value="11">Eleventh</option>
+        </select>
+      </div>
+
+      <div class="flex flex-col space-y-2">
+        <label for="y-coord" class="text-left font-medium text-gray-700">Y Coordinate</label>
+        <select id="y-coord" class="coord-select border rounded-lg p-2 text-gray-800 bg-white shadow-sm">
+          <option value="00">Zeroth</option>
+          <option value="01">First</option>
+          <option value="02">Second</option>
+          <option value="03">Third</option>
+          <option value="04">Fourth</option>
+          <option value="05">Fifth</option>
+          <option value="06">Sixth</option>
+          <option value="07">Seventh</option>
+          <option value="08">Eighth</option>
+          <option value="09">Ninth</option>
+          <option value="10">Tenth</option>
+          <option value="11">Eleventh</option>
+        </select>
+      </div>
+    </div>
+    <div>
+      <button class="my-button" id="my-button" type="button">Generate Gallery Row</button>
+       <div id="gallery" class="mt-6 space-y-4"></div>
+    </div>
+    <div class="mt-6">
+      <img id="coord-image" src="images/out256_00_00.jpg" alt="Selected Coordinate" class="w-full rounded-lg shadow-md" />
+    </div>
+  
+  </div>
+
+  <script type="text/javascript" src="main.js"></script>
+</body>
+</html>

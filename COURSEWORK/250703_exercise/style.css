@@ -1,0 +1,7 @@
+* {
+  transition: all 1s linear;
+}
+
+.move {
+  transform: rotate(360deg);
+}
