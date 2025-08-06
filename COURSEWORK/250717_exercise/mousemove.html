@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Mousemove</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            height: 200vh;
+            width: 200vw;
+        }
+
+        .box {
+            width: 100px;
+            height: 100px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-color: #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="box">
+        <p>
+            x: <span id="xPos"></span>
+            y: <span id="yPos"></span>
+        </p>
+    </div>
+
+    <script type="text/javascript">
+        document.addEventListener("mousemove", (e) => {
+            const xPos = e.offsetX;
+            const yPos = e.offsetY;
+            const xPosEl = document.querySelector('#xPos');
+            const yPosEl = document.querySelector('#yPos');
+
+            xPosEl.innerHTML = xPos;
+            yPosEl.innerHTML = yPos;
+
+            const boxEl = document.querySelector('.box');
+            boxEl.style.top = yPos + 'px';
+            boxEl.style.left = xPos + 'px';
+
+            if (yPos>100) {
+                boxEl.style.backgroundColor = 'red';
+            } else {
+                boxEl.style.backgroundColor = '#ccc';
+            }
+            }
+        );
+    </script>
+</body>
+
+</html>
