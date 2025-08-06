@@ -16,7 +16,7 @@
       grid-template-columns: repeat(4, 1fr);
       grid-template-rows: repeat(4, 1fr);
       gap: 1rem;
-      height: 700px;
+      height: 100%;
     }
     .domain-bg {
       position: absolute;
@@ -38,20 +38,21 @@
     }
   </style>
 </head>
-<body class="bg-neutral-900 text-white">
-  <div class="container mx-auto px-4 py-6">
-    <h1 class="text-3xl font-bold text-center mb-8">Select a Competency</h1>
+<body class="bg-neutral-900 text-white h-screen overflow-hidden">
+  <div class="w-full h-full flex flex-col">
+    <h1 class="text-2xl sm:text-3xl font-bold text-center py-2 sm:py-4">Select a Competency</h1>
 
-    <div class="relative">
-      <!-- Background Regions -->
-      <div class="domain-bg bg-green-800" style="top: 0; left: 0; width: 100%; height: 50%;"></div>
-      <div class="domain-bg bg-red-800" style="top: 50%; left: 0; width: 50%; height: 25%;"></div>
-      <div class="domain-bg bg-amber-800" style="top: 50%; left: 50%; width: 50%; height: 50%;"></div>
+    <div class="relative flex-1 px-4 pb-4">
+      <!-- Background Regions with padding for border effect -->
+      <div class="domain-bg bg-zinc-800" style="top: -0.5rem; left: -0.5rem; width: calc(100% + 1rem); height: 50%;"></div>
+      <div class="domain-bg bg-zinc-800" style="top: 50%; left: -0.5rem; width: 50%; height: 20%;"></div>
+      <div class="domain-bg bg-zinc-800" style="top: 50%; left: 50%; width: 50%; height: 20%;"></div>
+      <div class="domain-bg bg-zinc-800" style="top: 75%; left: -0.5rem; width: calc(100% + 1rem); height: 25%;"></div>
 
       <!-- Domain Labels -->
       <div class="domain-label" style="top: 0.5rem; left: 0.5rem;">Design & Documenting Domain</div>
       <div class="domain-label" style="top: 52%; left: 0.5rem;">Construction Administration Domain</div>
-      <div class="domain-label" style="bottom: 0.5rem; right: 0.5rem;">Practice & Project Management Domain</div>
+      <div class="domain-label" style="top: 76%; left: 0.5rem;">Practice & Project Management Domain</div>
 
       <!-- Button Grid -->
       <div class="grid-container" id="buttonGrid"></div>
@@ -80,13 +81,17 @@
 
     const container = document.getElementById('buttonGrid');
     data.forEach((item, index) => {
+      const row = Math.floor(index / 4) + 1;
+      const col = (index % 4) + 1;
       const div = document.createElement('div');
-      div.className = 'bg-neutral-800 hover:bg-yellow-500 text-white hover:text-black p-4 rounded text-center transition cursor-pointer button-cell flex flex-col justify-center items-center';
+      div.className = 'bg-transparent hover:bg-yellow-500 text-white hover:text-black rounded text-center transition cursor-pointer button-cell flex flex-col items-center justify-center gap-2';
+      div.style.gridRow = row;
+      div.style.gridColumn = col;
 
       div.innerHTML = `
-        <a href="info.html?index=${index}">
-          <img src="${item.img}" alt="${item.label}" class="w-12 h-12 mb-2" />
-          <div class="text-sm font-semibold">${item.label}</div>
+        <a href="info.html?index=${index}" class="flex flex-col items-center">
+          <img src="/comp_icons/${item.img}" alt="${item.label}" class="w-12 h-12 sm:w-16 sm:h-16 mb-1" />
+          <div class="text-sm sm:text-base font-semibold text-center">${item.label}</div>
         </a>
       `;
 
