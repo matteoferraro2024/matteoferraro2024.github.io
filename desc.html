@@ -1,75 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Select a Competency</title>
+  <title>Competency Description</title>
   <link href="https://fonts.googleapis.com/css2?family=Orienta&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
       font-family: 'Orienta', sans-serif;
     }
-
-    .grid-container {
-      position: relative;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      grid-template-rows: repeat(4, 1fr);
-      gap: 1rem;
-      height: 100%;
-    }
-
-    .domain-bg {
-      position: absolute;
-      z-index: 0;
-      border-radius: 0.5rem;
-    }
-
-    .domain-label {
-      position: absolute;
-      z-index: 10;
-      background-color: rgba(0, 0, 0, 0.5);
-      color: white;
-      font-weight: bold;
-      padding: 0.25rem 0.5rem;
-      border-radius: 0.25rem;
-      font-size: 0.875rem;
-    }
-
-    .button-cell {
-      z-index: 10;
-    }
   </style>
 </head>
+<body class="bg-neutral-900 text-white min-h-screen flex flex-col items-center justify-start px-6 pt-6 pb-10 text-center">
 
-<body class="bg-neutral-900 text-white h-screen overflow-hidden">
-  <div class="w-full h-full flex flex-col">
-    <h1 class="text-2xl sm:text-3xl font-bold text-center py-2 sm:py-4">SELECT A COMPETENCY</h1>
-
-    <div class="relative flex-1 px-4 pb-4">
-      <!-- Background Regions with padding for border effect -->
-      <div class="domain-bg bg-zinc-800" style="top: -0.5rem; left: -0.5rem; width: calc(100% + 1rem); height: 50%;">
-      </div>
-      <div class="domain-bg bg-zinc-800" style="top: 50%; left: -0.5rem; width: 50%; height: 20%;"></div>
-      <div class="domain-bg bg-zinc-800" style="top: 50%; left: 50%; width: 50%; height: 20%;"></div>
-      <div class="domain-bg bg-zinc-800" style="top: 75%; left: -0.5rem; width: calc(100% + 1rem); height: 25%;"></div>
-
-      <!-- Domain Labels -->
-      <div class="domain-label" style="top: 0.5rem; left: 0.5rem;">Design & Documenting Domain</div>
-      <div class="domain-label" style="top: 52%; left: 0.5rem;">Construction Administration Domain</div>
-      <div class="domain-label" style="top: 76%; left: 0.5rem;">Practice & Project Management Domain</div>
-
-      <!-- Button Grid -->
-      <div class="grid-container" id="buttonGrid"></div>
-    </div>
-  </div>
+  <div id="descContainer" class="w-full max-w-md flex flex-col items-center gap-4"></div>
 
   <script>
-  const isMobile = /Mobi|Android/i.test(navigator.userAgent);
-
-  const data = [
+   const data = [
     {
       img: '01.png',
       label: 'Assess Regulatory Design Requirements',
@@ -216,81 +164,27 @@
     }
   ];
 
-  const container = document.getElementById('buttonGrid');
+    const params = new URLSearchParams(window.location.search);
+    const index = parseInt(params.get('index'), 10);
+    const competency = data[index];
 
-  data.forEach((item, index) => {
-    const row = Math.floor(index / 4) + 1;
-    const col = (index % 4) + 1;
-
-    const div = document.createElement('div');
-    div.className = 'relative group bg-transparent text-white rounded text-center button-cell flex flex-col items-center justify-center gap-2';
-    div.style.gridRow = row;
-    div.style.gridColumn = col;
-
-    const href = isMobile ? `desc.html?index=${index}` : `info.html?index=${index}`;
-    const cardId = `hoverCard${index}`;
-
-    div.innerHTML = `
-      <a href="${href}" class="flex flex-col items-center cursor-pointer">
-        <img src="/comp_icons/${item.img}" alt="${item.label}" class="w-12 h-12 sm:w-16 sm:h-16 mb-1" />
-        <div class="text-sm sm:text-base font-semibold text-center">${item.label}</div>
-      </a>
-
-      <div id="${cardId}" class="hover-card fixed z-[9999] w-80 sm:w-96 bg-gray-100 text-black p-4 rounded shadow-lg hidden flex-col gap-2 text-left pointer-events-none">
-        <div class="font-bold uppercase text-base">COMPETENCY ${String(index + 1).padStart(2, '0')}</div>
-        <div class="font-semibold">${item.label}</div>
-        <ul class="list-disc list-inside space-y-1 text-sm">
-          ${item.desc.map(line => `<li>${line}</li>`).join('')}
+    const container = document.getElementById('descContainer');
+    container.innerHTML = `
+      <h2 class="text-xl font-bold leading-tight">WHAT COMPETENCY<br />ARE YOU INTERESTED IN?</h2>
+      <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wide">${competency.domain}</h3>
+      <img src="/comp_icons/${competency.img}" alt="${competency.label}" class="w-24 h-24 mx-auto" />
+      <h4 class="text-lg font-bold tracking-tight">${competency.label}</h4>
+      <p class="text-sm text-left text-gray-200 leading-relaxed">
+        <strong class="block text-white mb-1">Access Regulatory Design Requirements</strong>
+        <ul class="list-disc list-inside space-y-1">
+          ${competency.desc.map(line => `<li>${line}</li>`).join('')}
         </ul>
+      </p>
+      <div class="flex gap-4 mt-6">
+        <a href="/competencies.html" class="bg-gray-100 text-black px-4 py-2 rounded font-bold text-sm">BACK</a>
+        <a href="/info.html?index=${index}" class="bg-gray-100 text-black px-4 py-2 rounded font-bold text-sm">SELECT</a>
       </div>
     `;
-
-    container.appendChild(div);
-
-    // Hover logic with delay (desktop only)
-    if (!isMobile) {
-      const hoverCard = document.getElementById(cardId);
-      let hoverTimeout;
-
-      div.addEventListener('mouseenter', () => {
-        hoverTimeout = setTimeout(() => {
-          hoverCard.style.display = 'flex';
-          hoverCard.style.opacity = '1';
-        }, 250); // 250ms delay before showing
-      });
-
-      div.addEventListener('mousemove', (e) => {
-  const padding = 16;
-  const cardWidth = hoverCard.offsetWidth || 320;
-  const cardHeight = hoverCard.offsetHeight || 200;
-  const viewportWidth = window.innerWidth;
-  const viewportHeight = window.innerHeight;
-
-  let left = e.pageX + 10;
-  let top = e.pageY + 10;
-
-  if (left + cardWidth + padding > viewportWidth) {
-    left = viewportWidth - cardWidth - padding;
-  }
-  if (top + cardHeight + padding > viewportHeight) {
-    top = viewportHeight - cardHeight - padding;
-  }
-
-  hoverCard.style.left = `${left}px`;
-  hoverCard.style.top = `${top}px`;
-});
-
-
-      div.addEventListener('mouseleave', () => {
-        clearTimeout(hoverTimeout);
-        hoverCard.style.display = 'none';
-        hoverCard.style.opacity = '0';
-      });
-    }
-  });
-</script>
-
-
+  </script>
 </body>
-
 </html>
