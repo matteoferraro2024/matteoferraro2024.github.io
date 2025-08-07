@@ -1,65 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Select a Competency</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orienta&display=swap" rel="stylesheet" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    body {
-      font-family: 'Orienta', sans-serif;
-    }
-    .grid-container {
-      position: relative;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      grid-template-rows: repeat(4, 1fr);
-      gap: 1rem;
-      height: 100%;
-    }
-    .domain-bg {
-      position: absolute;
-      z-index: 0;
-      border-radius: 0.5rem;
-    }
-    .domain-label {
-      position: absolute;
-      z-index: 10;
-      background-color: rgba(0, 0, 0, 0.5);
-      color: white;
-      font-weight: bold;
-      padding: 0.25rem 0.5rem;
-      border-radius: 0.25rem;
-      font-size: 0.875rem;
-    }
-    .button-cell {
-      z-index: 10;
-    }
-  </style>
-</head>
-<body class="bg-neutral-900 text-white h-screen overflow-hidden">
-  <div class="w-full h-full flex flex-col">
-    <h1 class="text-2xl sm:text-3xl font-bold text-center py-2 sm:py-4">SELECT A COMPETENCY</h1>
-
-    <div class="relative flex-1 px-4 pb-4">
-      <!-- Background Regions with padding for border effect -->
-      <div class="domain-bg bg-zinc-800" style="top: -0.5rem; left: -0.5rem; width: calc(100% + 1rem); height: 50%;"></div>
-      <div class="domain-bg bg-zinc-800" style="top: 50%; left: -0.5rem; width: 50%; height: 20%;"></div>
-      <div class="domain-bg bg-zinc-800" style="top: 50%; left: 50%; width: 50%; height: 20%;"></div>
-      <div class="domain-bg bg-zinc-800" style="top: 75%; left: -0.5rem; width: calc(100% + 1rem); height: 25%;"></div>
-
-      <!-- Domain Labels -->
-      <div class="domain-label" style="top: 0.5rem; left: 0.5rem;">Design & Documenting Domain</div>
-      <div class="domain-label" style="top: 52%; left: 0.5rem;">Construction Administration Domain</div>
-      <div class="domain-label" style="top: 76%; left: 0.5rem;">Practice & Project Management Domain</div>
-
-      <!-- Button Grid -->
-      <div class="grid-container" id="buttonGrid"></div>
-    </div>
-  </div>
-
-  <script>
+<script>
   const isMobile = /Mobi|Android/i.test(navigator.userAgent);
 
   const data = [
@@ -221,7 +160,6 @@
     div.style.gridColumn = col;
 
     const href = isMobile ? `desc.html?index=${index}` : `info.html?index=${index}`;
-    const cardId = `hoverCard${index}`;
 
     div.innerHTML = `
       <a href="${href}" class="flex flex-col items-center cursor-pointer">
@@ -229,7 +167,8 @@
         <div class="text-sm sm:text-base font-semibold text-center">${item.label}</div>
       </a>
 
-      <div id="${cardId}" class="hover-card fixed z-50 w-80 sm:w-96 bg-gray-100 text-black p-4 rounded shadow-lg hidden flex-col gap-2 text-left pointer-events-none">
+      <!-- Hover card for desktop -->
+      <div class="hover-card absolute bottom-full left-1/2 -translate-x-1/2 mb-4 z-50 w-80 sm:w-96 bg-gray-100 text-black p-4 rounded shadow-lg hidden group-hover:flex flex-col gap-2 pointer-events-none">
         <div class="font-bold uppercase text-base">COMPETENCY ${String(index + 1).padStart(2, '0')}</div>
         <div class="font-semibold">${item.label}</div>
         <ul class="list-disc list-inside space-y-1 text-sm">
@@ -239,28 +178,5 @@
     `;
 
     container.appendChild(div);
-
-    // Hover logic (desktop only)
-    if (!isMobile) {
-      const hoverCard = document.getElementById(cardId);
-
-      div.addEventListener('mouseenter', () => {
-        hoverCard.style.display = 'flex';
-      });
-
-      div.addEventListener('mousemove', (e) => {
-        hoverCard.style.left = `${e.pageX + 10}px`;
-        hoverCard.style.top = `${e.pageY + 10}px`;
-      });
-
-      div.addEventListener('mouseleave', () => {
-        hoverCard.style.display = 'none';
-      });
-    }
   });
 </script>
-
-
-  
-</body>
-</html>
