@@ -40,7 +40,7 @@
     <!-- Left Content -->
     <div class="flex flex-col justify-center pr-0 md:pr-8">
       <h1 class="text-3xl md:text-4xl font-semibold text-brandYellow mb-2">NEW RULES AHEAD</h1>
-      <p class="text-2xl md:text-2xl text-gray-200 mb-4">Fall 2025 architecture students face updated licensure path</p>
+      <p class="text-2xl md:text-2xl text-gray-200 mb-4">Fall 2025 architecture students face an unprecedented licensure path</p>
       <p class="text-sm md:text-base text-gray-400 leading-relaxed mb-6">
         The <span class="text-sm font-semibold text-white">National Council of Architectural Registration Boards
           (NCARB)</span> will be
@@ -58,7 +58,7 @@
 
   <!-- Apply tight and consistent spacing manually -->
   <div>
-    <a href="competencies.html" class="block mb-3">
+    <a href="competencies.html" class="block mb-3" onclick="storeRole('student')">
       <button
         class="w-full bg-gray-200 text-black font-semibold py-3 px-4 rounded-md hover:bg-brandYellow hover:text-black transition-all group relative"
       >
@@ -69,7 +69,7 @@
       </button>
     </a>
 
-    <a href="year.html" class="block mb-3">
+    <a href="year.html" class="block mb-3" onclick="storeRole('instructor')">
       <button
         class="w-full bg-gray-200 text-black font-semibold py-3 px-4 rounded-md hover:bg-brandYellow hover:text-black transition-all group relative"
       >
@@ -80,7 +80,7 @@
       </button>
     </a>
 
-    <a href="year.html" class="block">
+    <a href="year.html" class="block" onclick="storeRole('administrator')">
       <button
         class="w-full bg-gray-200 text-black font-semibold py-3 px-4 rounded-md hover:bg-brandYellow hover:text-black transition-all group relative"
       >
@@ -96,6 +96,11 @@
 
   </div>
   </div>
+  <script>
+  function storeRole(role) {
+    localStorage.setItem('selectedRole', role);
+  }
+</script>
 </body>
 
 </html>
