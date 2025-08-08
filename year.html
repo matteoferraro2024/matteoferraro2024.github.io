@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -14,12 +15,15 @@
     body {
       font-family: 'Orienta', sans-serif;
     }
+
     .btn-hover:hover {
-      background-color: #fedc4b; /* Yellow hover */
+      background-color: #fedc4b;
+      /* Yellow hover */
       color: #000000;
     }
   </style>
 </head>
+
 <body class="bg-[#212120] text-white min-h-screen flex items-center justify-center px-4">
   <div class="max-w-4xl w-full text-center">
     <h1 class="text-2xl sm:text-3xl font-semibold tracking-wide mb-2">
@@ -29,24 +33,48 @@
 
     <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
       <!-- Beginner -->
-      <button data-filter data-key="Level" data-value="Beginner" data-next="tasks.html" class="btn-hover w-64 bg-gray-200 text-black py-5 px-4 rounded-md transition-colors duration-300">
+      <button data-filter data-key="Level" data-value="Beginner" data-next="tasks.html"
+        class="btn-hover w-64 bg-gray-200 text-black py-5 px-4 rounded-md transition-colors duration-300">
         <div class="font-semibold uppercase text-base">Beginner</div>
         <div class="text-sm mt-1">(First and Second Year)</div>
       </button>
 
       <!-- Intermediate -->
-      <button data-filter data-key="Level" data-value="Intermediate" data-next="tasks.html" class="btn-hover w-64 bg-gray-200 text-black py-5 px-4 rounded-md transition-colors duration-300">
+      <button data-filter data-key="Level" data-value="Intermediate" data-next="tasks.html"
+        class="btn-hover w-64 bg-gray-200 text-black py-5 px-4 rounded-md transition-colors duration-300">
         <div class="font-semibold uppercase text-base">Intermediate</div>
         <div class="text-sm mt-1">(Third and Fourth Year)</div>
       </button>
 
       <!-- Advanced -->
-      <button data-filter data-key="Level" data-value="Advanced" data-next="tasks.html" class="btn-hover w-64 bg-gray-200 text-black py-5 px-4 rounded-md transition-colors duration-300">
+      <button data-filter data-key="Level" data-value="Advanced" data-next="tasks.html"
+        class="btn-hover w-64 bg-gray-200 text-black py-5 px-4 rounded-md transition-colors duration-300">
         <div class="font-semibold uppercase text-base">Advanced</div>
         <div class="text-sm mt-1">(Fifth Year +)</div>
       </button>
     </div>
   </div>
-  <script src="./js/filterState.js"></script>
+  <!-- fixed path + minimal fallback click handler -->
+  <script src="./filterState.js"></script>
+  <script>
+    // Fallback in case filterState.js didn't bind listeners yet
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('[data-filter]').forEach(btn => {
+        if (btn.__fsBound) return; // prevent double-binding
+        btn.__fsBound = true;
+
+        btn.addEventListener('click', () => {
+          const { key, value, next } = btn.dataset;
+
+          const state = JSON.parse(localStorage.getItem('filterState') || '{}');
+          state[key] = value;
+          localStorage.setItem('filterState', JSON.stringify(state));
+
+          if (next) window.location.href = next;
+        });
+      });
+    });
+  </script>
 </body>
+
 </html>
