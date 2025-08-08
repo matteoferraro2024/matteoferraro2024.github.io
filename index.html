@@ -40,7 +40,8 @@
     <!-- Left Content -->
     <div class="flex flex-col justify-center pr-0 md:pr-8">
       <h1 class="text-3xl md:text-4xl font-semibold text-brandYellow mb-2">NEW RULES AHEAD</h1>
-      <p class="text-2xl md:text-2xl text-gray-200 mb-4">Fall 2025 architecture students face an unprecedented licensure path</p>
+      <p class="text-2xl md:text-2xl text-gray-200 mb-4">Fall 2025 architecture students face an unprecedented licensure
+        path</p>
       <p class="text-sm md:text-base text-gray-400 leading-relaxed mb-6">
         The <span class="text-sm font-semibold text-white">National Council of Architectural Registration Boards
           (NCARB)</span> will be
@@ -52,55 +53,62 @@
     </div>
 
     <!-- Right Role Selector with Vertical Divider -->
-<div class="md:border-l md:border-gray-600 md:pl-8 pt-8 md:pt-0">
-  <h2 class="text-xl md:text-2xl font-bold mb-2">WHAT IS YOUR ROLE?</h2>
-  <p class="text-sm text-gray-400 mb-6">Select one:</p>
+    <div class="md:border-l md:border-gray-600 md:pl-8 pt-8 md:pt-0">
+      <h2 class="text-xl md:text-2xl font-bold mb-2">WHAT IS YOUR ROLE?</h2>
+      <p class="text-sm text-gray-400 mb-6">Select one:</p>
 
-  <!-- Apply tight and consistent spacing manually -->
-  <div>
-    <a href="competencies.html" class="block mb-3" onclick="storeRole('student')">
-      <button
-        class="w-full bg-gray-200 text-black font-semibold py-3 px-4 rounded-md hover:bg-brandYellow hover:text-black transition-all group relative"
-      >
-        A STUDENT
-        <span class="block text-xs text-gray-500 mt-1 group-hover:text-black transition-all">
-          See tools to prepare early for licensure
-        </span>
-      </button>
-    </a>
+      <!-- spacing lives here -->
+      <div id="roleButtons" class="space-y-4">
+        <button type="button" data-filter data-key="role" data-value="Student" data-next="competencies.html"
+          class="w-full bg-gray-200 text-black font-semibold py-3 px-4 rounded-md hover:bg-brandYellow hover:text-black transition-all group relative">
+          A STUDENT
+          <span class="block text-xs text-gray-500 mt-1 group-hover:text-black transition-all">
+            See tools to prepare early for licensure
+          </span>
+        </button>
 
-    <a href="year.html" class="block mb-3" onclick="storeRole('instructor')">
-      <button
-        class="w-full bg-gray-200 text-black font-semibold py-3 px-4 rounded-md hover:bg-brandYellow hover:text-black transition-all group relative"
-      >
-        AN INSTRUCTOR
-        <span class="block text-xs text-gray-500 mt-1 group-hover:text-black transition-all">
-          Integrate licensure prep into curriculum
-        </span>
-      </button>
-    </a>
+        <button type="button" data-filter data-key="role" data-value="Instructor" data-next="year.html"
+          class="w-full bg-gray-200 text-black font-semibold py-3 px-4 rounded-md hover:bg-brandYellow hover:text-black transition-all group relative">
+          AN INSTRUCTOR
+          <span class="block text-xs text-gray-500 mt-1 group-hover:text-black transition-all">
+            Integrate licensure prep into curriculum
+          </span>
+        </button>
 
-    <a href="year.html" class="block" onclick="storeRole('administrator')">
-      <button
-        class="w-full bg-gray-200 text-black font-semibold py-3 px-4 rounded-md hover:bg-brandYellow hover:text-black transition-all group relative"
-      >
-        AN ADMINISTRATOR
-        <span class="block text-xs text-gray-500 mt-1 group-hover:text-black transition-all">
-          Plan for evolving accreditation paths
-        </span>
-      </button>
-    </a>
-  </div>
-</div>
-
+        <button type="button" data-filter data-key="role" data-value="Admin" data-next="naab.html"
+          class="w-full bg-gray-200 text-black font-semibold py-3 px-4 rounded-md hover:bg-brandYellow hover:text-black transition-all group relative">
+          AN ADMINISTRATOR
+          <span class="block text-xs text-gray-500 mt-1 group-hover:text-black transition-all">
+            Plan for evolving accreditation paths
+          </span>
+        </button>
+      </div>
+    </div>
 
   </div>
   </div>
+  <script src="/js/filterState.js"></script>
   <script>
-  function storeRole(role) {
-    localStorage.setItem('selectedRole', role);
-  }
-</script> 
+  // minimal router + state save
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('[data-filter]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const key = btn.dataset.key;
+        const value = btn.dataset.value;
+        const next = btn.dataset.next;
+
+        // store / merge filter state
+        const state = JSON.parse(localStorage.getItem('filterState') || '{}');
+        state[key] = value;
+        localStorage.setItem('filterState', JSON.stringify(state));
+        localStorage.setItem('selectedRole', value); // if you also use this key elsewhere
+
+        if (next) window.location.href = next;
+      });
+    });
+  });
+</script>
+
 </body>
 
 </html>
