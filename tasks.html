@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task Results</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orienta&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              orienta: ['Orienta', 'sans-serif'],
+            },
+            colors: {
+              brandGrey: '#6B7280',
+            }
+          }
+        }
+      };
+    </script>
+    <style>
+      body {
+        font-family: 'Orienta', sans-serif;
+        background-color: #000;
+        color: white;
+      }
+    </style>
+  </head>
+  <body class="p-4">
+    <div class="flex justify-between mb-4">
+      <button onclick="resetFilters()" class="bg-white text-black px-4 py-2 font-bold">RESTART</button>
+      <button onclick="toggleGreyTasks()" class="bg-white text-black px-4 py-2 font-bold">HIDE</button>
+    </div>
+
+    <h1 class="text-2xl md:text-3xl font-bold mb-4">CHOOSE A TASK TO PRACTICE AN EXERCISE:</h1>
+    <p class="mb-4">Select one:</p>
+
+    <div id="taskList" class="space-y-3"></div>
+
+    <script>
+      let filters = {
+        competency: 5,
+        level: 'Beginner',
+        naab: ['P4']
+      };
+
+      let showGrey = true;
+
+      async function loadTasks() {
+        const response = await fetch('tasks_data.json');
+        const data = await response.json();
+        renderTasks(data);
+      }
+
+      function renderTasks(data) {
+        const taskList = document.getElementById('taskList');
+        taskList.innerHTML = '';
+
+        data.forEach((task, index) => {
+          const meetsFilter =
+            task.Competency === filters.competency &&
+            task.Level === filters.level &&
+            filters.naab.some(code => task.NAAB.includes(code));
+
+          const fontColor = meetsFilter ? task.Color : '#6B7280'; // gray for unmatched
+
+          const container = document.createElement('div');
+          container.className = 'transition-all duration-200';
+          if (!meetsFilter && !showGrey) {
+            container.classList.add('hidden');
+          }
+
+          container.innerHTML = `
+            <div class="cursor-pointer" onclick="toggleDetails('details-${index}')">
+              <p style="color: ${fontColor}" class="text-base md:text-lg">${task.Task}</p>
+            </div>
+            <div id="details-${index}" class="hidden text-sm text-white mt-2">
+              <!-- Additional expandable information can be added here per task -->
+              <p>More details about this task will go here.</p>
+            </div>
+          `;
+
+          taskList.appendChild(container);
+        });
+      }
+
+      function toggleDetails(id) {
+        const details = document.getElementById(id);
+        details.classList.toggle('hidden');
+      }
+
+      function resetFilters() {
+        window.location.href = 'index.html';
+      }
+
+      function toggleGreyTasks() {
+        showGrey = !showGrey;
+        loadTasks();
+      }
+
+      loadTasks();
+    </script>
+  </body>
+</html>
