@@ -15,43 +15,74 @@
             },
             colors: {
               brandGrey: '#6B7280',
+              bgDark: '#000000',
             }
           }
         }
       };
     </script>
     <style>
-      body {
-        font-family: 'Orienta', sans-serif;
-        background-color: #000;
-        color: white;
-      }
+      body { font-family: 'Orienta', sans-serif; background-color: #000; color: #fff; }
+      /* improve tap targets on mobile */
+      .tap { -webkit-tap-highlight-color: transparent; }
     </style>
   </head>
-  <body class="p-4">
-    <div class="flex justify-between mb-4">
-      <button onclick="resetFilters()" class="bg-white text-black px-4 py-2 font-bold">RESTART</button>
-      <button onclick="toggleGreyTasks()" class="bg-white text-black px-4 py-2 font-bold">HIDE</button>
-    </div>
+  <body class="min-h-screen">
+    <!-- Top bar -->
+    <header class="sticky top-0 z-50 bg-black/80 backdrop-blur supports-[backdrop-filter]:bg-black/60 border-b border-white/10">
+      <div class="mx-auto max-w-4xl px-4 py-3 flex items-center justify-between">
+        <button onclick="resetFilters()" class="tap inline-flex items-center gap-2 rounded px-3 py-2 text-sm font-semibold bg-white text-black hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-white/50">
+          ← Return
+        </button>
+        <button id="toggleButton" onclick="toggleGreyTasks()" class="tap inline-flex items-center gap-2 rounded px-3 py-2 text-sm font-semibold bg-white text-black hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-white/50">
+          HIDE
+        </button>
+      </div>
+    </header>
 
-    <h1 class="text-2xl md:text-3xl font-bold mb-4">CHOOSE A TASK TO PRACTICE AN EXERCISE:</h1>
-    <p class="mb-4">Select one:</p>
+    <main class="mx-auto max-w-4xl px-4 py-6">
+      <h1 class="text-2xl md:text-3xl font-bold mb-2">CHOOSE A TASK TO PRACTICE AN EXERCISE:</h1>
+      <p class="text-white/80 mb-6">Select one:</p>
 
-    <div id="taskList" class="space-y-3"></div>
+      <div id="taskList" class="divide-y divide-white/10"></div>
+    </main>
 
     <script>
+      // --- FILTERS (replace with stored keys later) ---
       let filters = {
-        competency: 5,
+        competency: 1,
         level: 'Beginner',
-        naab: ['P4']
+        naab: ['S3']
       };
 
-      let showGrey = true;
+      // --- STATE ---
+      let showGrey = true;      // when false, hide non-matching tasks
+      let taskData = [];        // cache of tasks JSON
+
+      // Normalize NAAB value which might arrive as a JSON string like "['S3','S5']"
+      function getNaabArray(naabRaw) {
+        if (Array.isArray(naabRaw)) return naabRaw;
+        if (typeof naabRaw === 'string') {
+          try {
+            // Convert single quotes to double quotes then parse
+            const fixed = naabRaw.replace(/'/g, '"');
+            const parsed = JSON.parse(fixed);
+            return Array.isArray(parsed) ? parsed : [];
+          } catch (e) {
+            // Fallback: loose match by splitting on commas and stripping brackets/spaces
+            return naabRaw
+              .replace(/[\[\]\s]/g, '')
+              .split(',')
+              .filter(Boolean);
+          }
+        }
+        return [];
+      }
 
       async function loadTasks() {
-        const response = await fetch('tasks_data.json');
-        const data = await response.json();
-        renderTasks(data);
+        const res = await fetch('tasks_data.json');
+        taskData = await res.json();
+        renderTasks(taskData);
       }
 
       function renderTasks(data) {
@@ -59,45 +90,99 @@
         taskList.innerHTML = '';
 
         data.forEach((task, index) => {
-          const meetsFilter =
+          const naabArr = getNaabArray(task.NAAB);
+          const meetsFilter = (
             task.Competency === filters.competency &&
             task.Level === filters.level &&
-            filters.naab.some(code => task.NAAB.includes(code));
+            filters.naab.some(code => naabArr.includes(code))
+          );
 
-          const fontColor = meetsFilter ? task.Color : '#6B7280'; // gray for unmatched
+          const fontColor = meetsFilter ? task.Color : '#6B7280'; // grey when unmatched
+          const hasDetails = Boolean(task['TASK DETAILS']);
+          const detailId = `details-${index}`;
 
-          const container = document.createElement('div');
-          container.className = 'transition-all duration-200';
-          if (!meetsFilter && !showGrey) {
-            container.classList.add('hidden');
+          // container per task
+          const wrapper = document.createElement('div');
+          wrapper.className = 'py-4';
+          wrapper.dataset.match = String(meetsFilter);
+
+          // row: task text + optional arrow
+          const row = document.createElement('button');
+          row.className = 'tap w-full text-left flex items-start gap-2';
+          row.setAttribute('aria-controls', detailId);
+          row.setAttribute('aria-expanded', 'false');
+          row.onclick = () => toggleDetails(detailId, row);
+
+          const taskText = document.createElement('span');
+          taskText.className = 'text-base md:text-lg';
+          taskText.style.color = fontColor;
+          taskText.textContent = task.Task;
+
+          row.appendChild(taskText);
+
+          if (hasDetails) {
+            const arrow = document.createElement('span');
+            arrow.className = 'ml-1 select-none';
+            arrow.style.color = fontColor;
+            arrow.textContent = '↓';
+            arrow.dataset.arrow = 'true';
+            row.appendChild(arrow);
           }
 
-          container.innerHTML = `
-            <div class="cursor-pointer" onclick="toggleDetails('details-${index}')">
-              <p style="color: ${fontColor}" class="text-base md:text-lg">${task.Task}</p>
-            </div>
-            <div id="details-${index}" class="hidden text-sm text-white mt-2">
-              <!-- Additional expandable information can be added here per task -->
-              <p>More details about this task will go here.</p>
-            </div>
-          `;
+          // details panel (reduced hierarchy)
+          const details = document.createElement('div');
+          details.id = detailId;
+          details.className = 'hidden mt-1 pl-4 max-w-prose';
+          if (hasDetails) {
+            const p = document.createElement('p');
+            p.className = 'text-sm leading-relaxed text-white/80';
+            p.textContent = task['TASK DETAILS'];
+            details.appendChild(p);
+          }
 
-          taskList.appendChild(container);
+          // initial hide of unmatched if showGrey is false
+          if (!meetsFilter && !showGrey) {
+            wrapper.classList.add('hidden');
+          }
+
+          wrapper.appendChild(row);
+          if (hasDetails) wrapper.appendChild(details);
+          taskList.appendChild(wrapper);
         });
       }
 
-      function toggleDetails(id) {
-        const details = document.getElementById(id);
-        details.classList.toggle('hidden');
+      function toggleDetails(id, buttonEl) {
+        const panel = document.getElementById(id);
+        if (!panel) return;
+        const isHidden = panel.classList.contains('hidden');
+        panel.classList.toggle('hidden');
+        if (buttonEl) {
+          buttonEl.setAttribute('aria-expanded', String(isHidden));
+          const arrow = Array.from(buttonEl.querySelectorAll('[data-arrow]'))[0];
+          if (arrow) arrow.textContent = isHidden ? '↑' : '↓';
+        }
       }
 
       function resetFilters() {
+        // Clear any stored filters here later if needed
         window.location.href = 'index.html';
       }
 
       function toggleGreyTasks() {
         showGrey = !showGrey;
-        loadTasks();
+        document.getElementById('toggleButton').innerText = showGrey ? 'HIDE' : 'SHOW';
+
+        const items = document.getElementById('taskList').children;
+        for (const el of items) {
+          const matched = el.dataset.match === 'true';
+          if (!matched) {
+            if (showGrey) {
+              el.classList.remove('hidden');
+            } else {
+              el.classList.add('hidden');
+            }
+          }
+        }
       }
 
       loadTasks();

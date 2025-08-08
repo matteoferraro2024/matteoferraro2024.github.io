@@ -1,182 +1,285 @@
-<script>
-  const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Select a Competency — Responsive Masonry/Grid</title>
 
-  const data = [
-    {
-      img: '01.png',
-      label: 'Assess Regulatory Design Requirements',
-      desc: [
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Orienta&display=swap" rel="stylesheet"/>
+
+  <!-- Tailwind (CDN for dev; use PostCSS/CLI in prod) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { darkBg: '#212120' },
+          fontFamily: { orienta: ['Orienta', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body { font-family: 'Orienta', sans-serif; }
+    /* Masonry (mobile/tablet) via CSS columns */
+    .masonry { column-gap: 1rem; }
+    .masonry-col-1 { columns: 1; }
+    .masonry-col-2 { columns: 2; }
+    .masonry-col-3 { columns: 3; }
+    .card { break-inside: avoid; }
+
+    /* Desktop domain chrome */
+    .domain-bg { position:absolute; z-index:0; border-radius:0.5rem; border:2px dashed rgba(255,255,255,.25); }
+    .domain-label { position:absolute; z-index:1; background:rgba(0,0,0,.5); color:white; font-weight:600; padding:.25rem .5rem; border-radius:.25rem; font-size:.8rem; letter-spacing:.02em; text-transform:uppercase; }
+  </style>
+</head>
+<body class="bg-darkBg text-white min-h-screen">
+  <header class="px-4 sm:px-6 lg:px-10 pt-4 lg:pt-6">
+    <h1 class="text-2xl sm:text-3xl font-bold tracking-wide">SELECT A COMPETENCY</h1>
+    <p class="text-sm text-zinc-300 mt-1">Browse by domain. Tap on mobile for details.</p>
+  </header>
+
+  <!-- LAYOUT WRAPPER -->
+  <main class="relative px-4 sm:px-6 lg:px-10 pb-10 lg:pb-6">
+    <!-- DESKTOP (≥lg): explicit 4×4 grid that fits the screen -->
+    <section id="gridWrap"
+             class="hidden lg:block relative"
+             style="height: calc(100vh - 120px);"> <!-- adjusts to header height -->
+      <!-- Domain backgrounds (desktop only) -->
+      <!-- Top half (Design & Documenting) -->
+      <div class="domain-bg" style="top:0; left:0; right:0; height:50%;"></div>
+      <div class="domain-label" style="top:8px; left:8px;">Design &amp; Documenting Domain</div>
+
+      <!-- Middle row, left half (Construction Admin) -->
+      <div class="domain-bg" style="top:50%; left:0; width:50%; height:25%;"></div>
+      <div class="domain-label" style="top:52%; left:8px;">Construction Administration Domain</div>
+
+      <!-- Middle row, right half (Practice & Project Mgmt) -->
+      <div class="domain-bg" style="top:50%; right:0; width:50%; height:25%;"></div>
+      <div class="domain-label" style="top:52%; left:52%;">Practice &amp; Project Management Domain</div>
+
+      <!-- Bottom row (full width footer row for practice/legal/ethical/business) -->
+      <div class="domain-bg" style="bottom:0; left:0; right:0; height:25%;"></div>
+
+      <!-- 4×4 grid area -->
+      <div id="grid16"
+           class="grid grid-cols-4 grid-rows-4 gap-6 absolute inset-0 z-10 place-items-center px-2">
+        <!-- cards injected by JS; each is sized to fit the grid comfortably -->
+      </div>
+    </section>
+
+    <!-- MOBILE/TABLET (<lg): masonry columns -->
+    <section id="masonryWrap" class="lg:hidden">
+      <div id="masonry" class="masonry masonry-col-1 sm:masonry-col-2 md:masonry-col-3 mt-4"></div>
+    </section>
+  </main>
+
+  <script>
+    const isMobileUA = /Mobi|Android/i.test(navigator.userAgent);
+
+    const data = [
+      { img:'01.png', label:'Assess Regulatory Design Requirements', desc:[
         'Identify local, state, and federal authorities having jurisdiction over a project.',
         'Understand the regulatory and jurisdictional approval process applicable to a project in order to obtain the necessary approvals.',
         'Determine the specific regulations, codes, and rules (e.g., zoning rules, building and environmental codes, historic preservation requirements, design covenants, etc.) that apply to a project.'
-      ]
-    },
-    {
-      img: '02.png',
-      label: 'Analyze Site and Existing Conditions',
-      desc: [
+      ]},
+      { img:'02.png', label:'Analyze Site and Existing Conditions', desc:[
         'Identify characteristics of the site and surrounding context.',
         'Evaluate environmental, historical, and existing site conditions that may impact design or construction.',
         'Analyze site opportunities and constraints that may impact the program or design strategy.'
-      ]
-    },
-    {
-      img: '03.png',
-      label: 'Establish Project Goals and Programming',
-      desc: [
+      ]},
+      { img:'03.png', label:'Establish Project Goals and Programming', desc:[
         'Identify stakeholder goals, values, and requirements.',
         'Establish spatial, functional, and performance criteria for the project.',
         'Define project scope, priorities, and success metrics.'
-      ]
-    },
-    {
-      img: '04.png',
-      label: 'Incorporate Environmental and Sustainability Principles',
-      desc: [
+      ]},
+      { img:'04.png', label:'Incorporate Environmental and Sustainability Principles', desc:[
         'Evaluate environmental context and impacts.',
         'Incorporate sustainable design principles and systems.',
         'Design for performance outcomes related to energy, water, and material use.'
-      ]
-    },
-    {
-      img: '05.png',
-      label: 'Address Social and Ethical Issues',
-      desc: [
+      ]},
+      { img:'05.png', label:'Address Social and Ethical Issues', desc:[
         'Incorporate equity, accessibility, and inclusion in design.',
         'Consider health, safety, and welfare of users and the public.',
         'Respond to social and cultural context.'
-      ]
-    },
-    {
-      img: '06.png',
-      label: 'Develop a Design Based on Programmatic Requirements',
-      desc: [
+      ]},
+      { img:'06.png', label:'Develop a Design Based on Programmatic Requirements', desc:[
         'Translate programmatic requirements into design solutions.',
         'Synthesize spatial, functional, and experiential considerations.',
         'Iterate and refine design concepts using appropriate media.'
-      ]
-    },
-    {
-      img: '07.png',
-      label: 'Prepare Design Documentation',
-      desc: [
+      ]},
+      { img:'07.png', label:'Prepare Design Documentation', desc:[
         'Produce drawings and documentation that convey design intent.',
         'Coordinate documentation across disciplines.',
         'Ensure clarity, accuracy, and consistency in design documents.'
-      ]
-    },
-    {
-      img: '08.png',
-      label: 'Develop the Design',
-      desc: [
+      ]},
+      { img:'08.png', label:'Develop the Design', desc:[
         'Advance the design from schematic to detailed level.',
         'Integrate building systems, materials, and assemblies.',
         'Respond to cost, schedule, and constructability considerations.'
-      ]
-    },
-    {
-      img: '09.png',
-      label: 'Administer the Contract During Construction',
-      desc: [
+      ]},
+      { img:'09.png', label:'Administer the Contract During Construction', desc:[
         'Interpret contract documents and respond to requests for information.',
         'Review submittals, shop drawings, and other contractor documents.',
         'Observe construction and evaluate conformance with contract documents.'
-      ]
-    },
-    {
-      img: '10.png',
-      label: 'Evaluate Construction for Conformance',
-      desc: [
+      ]},
+      { img:'10.png', label:'Evaluate Construction for Conformance', desc:[
         'Monitor progress and quality of construction.',
         'Identify nonconforming work and recommend corrective action.',
         'Document construction observations and communications.'
-      ]
-    },
-    {
-      img: '11.png',
-      label: 'Manage Contracts',
-      desc: [
+      ]},
+      { img:'11.png', label:'Manage Contracts', desc:[
         'Understand contractual relationships among project participants.',
         'Administer agreements with clients and consultants.',
         'Advise on contract modifications and resolution of disputes.'
-      ]
-    },
-    {
-      img: '12.png',
-      label: 'Plan and Manage Projects',
-      desc: [
+      ]},
+      { img:'12.png', label:'Plan and Manage Projects', desc:[
         'Develop work plans, schedules, and budgets.',
         'Manage project teams, resources, and communication.',
         'Monitor progress and adjust plans as needed.'
-      ]
-    },
-    {
-      img: '13.png',
-      label: 'Manage Practice',
-      desc: [
+      ]},
+      { img:'13.png', label:'Manage Practice', desc:[
         'Understand practice structures, roles, and responsibilities.',
         'Implement policies and procedures for quality management.',
         'Manage risk and compliance with legal requirements.'
-      ]
-    },
-    {
-      img: '14.png',
-      label: 'Comply with Legal Requirements',
-      desc: [
+      ]},
+      { img:'14.png', label:'Comply with Legal Requirements', desc:[
         'Understand laws and regulations governing architectural practice.',
         'Comply with codes, licensing, and insurance requirements.',
         'Manage legal and professional liability.'
-      ]
-    },
-    {
-      img: '15.png',
-      label: 'Demonstrate Ethical Practice',
-      desc: [
+      ]},
+      { img:'15.png', label:'Demonstrate Ethical Practice', desc:[
         'Adhere to professional codes of ethics and conduct.',
         'Promote equity, sustainability, and social responsibility.',
         'Maintain transparency and accountability in practice.'
-      ]
-    },
-    {
-      img: '16.png',
-      label: 'Manage Business Operations',
-      desc: [
+      ]},
+      { img:'16.png', label:'Manage Business Operations', desc:[
         'Understand financial management and business planning.',
         'Support marketing, client development, and strategic planning.',
         'Contribute to operational efficiency and profitability.'
-      ]
-    }
-  ];
+      ]}
+    ];
 
-  const container = document.getElementById('buttonGrid');
+    // ---------- Helpers to create a card ----------
+    const makeCardHTML = (item, index, linkTarget) => `
+      <div class="relative group bg-zinc-800/40 hover:bg-zinc-800/60 transition rounded-xl p-4 flex flex-col items-center text-center gap-3 w-full">
+        <a href="${linkTarget}" class="flex flex-col items-center">
+          <img src="/comp_icons/${item.img}" alt="${item.label}" class="w-14 h-14 xl:w-16 xl:h-16"/>
+          <h3 class="mt-2 text-sm xl:text-base font-semibold leading-snug">${item.label}</h3>
+        </a>
 
-  data.forEach((item, index) => {
-    const row = Math.floor(index / 4) + 1;
-    const col = (index % 4) + 1;
-
-    const div = document.createElement('div');
-    div.className = 'relative group bg-transparent text-white rounded text-center button-cell flex flex-col items-center justify-center gap-2';
-    div.style.gridRow = row;
-    div.style.gridColumn = col;
-
-    const href = isMobile ? `desc.html?index=${index}` : `info.html?index=${index}`;
-
-    div.innerHTML = `
-      <a href="${href}" class="flex flex-col items-center cursor-pointer">
-        <img src="/comp_icons/${item.img}" alt="${item.label}" class="w-12 h-12 sm:w-16 sm:h-16 mb-1" />
-        <div class="text-sm sm:text-base font-semibold text-center">${item.label}</div>
-      </a>
-
-      <!-- Hover card for desktop -->
-      <div class="hover-card absolute bottom-full left-1/2 -translate-x-1/2 mb-4 z-50 w-80 sm:w-96 bg-gray-100 text-black p-4 rounded shadow-lg hidden group-hover:flex flex-col gap-2 pointer-events-none">
-        <div class="font-bold uppercase text-base">COMPETENCY ${String(index + 1).padStart(2, '0')}</div>
-        <div class="font-semibold">${item.label}</div>
-        <ul class="list-disc list-inside space-y-1 text-sm">
-          ${item.desc.map(line => `<li>${line}</li>`).join('')}
-        </ul>
+        <!-- Hover card (desktop only) -->
+        <div id="hoverCard${index}" class="fixed z-[9999] w-80 xl:w-96 bg-gray-100 text-black p-4 rounded shadow-lg hidden flex-col gap-2 text-left pointer-events-none">
+          <div class="font-bold uppercase text-base">COMPETENCY ${String(index + 1).padStart(2, '0')}</div>
+          <div class="font-semibold">${item.label}</div>
+          <ul class="list-disc list-inside space-y-1 text-sm">
+            ${item.desc.map(line => `<li>${line}</li>`).join('')}
+          </ul>
+        </div>
       </div>
     `;
 
-    container.appendChild(div);
-  });
-</script>
+    // ---------- Render for masonry (mobile/tablet) ----------
+    function renderMasonry() {
+      const wrap = document.getElementById('masonry');
+      data.forEach((item, index) => {
+        const href = isMobileUA ? `desc.html?index=${index}` : `info.html?index=${index}`;
+        const card = document.createElement('article');
+        card.className = 'card inline-block w-full mb-4 align-top';
+        card.innerHTML = makeCardHTML(item, index, href);
+        wrap.appendChild(card);
+        attachHover(card, index);
+      });
+    }
+
+    // ---------- Render for 4×4 grid (desktop) ----------
+    function renderGrid() {
+      const grid = document.getElementById('grid16');
+      data.forEach((item, index) => {
+        const href = `info.html?index=${index}`;
+        const shell = document.createElement('div');
+        // keep each cell sized nicely inside grid
+        shell.className = 'w-[86%] max-w-[220px]';
+        shell.innerHTML = makeCardHTML(item, index, href);
+
+        // place in 4×4 explicitly
+        const row = Math.floor(index / 4) + 1;
+        const col = (index % 4) + 1;
+        shell.style.gridRow = row;
+        shell.style.gridColumn = col;
+
+        grid.appendChild(shell);
+        attachHover(shell, index);
+      });
+    }
+
+    // ---------- Hover card (desktop only) ----------
+    function attachHover(node, index) {
+      if (window.matchMedia('(min-width: 1024px)').matches) {
+        const hoverCard = node.querySelector(`#hoverCard${index}`);
+        let timer;
+
+        node.addEventListener('mouseenter', () => {
+          timer = setTimeout(() => {
+            hoverCard.style.display = 'flex';
+            hoverCard.style.opacity = '1';
+          }, 250);
+        });
+
+        node.addEventListener('mousemove', (e) => {
+          const pad = 16;
+          const w = hoverCard.offsetWidth || 320;
+          const h = hoverCard.offsetHeight || 200;
+          const vw = window.innerWidth;
+          const vh = window.innerHeight;
+
+          let left = e.pageX + 10;
+          let top = e.pageY + 10;
+
+          if (left + w + pad > vw) left = vw - w - pad;
+          if (top + h + pad > vh) top = vh - h - pad;
+
+          hoverCard.style.left = `${left}px`;
+          hoverCard.style.top = `${top}px`;
+        });
+
+        node.addEventListener('mouseleave', () => {
+          clearTimeout(timer);
+          hoverCard.style.display = 'none';
+          hoverCard.style.opacity = '0';
+        });
+      }
+    }
+
+    // Boot
+    if (window.matchMedia('(min-width: 1024px)').matches) {
+      renderGrid();
+    } else {
+      renderMasonry();
+    }
+
+    // Re-render on live resize across the lg breakpoint
+    window.addEventListener('resize', () => {
+      const isDesktop = window.matchMedia('(min-width: 1024px)').matches;
+      const gridWrap = document.getElementById('gridWrap');
+      const masonryWrap = document.getElementById('masonryWrap');
+
+      if (isDesktop && masonryWrap.style.display !== 'none') {
+        // switch to grid
+        masonryWrap.style.display = 'none';
+        gridWrap.style.display = 'block';
+        document.getElementById('grid16').innerHTML = '';
+        renderGrid();
+      } else if (!isDesktop && gridWrap.style.display !== 'none') {
+        // switch to masonry
+        gridWrap.style.display = 'none';
+        masonryWrap.style.display = 'block';
+        document.getElementById('masonry').innerHTML = '';
+        renderMasonry();
+      }
+    });
+  </script>
+</body>
+</html>

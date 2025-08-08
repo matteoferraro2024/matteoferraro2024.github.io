@@ -1,0 +1,898 @@
+[
+  {
+    "Task": "Adhere to ethical standards and codes of professional conduct",
+    "Competency": 1,
+    "Color": "#32C4EC",
+    "Level": "Beginner",
+    "NAAB": "['S3','S5']",
+    "TASK DETAILS": "Studio culture policies will promote Academic Integrity and emulate standards of professionally standard acceptable ethical practices (AIA Code of Ethics and NCARB Model Rules of Conduct).   Instructors are encouraged to incorporate case studies into their courses for experiential learning."
+  },
+  {
+    "Task": "Participate in community activities that may provide opportunities or design of facilities that reflect community needs",
+    "Competency": 5,
+    "Color": "#32C4EC",
+    "Level": "Beginner",
+    "NAAB": "['P2','P4','P5','P6','P8','S5']",
+    "TASK DETAILS": "The institution will look for community partners for the basis of design studio’s, ideally leading to small-scale design-builds.  Volunteer opportunities will also be promoted to students and it is encouraged to establish a student organization for Habitat for Humanity or similar charity."
+  },
+  {
+    "Task": "Participate in professional development activities that offer exchanges with other design professionals",
+    "Competency": 15,
+    "Color": "#32C4EC",
+    "Level": "Beginner",
+    "NAAB": "['P6','P7','S2']",
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "Prepare marketing documents that accurately communicate firm’s experience and capabilities",
+    "Competency": 15,
+    "Color": "#32C4EC",
+    "Level": "Beginner",
+    "NAAB": "['P6','P7','S2']",
+    "TASK DETAILS": "Students will be required to submit a portfolio and resume for a milestone evaluation.  This will prepare students to pursue an internship and will be serve as a basis to answer Request for Qualifications in a later studio."
+  },
+  {
+    "Task": "Understand implications of policies and procedures to ensure supervision of design work by architect in responsible charge/control",
+    "Competency": 13,
+    "Color": "#32C4EC",
+    "Level": "Beginner",
+    "NAAB": "['P6','P7']",
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "",
+    "Competency": "",
+    "Color": "",
+    "Level": "",
+    "NAAB": "",
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "Develop professional and leadership skills within firm",
+    "Competency": 12,
+    "Color": "#32C4EC",
+    "Level": "Intermediate",
+    "NAAB": "['P6','P7']",
+    "TASK DETAILS": "Non-credit requirements will be established to ensure students have leadership/managerial experience in group work throughout the program.  Leadership roles for extracurricular activities also fulfill this requirement."
+  },
+  {
+    "Task": "Develop procedures for responding to contractor requests (Requests for Information)",
+    "Competency": 9,
+    "Color": "#32C4EC",
+    "Level": "Intermediate",
+    "NAAB": [],
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "Establish procedures for documenting project decisions",
+    "Competency": 7,
+    "Color": "#32C4EC",
+    "Level": "Intermediate",
+    "NAAB": "['S3','S4']",
+    "TASK DETAILS": "Students will be required to maintain a project record each semester to be presented as part of the grading system.  Project documentation may take the form of an email chain, log document, or student’s sketchbook."
+  },
+  {
+    "Task": "Maintain positive work environment within firm that facilitates cooperation, teamwork, and staff morale",
+    "Competency": 13,
+    "Color": "#32C4EC",
+    "Level": "Intermediate",
+    "NAAB": "['P6','P7']",
+    "TASK DETAILS": "Each semester, instructors should review the Studio Culture Policy as a foundation for a discussion on studio etiquette.  Students are encouraged to amend the document and add to it for their studio’s unique needs."
+  },
+  {
+    "Task": "Develop procedures for responding to changes in project scope",
+    "Competency": 11,
+    "Color": "#32C4EC",
+    "Level": "Intermediate",
+    "NAAB": [],
+    "TASK DETAILS": "At least one studio should involve scope changes.  It is recommended these scenarios vary, like providing alternatives, reducing scope, or increasing scope.  Students should be able to discuss these changes as contractual revisions and their overall project impact during desk crits."
+  },
+  {
+    "Task": "Develop and maintain effective and productive relationships with clients",
+    "Competency": 12,
+    "Color": "#32C4EC",
+    "Level": "Intermediate",
+    "NAAB": "['P6','P7']",
+    "TASK DETAILS": "A housing studio will put students in the role of a client.  It will start with the students writing their programmatic requirements for a new single-family residential construction.  Students will simultaneously be a client for a peer as well as another peer’s architect.  The client student will serve as a template user to be designed for.  Students will also critically engage throughout the project as a client."
+  },
+  {
+    "Task": "Establish procedures to process documentation during contract administration",
+    "Competency": 9,
+    "Color": "#32C4EC",
+    "Level": "Intermediate",
+    "NAAB": [],
+    "TASK DETAILS": "If a construction management program is accessible for partnership with the school, students will simulate a bidding process at the end of the semester.  Architecture students will learn about procedures of bidding, provide the building to be bidded on, and administer the bidding process.  The students in a Cost Estimating class will prepare a competitive bid for the building as their final assessment."
+  },
+  {
+    "Task": "",
+    "Competency": "",
+    "Color": "",
+    "Level": "",
+    "NAAB": "",
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "Comply with laws and regulations governing the practice of architecture",
+    "Competency": 14,
+    "Color": "#32C4EC",
+    "Level": "Advanced",
+    "NAAB": "['P1','S2']",
+    "TASK DETAILS": "Studios will advance through the sequence in the depth of discussion or requirements governing practice regulations.  This may range from learning about the licensure process, exploring state board resources, or incorporating building code requirements."
+  },
+  {
+    "Task": "Prepare proposals for services in response to client requirements",
+    "Competency": 11,
+    "Color": "#32C4EC",
+    "Level": "Advanced",
+    "NAAB": [],
+    "TASK DETAILS": "Before schematic design begins in a studio, students will be tasked with developing a client proposal and/or statement of qualifications calibrated to progress in the curriculum."
+  },
+  {
+    "Task": "Prepare final procurement and contract documents",
+    "Competency": 7,
+    "Color": "#32C4EC",
+    "Level": "Advanced",
+    "NAAB": "['S3','S4']",
+    "TASK DETAILS": "An advanced studio semester will require students to produce a set of construction documents."
+  },
+  {
+    "Task": "Understand implications of project delivery technologies",
+    "Competency": 11,
+    "Color": "#32C4EC",
+    "Level": "Advanced",
+    "NAAB": [],
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "",
+    "Competency": "",
+    "Color": "",
+    "Level": "",
+    "NAAB": "",
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "Participate in pre-construction, pre-installation, and regular progress meetings with design team",
+    "Competency": 13,
+    "Color": "#B76EAB",
+    "Level": "Beginner",
+    "NAAB": "['P6','P7']",
+    "TASK DETAILS": "One semester in the curriculum is designated for a design-build studio, in which students get experience interfacing with constructability reviews during design."
+  },
+  {
+    "Task": "Prepare written communications related to design ideas, project documentation, and contracts",
+    "Competency": 7,
+    "Color": "#B76EAB",
+    "Level": "Beginner",
+    "NAAB": "['S3','S4']",
+    "TASK DETAILS": "Consider varying deliverable submissions.  Instead of desk-crits; consider having students send an email outlining the project status and including a pdf of the work (a schematic floor plan, detail, rendering, etc.).\nAt least one semester, students should have to develop an entire set of construction documents."
+  },
+  {
+    "Task": "Maintain compliance with established milestones",
+    "Competency": 12,
+    "Color": "#B76EAB",
+    "Level": "Beginner",
+    "NAAB": "['P6','P7']",
+    "TASK DETAILS": "As a two-way street, the instructor should model proper project planning to ensure an appropriate workload throughout the semester.  Students should ensure deadlines are met and when given the ability to propose deliverables, should be held to their agreement."
+  },
+  {
+    "Task": "Identify changes in project scope that require additional services",
+    "Competency": 11,
+    "Color": "#B76EAB",
+    "Level": "Beginner",
+    "NAAB": [],
+    "TASK DETAILS": "Some studios should include a variety of design changes, of which it should be shared with the class which are considered additional services.  If contractual agreements are being simulated in the class, revisions should be a homework assignment."
+  },
+  {
+    "Task": "Evaluate appropriateness of building information modeling (BIM) for proposed project",
+    "Competency": 7,
+    "Color": "#B76EAB",
+    "Level": "Beginner",
+    "NAAB": "['S3','S4']",
+    "TASK DETAILS": "Software education may be incremental throughout the program’s curriculum.  At the advanced level, students should be proficient in a CAD software as well as a BIM software.  One of the student’s advanced studios should be utilizing BIM, though each semester should encourage a discussion to use it or not."
+  },
+  {
+    "Task": "",
+    "Competency": "",
+    "Color": "",
+    "Level": "",
+    "NAAB": "",
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "Coordinate design work of consultants",
+    "Competency": 8,
+    "Color": "#B76EAB",
+    "Level": "Intermediate",
+    "NAAB": "['P6','S4','S6']",
+    "TASK DETAILS": "If available at the institution, students should interface with majors like Mechanical Engineers, Civil Engineers, Structural Engineers, and Interior Designers to collaborate on the studio project.  The student may serve the role as an architect and provide a schematic plan to the other discipline.  Another discipline’s course would require consultant work to be done as a project, that would be reviewed and then re-submitted to the architecture student to incorporate."
+  },
+  {
+    "Task": "Collaborate with stakeholders during design process to maintain design intent and comply with owner specifications",
+    "Competency": 6,
+    "Color": "#B76EAB",
+    "Level": "Intermediate",
+    "NAAB": "['P2', 'P5','S3','S4','S5']",
+    "TASK DETAILS": "Design studios should look to partner with community organizations.  The exercise could help the organization identify improvements they would like to make or use the group to solicit diverse feedback from direct solicitors during the design process or at reviews."
+  },
+  {
+    "Task": "Determine project schedule",
+    "Competency": 11,
+    "Color": "#B76EAB",
+    "Level": "Intermediate",
+    "NAAB": [],
+    "TASK DETAILS": "In upperclassmen years of the curriculum, students should independently be sketching out their project schedule for the semester under guidelines given by the instructor.  In advanced studios, the instructor may plan unexpected design changes/delays to help students build flexibility into schedules."
+  },
+  {
+    "Task": "Coordinate design work of in-house team members",
+    "Competency": 16,
+    "Color": "#B76EAB",
+    "Level": "Intermediate",
+    "NAAB": "['S2']",
+    "TASK DETAILS": "After proper training and/or training on the soft-skill of team management, studios should incorporate design teams with a project manager.  Each student should have the role of a manager."
+  },
+  {
+    "Task": "Understand implications of project delivery methods",
+    "Competency": 7,
+    "Color": "#B76EAB",
+    "Level": "Intermediate",
+    "NAAB": "['S3','S4']",
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "Assist client in determining delivery method for construction of project",
+    "Competency": 3,
+    "Color": "#B76EAB",
+    "Level": "Intermediate",
+    "NAAB": "['P2','P4','P6','S5']",
+    "TASK DETAILS": "Each semester, the studio should start reviewing a project delivery method (Design-Bid-Build, Design-Build, Construction Manager as Advisor).  Discussions should be had about the implications of the project delivery method on project milestones throughout the semester.  Minor homework activities could simulate interactions that occur with the delivery method."
+  },
+  {
+    "Task": "Assist Owner in obtaining necessary permits and approvals",
+    "Competency": 12,
+    "Color": "#B76EAB",
+    "Level": "Intermediate",
+    "NAAB": "['P6','P7']",
+    "TASK DETAILS": "Projects should be submitted for simulated township approvals.  Examples may be to complete a zoning application and submit a site plan to the instructor, host a review for historic preservation with institutional experts, members of a local board, or practicing architects with experience working in historic districts.  Floor plans should be submitted for a plan review prior to final review for approval.  Advanced studios may integrate a code analysis component."
+  },
+  {
+    "Task": "Perform constructability review to determine buildability, bid ability, and construction sequencing of proposed project",
+    "Competency": 6,
+    "Color": "#B76EAB",
+    "Level": "Intermediate",
+    "NAAB": "['P2', 'P5','S3','S4','S5']",
+    "TASK DETAILS": "Members of the construction management field should be invited for desk crits or for a pin-up review of the work.  If the studio gives a proposed budget, the contractor could provide rules of thumb for determining the Cost of Work and students may adjust their design to stay within a budget.  The studio may create bid documents for reviewed development.  Students may also get an assignment to research a construction project’s sequencing and scheduling."
+  },
+  {
+    "Task": "Conduct periodic progress meetings with design and project team",
+    "Competency": 13,
+    "Color": "#B76EAB",
+    "Level": "Intermediate",
+    "NAAB": "['P6','P7']",
+    "TASK DETAILS": "Students may be assigned to lead group studio discussions, whether this is the deployment of an exercise, establishing deliverable for next class, coordinating desk crit lists, etc."
+  },
+  {
+    "Task": "Establish methods for Architect-Client communication based on project scope of work",
+    "Competency": 12,
+    "Color": "#B76EAB",
+    "Level": "Intermediate",
+    "NAAB": "['P6','P7']",
+    "TASK DETAILS": "Professors should serve as a client and encourage simulation of architect-client communications (emails, phone calls, in-person meetings) throughout the semester."
+  },
+  {
+    "Task": "Manage information exchange during construction",
+    "Competency": 10,
+    "Color": "#B76EAB",
+    "Level": "Intermediate",
+    "NAAB": "['S4']",
+    "TASK DETAILS": "Students should get hands-on for contractor’s proposed substitutions.  The student should compare a specified finish to the substitution to identify if it is acceptable."
+  },
+  {
+    "Task": "Perform constructability reviews throughout the design process",
+    "Competency": 6,
+    "Color": "#B76EAB",
+    "Level": "Intermediate",
+    "NAAB": "['P2', 'P5','S3','S4','S5']",
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "Determine scope of services",
+    "Competency": 3,
+    "Color": "#B76EAB",
+    "Level": "Intermediate",
+    "NAAB": "['P2','P4','P6','S5']",
+    "TASK DETAILS": "Before schematic design begins in a studio, students will be tasked with developing a client proposal and/or statement of qualifications calibrated to progress in the curriculum."
+  },
+  {
+    "Task": "Present design concept to stakeholders",
+    "Competency": 7,
+    "Color": "#B76EAB",
+    "Level": "Intermediate",
+    "NAAB": "['S3','S4']",
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "Manage implementation of sustainability criteria",
+    "Competency": 4,
+    "Color": "#B76EAB",
+    "Level": "Intermediate",
+    "NAAB": "['P2','P3','P5','S1','S5']",
+    "TASK DETAILS": "Students should actively incorporate sustainability technology into their designs - with a level of detail to showcase competency in system technology."
+  },
+  {
+    "Task": "",
+    "Competency": "",
+    "Color": "",
+    "Level": "",
+    "NAAB": "",
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "Determine design fee budget",
+    "Competency": 16,
+    "Color": "#B76EAB",
+    "Level": "Advanced",
+    "NAAB": "['S2']",
+    "TASK DETAILS": "Students will practice budgeting their hourly rate for their design work during exercises throughout the semester.  They will have conversations with the instructor when their work exceeded their estimate and why.  At the end of the semester, students will reflect on budget of the semester and consider operating costs for profitability."
+  },
+  {
+    "Task": "Prepare Architect-Consultant Agreement",
+    "Competency": 11,
+    "Color": "#B76EAB",
+    "Level": "Advanced",
+    "NAAB": [],
+    "TASK DETAILS": "If there is facilitated student engagement with a third-party consultant (student in another discipline or outside professional), students should draft a consultant agreement to be reviewed by the instructor and outside professional - if applicable, solely for the educational experience."
+  },
+  {
+    "Task": "Prepare Owner-Architect Agreement",
+    "Competency": 11,
+    "Color": "#B76EAB",
+    "Level": "Advanced",
+    "NAAB": [],
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "Manage modifications to the construction contract",
+    "Competency": 11,
+    "Color": "#B76EAB",
+    "Level": "Advanced",
+    "NAAB": [],
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "Perform quality control reviews throughout the documentation process",
+    "Competency": 13,
+    "Color": "#B76EAB",
+    "Level": "Advanced",
+    "NAAB": "['P6','P7']",
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "Define roles and responsibilities of team members",
+    "Competency": 12,
+    "Color": "#B76EAB",
+    "Level": "Advanced",
+    "NAAB": "['P6','P7']",
+    "TASK DETAILS": "If the studio project is a team group work, the first exercise should be to sketch out a project team of the same members and identify each member’s roles and responsibilities.  After an incremented time, the students should rotate roles so by the end of the project, each student has worked through each role."
+  },
+  {
+    "Task": "Manage project-specific bidding process",
+    "Competency": 9,
+    "Color": "#B76EAB",
+    "Level": "Advanced",
+    "NAAB": [],
+    "TASK DETAILS": "If a construction management program is accessible for partnership with the school, students will simulate a bidding process at the end of the semester.  Architecture students will learn about procedures of bidding, provide the building to be bidded on, and administer the bidding process.  The students in a Cost Estimating class will prepare a competitive bid for the building as their final assessment."
+  },
+  {
+    "Task": "Monitor performance of design team consultants",
+    "Competency": 13,
+    "Color": "#B76EAB",
+    "Level": "Advanced",
+    "NAAB": "['P6','P7']",
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "Submit schedule of Architect’s services to Owner for each phase",
+    "Competency": 12,
+    "Color": "#B76EAB",
+    "Level": "Advanced",
+    "NAAB": "['P6','P7']",
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "Resolve conflicts that may arise during design and construction process",
+    "Competency": 13,
+    "Color": "#B76EAB",
+    "Level": "Advanced",
+    "NAAB": "['P6','P7']",
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "Prepare staffing plan to meet project goals",
+    "Competency": 12,
+    "Color": "#B76EAB",
+    "Level": "Advanced",
+    "NAAB": "['P6','P7']",
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "Assist client in selecting contractors",
+    "Competency": 9,
+    "Color": "#B76EAB",
+    "Level": "Advanced",
+    "NAAB": [],
+    "TASK DETAILS": "As a minor assignment, students may receive a few contractor profiles and then provide a summary of qualifications, pros/cons to the client for their decision."
+  },
+  {
+    "Task": "",
+    "Competency": "",
+    "Color": "",
+    "Level": "",
+    "NAAB": "",
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "Determine impact of applicable zoning and development ordinances to determine project constraints",
+    "Competency": 1,
+    "Color": "#7A78B9",
+    "Level": "Beginner",
+    "NAAB": "['S3','S5']",
+    "TASK DETAILS": "Throughout the curriculum, studios should increase their detail of site constraints into zoning and development ordinances, as applicable.  Existing municipal ordinances should be used (modified as required) to give students the hands-on experience of a zoning analysis / code review."
+  },
+  {
+    "Task": "Prepare diagrams illustrating spatial relationships and functional adjacencies",
+    "Competency": 7,
+    "Color": "#7A78B9",
+    "Level": "Beginner",
+    "NAAB": "['S3','S4']",
+    "TASK DETAILS": "During predesign/conceptual design, students should develop a programmatic diagram to inform the layout of the project.  In some studios, programming should have a deeper dive, such as clearances, storage space required, etc.  This may involve interviewing experienced users, researching case studies and best practices (such as Architectural Graphic Standards)"
+  },
+  {
+    "Task": "Prepare site analysis diagrams to document existing conditions, features, infrastructure, and regulatory requirements",
+    "Competency": 2,
+    "Color": "#7A78B9",
+    "Level": "Beginner",
+    "NAAB": "['S3','S5']",
+    "TASK DETAILS": "Projects should be submitted for simulated township approvals.  Examples may be to complete a zoning application and submit a site plan to the instructor, host a review for historic preservation with institutional experts, members of a local board, or practicing architects with experience working in historic districts.  Floor plans should be submitted for a plan review prior to final review for approval.  Advanced studios may integrate a code analysis component."
+  },
+  {
+    "Task": "",
+    "Competency": "",
+    "Color": "",
+    "Level": "",
+    "NAAB": "",
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "Gather information about community concerns and issues that may impact proposed project",
+    "Competency": 5,
+    "Color": "#7A78B9",
+    "Level": "Intermediate",
+    "NAAB": "['P2','P4','P5','P6','P8','S5']",
+    "TASK DETAILS": "Students may be assigned to attend a public hearing and/or meeting for a development project.  Alternatively, students from another program year may be invited to be a sounding board to the studio project during the semester.  The visiting students will gain insight of design-consciousness by imitating a concerned community member."
+  },
+  {
+    "Task": "Analyze existing site conditions to determine impact on facility layout",
+    "Competency": 2,
+    "Color": "#7A78B9",
+    "Level": "Intermediate",
+    "NAAB": "['S3','S5']",
+    "TASK DETAILS": "Sites should include unique features such as wetlands/environmentally sensitive areas, seismically active areas, municipal easements, flood-risk, or soil conditions."
+  },
+  {
+    "Task": "Determine impact of environmental, zoning, and other regulations on site",
+    "Competency": 2,
+    "Color": "#7A78B9",
+    "Level": "Intermediate",
+    "NAAB": "['S3','S5']",
+    "TASK DETAILS": "Throughout the curriculum, studios should increase their detail of site constraints into zoning and development ordinances, as applicable.  Existing municipal ordinances should be used (modified as required) to give students the hands-on experience of a zoning analysis / code review.\nSites should include unique features such as wetlands/environmentally sensitive areas, seismically active areas, municipal easements, flood-risk, or soil conditions."
+  },
+  {
+    "Task": "Establish project design goals",
+    "Competency": 3,
+    "Color": "#7A78B9",
+    "Level": "Intermediate",
+    "NAAB": "['P2','P4','P6','S5']",
+    "TASK DETAILS": "Besides programmatic goals or client driven goals, the student should have an individual goal to investigate as a developing designer.  The student should pose a question and carry research throughout the semester.  The goal of this deliverable is to help students identify and describe their design interests and identity."
+  },
+  {
+    "Task": "Consider recommendations from geotechnical studies when establishing design parameters",
+    "Competency": 3,
+    "Color": "#7A78B9",
+    "Level": "Intermediate",
+    "NAAB": "['P2','P4','P6','S5']",
+    "TASK DETAILS": "Students should be acquainted with a variety of foundation systems throughout the curriculum, and experience designing with them to gain a deeper understanding of their implications to the rest of the design."
+  },
+  {
+    "Task": "Assist owner in preparing building program including list of spaces and their characteristics",
+    "Competency": 3,
+    "Color": "#7A78B9",
+    "Level": "Intermediate",
+    "NAAB": "['P2','P4','P6','S5']",
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "Develop conceptual budget",
+    "Competency": 3,
+    "Color": "#7A78B9",
+    "Level": "Intermediate",
+    "NAAB": "['P2','P4','P6','S5']",
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "Gather information about client’s vision, goals, budget, and schedule to validate project scope and program",
+    "Competency": 3,
+    "Color": "#7A78B9",
+    "Level": "Intermediate",
+    "NAAB": "['P2','P4','P6','S5']",
+    "TASK DETAILS": "Projects should be assigned clients with a profile - whether simulated by the instructor, another student, or organization.  In the latter, the organization should be researchable, such as Grace Farms - that provides a mission and vision that may guide design decisions."
+  },
+  {
+    "Task": "Evaluate opportunities and constraints of alternative sites",
+    "Competency": 2,
+    "Color": "#7A78B9",
+    "Level": "Intermediate",
+    "NAAB": "['S3','S5']",
+    "TASK DETAILS": "When appropriate a studio should provide options for sites.  Students will be required to evaluate site options.  This may include sites with different zoning restrictions.  What if a student has to consider a Use Variance versus an Area-Variance?"
+  },
+  {
+    "Task": "Determine impact of existing transportation infrastructure on site",
+    "Competency": 2,
+    "Color": "#7A78B9",
+    "Level": "Intermediate",
+    "NAAB": "['S3','S5']",
+    "TASK DETAILS": "When appropriate a studio should provide options for sites. Students will be required to evaluate site options.  This may include sites with different zoning restrictions.  What if a student has to consider a Use-Variance versus an Area-Variance?\nStudents should interface with consequences of design solutions - such as exterior lighting plans, traffic plans, connections to utilities, drainage plans, etc."
+  },
+  {
+    "Task": "Consider results of environmental studies when developing site alternatives",
+    "Competency": 4,
+    "Color": "#7A78B9",
+    "Level": "Intermediate",
+    "NAAB": "['P2','P3','P5','S1','S5']",
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "",
+    "Competency": "",
+    "Color": "",
+    "Level": "",
+    "NAAB": "",
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "Evaluate results of feasibility studies to determine project’s financial viability",
+    "Competency": 6,
+    "Color": "#7A78B9",
+    "Level": "Advanced",
+    "NAAB": "['P2', 'P5','S3','S4','S5']",
+    "TASK DETAILS": "Provide students with a proforma for a housing studio as a programmatic requirement to ensure profitability.  Discuss needs as the design develops."
+  },
+  {
+    "Task": "Establish sustainability goals affecting building performance",
+    "Competency": 3,
+    "Color": "#7A78B9",
+    "Level": "Advanced",
+    "NAAB": "['P2','P4','P6','S5']",
+    "TASK DETAILS": "Students should be researching and incorporating sustainable systems in each semester's project.  The instructor may require a specific typology of system to include in the project (facade treatment, MEP, interior finishes, etc.)"
+  },
+  {
+    "Task": "Assess environmental impact to formulate design decisions",
+    "Competency": 4,
+    "Color": "#7A78B9",
+    "Level": "Advanced",
+    "NAAB": "['P2','P3','P5','S1','S5']",
+    "TASK DETAILS": "Students should interface with consequences of design solutions - such as exterior lighting plans, traffic plans, connections to utilities, drainage plans, etc."
+  },
+  {
+    "Task": "Review legal documents related to site to determine project constraints",
+    "Competency": 1,
+    "Color": "#7A78B9",
+    "Level": "Advanced",
+    "NAAB": "['S3','S5']",
+    "TASK DETAILS": "Sites should include unique features such as wetlands/environmentally sensitive areas, seismically active areas, municipal easements, flood-risk, or soil conditions."
+  },
+  {
+    "Task": "",
+    "Competency": "",
+    "Color": "",
+    "Level": "",
+    "NAAB": "",
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "Determine impact of existing utilities infrastructure on site",
+    "Competency": 2,
+    "Color": "#ABD162",
+    "Level": "Beginner",
+    "NAAB": "['S3','S5']",
+    "TASK DETAILS": "Students should interface with consequences of design solutions - such as exterior lighting plans, traffic plans, connections to utilities, drainage plans, etc."
+  },
+  {
+    "Task": "",
+    "Competency": "",
+    "Color": "",
+    "Level": "",
+    "NAAB": "",
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "Develop sustainability goals based on existing environmental conditions",
+    "Competency": 3,
+    "Color": "#ABD162",
+    "Level": "Intermediate",
+    "NAAB": "['P2','P4','P6','S5']",
+    "TASK DETAILS": "Earlier in the curriculum, students should learn how to site buildings to take advantage of passive design (wind, lighting, solar heat gains).  These techniques should be considered in each design studio."
+  },
+  {
+    "Task": "Define requirements for site survey based on established project scope",
+    "Competency": 8,
+    "Color": "#ABD162",
+    "Level": "Intermediate",
+    "NAAB": "['P6','S4','S6']",
+    "TASK DETAILS": "One studio in the curriculum should have a deep investigation on sites.  In this studio, students should gain practice of evaluating a site and determining the requirements for a site survey."
+  },
+  {
+    "Task": "Select materials, finishes, and systems based on technical properties and aesthetic requirements",
+    "Competency": 6,
+    "Color": "#ABD162",
+    "Level": "Intermediate",
+    "NAAB": "['P2', 'P5','S3','S4','S5']",
+    "TASK DETAILS": "Students will have hands-on experience with specifying materials and finishes throughout the curriculum.  Each studio should focus on a finish. Instructors are encouraged to invite product reps to talk about important factors in finish typologies.  Materials should appear in renders, drawings, and as a finish board."
+  },
+  {
+    "Task": "Determine design parameters for building engineering systems",
+    "Competency": 8,
+    "Color": "#ABD162",
+    "Level": "Intermediate",
+    "NAAB": "['P6','S4','S6']",
+    "TASK DETAILS": "Students should be acquainted with disciplinary building codes such as MEP, Structural, and Energy Code.  Students may be asked to identify code sections that are relevant to the project."
+  },
+  {
+    "Task": "Prepare design alternatives for client review",
+    "Competency": 6,
+    "Color": "#ABD162",
+    "Level": "Intermediate",
+    "NAAB": "['P2', 'P5','S3','S4','S5']",
+    "TASK DETAILS": "At least one design studio should incorporate a “design alternative” scenario, in which students are asked to propose multiple variations of the building depending on constraints such as budget or lot size."
+  },
+  {
+    "Task": "Present design ideas to client orally",
+    "Competency": 7,
+    "Color": "#ABD162",
+    "Level": "Intermediate",
+    "NAAB": "['S3','S4']",
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "Apply principles of historic preservation for projects involving building restoration or renovation",
+    "Competency": 6,
+    "Color": "#ABD162",
+    "Level": "Intermediate",
+    "NAAB": "['P2', 'P5','S3','S4','S5']",
+    "TASK DETAILS": "At least one studio should be dedicated to historic preservation.  The studio should engage in discourse on re-use and existing conditions.  Students should also gain an understanding about Standards for the Treatment of Historic Properties."
+  },
+  {
+    "Task": "Understand implications of evolving sustainable design strategies and technologies",
+    "Competency": 4,
+    "Color": "#ABD162",
+    "Level": "Intermediate",
+    "NAAB": "['P2','P3','P5','S1','S5']",
+    "TASK DETAILS": "Students should actively incorporate sustainability technology into their designs - with a level of detail to showcase competency in system technology."
+  },
+  {
+    "Task": "Design landscape elements for site",
+    "Competency": 4,
+    "Color": "#ABD162",
+    "Level": "Intermediate",
+    "NAAB": "['P2','P3','P5','S1','S5']",
+    "TASK DETAILS": "Throughout the curriculum, studios should increase their detail of site constraints into zoning and development ordinances, as applicable.  Existing municipal ordinances should be used (modified as required) to give students the hands-on experience of a zoning analysis / code review.\nSites should include unique features such as wetlands/environmentally sensitive areas, seismically active areas, municipal easements, flood-risk, or soil conditions.\nOne studio in the curriculum should have a deep investigation on sites.  In this studio, students should gain practice of evaluating a site and determining the requirements for a site survey."
+  },
+  {
+    "Task": "Develop mitigation options to address adverse site conditions",
+    "Competency": 5,
+    "Color": "#ABD162",
+    "Level": "Intermediate",
+    "NAAB": "['P2','P4','P5','P6','P8','S5']",
+    "TASK DETAILS": "Throughout the curriculum, studios should increase their detail of site constraints into zoning and development ordinances, as applicable.  Existing municipal ordinances should be used (modified as required) to give students the hands-on experience of a zoning analysis / code review.\nSites should include unique features such as wetlands/environmentally sensitive areas, seismically active areas, municipal easements, flood-risk, or soil conditions.\nOne studio in the curriculum should have a deep investigation on sites.  In this studio, students should gain practice of evaluating a site and determining the requirements for a site survey."
+  },
+  {
+    "Task": "",
+    "Competency": "",
+    "Color": "",
+    "Level": "",
+    "NAAB": "",
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "Perform building code analysis",
+    "Competency": 6,
+    "Color": "#ABD162",
+    "Level": "Advanced",
+    "NAAB": "['P2', 'P5','S3','S4','S5']",
+    "TASK DETAILS": "Studios should interface with the building code in a variety of ways.  Instructors should choose portions of the code to bring into the class and discuss through the lens of the design project.  This may begin with ADA requirements, Use Group, and Egress.  These should soon become standard in the design practice and include more topics such as Building Type, Interior Finishes."
+  },
+  {
+    "Task": "Prepare code analysis documentation",
+    "Competency": 7,
+    "Color": "#ABD162",
+    "Level": "Advanced",
+    "NAAB": "['S3','S4']",
+    "TASK DETAILS": "Advanced studios should have a component in which they produce code analysis documentation.  This may be a lab course attached to the studio."
+  },
+  {
+    "Task": "Oversee design integration of building components and systems",
+    "Competency": 8,
+    "Color": "#ABD162",
+    "Level": "Advanced",
+    "NAAB": "['P6','S4','S6']",
+    "TASK DETAILS": "If available at the institution, students should interface with majors like Mechanical Engineers, Civil Engineers, Structural Engineers, and Interior Designers to collaborate on the studio project.  The student may serve the role as an architect and provide a schematic plan to the other discipline.  Another discipline’s course would require consultant work to be done as a project, that would be reviewed and then re-submitted to the architecture student to incorporate."
+  },
+  {
+    "Task": "Evaluate results of feasibility studies to determine project’s technical viability",
+    "Competency": 2,
+    "Color": "#ABD162",
+    "Level": "Advanced",
+    "NAAB": "['S3','S5']",
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "Review local, state, and federal codes for changes that may impact design and construction",
+    "Competency": 1,
+    "Color": "#ABD162",
+    "Level": "Advanced",
+    "NAAB": "['S3','S5']",
+    "TASK DETAILS": "The year of code changes, all students will have a mandatory seminar to review the building code and its changes.  The seminar will provide a history of the code, and provide a survey of its contents.  The semester will review relevant notable precedent cases and finally shift into a speculative discussion on the impacts of the code changes."
+  },
+  {
+    "Task": "Prepare Cost of Work estimates",
+    "Competency": 6,
+    "Color": "#ABD162",
+    "Level": "Advanced",
+    "NAAB": "['P2', 'P5','S3','S4','S5']",
+    "TASK DETAILS": "Students will practice budgeting their hourly rate for their design work during exercises throughout the semester.  They will have conversations with the instructor when their work exceeded their estimate and why.  At the end of the semester, students will reflect on budget of the semester and consider operating costs for profitability."
+  },
+  {
+    "Task": "",
+    "Competency": "",
+    "Color": "",
+    "Level": "",
+    "NAAB": "",
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "Communicate design ideas to the client graphically",
+    "Competency": 7,
+    "Color": "#EF6976",
+    "Level": "Beginner",
+    "NAAB": "['S3','S4']",
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "Communicate design ideas to client with twodimensional (2-D) computer aided design software",
+    "Competency": 7,
+    "Color": "#EF6976",
+    "Level": "Beginner",
+    "NAAB": "['S3','S4']",
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "Select furniture, fixtures, and equipment that meet client’s design requirements and needs",
+    "Competency": 6,
+    "Color": "#EF6976",
+    "Level": "Beginner",
+    "NAAB": "['P2', 'P5','S3','S4','S5']",
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "Communicate design ideas to client with threedimensional (3-D) computer aided design software",
+    "Competency": 7,
+    "Color": "#EF6976",
+    "Level": "Beginner",
+    "NAAB": "['S3','S4']",
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "",
+    "Competency": "",
+    "Color": "",
+    "Level": "",
+    "NAAB": "",
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "Communicate design ideas to the client using hand drawings",
+    "Competency": 7,
+    "Color": "#EF6976",
+    "Level": "Intermediate",
+    "NAAB": "['S3','S4']",
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "",
+    "Competency": "",
+    "Color": "",
+    "Level": "",
+    "NAAB": "",
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "Prepare submittals for regulatory approval",
+    "Competency": 12,
+    "Color": "#EF6976",
+    "Level": "Advanced",
+    "NAAB": "['P6','P7']",
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "Update Cost of Work estimates",
+    "Competency": 6,
+    "Color": "#EF6976",
+    "Level": "Advanced",
+    "NAAB": "['P2', 'P5','S3','S4','S5']",
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "",
+    "Competency": "",
+    "Color": "",
+    "Level": "",
+    "NAAB": "",
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "Complete field reports to document field observations from construction site visit",
+    "Competency": 10,
+    "Color": "#F59165",
+    "Level": "Intermediate",
+    "NAAB": "['S4']",
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "Manage project close-out procedures and documentation",
+    "Competency": 10,
+    "Color": "#F59165",
+    "Level": "Intermediate",
+    "NAAB": "['S4']",
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "",
+    "Competency": "",
+    "Color": "",
+    "Level": "",
+    "NAAB": "",
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "Review shop drawings and submittals during construction for conformance with design intent",
+    "Competency": 10,
+    "Color": "#F59165",
+    "Level": "Advanced",
+    "NAAB": "['S4']",
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "Respond to Contractor Requests for Information",
+    "Competency": 9,
+    "Color": "#F59165",
+    "Level": "Advanced",
+    "NAAB": [],
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "Review results from field reports, thirdparty inspections, and other test results for conformance with contract documents",
+    "Competency": 10,
+    "Color": "#F59165",
+    "Level": "Advanced",
+    "NAAB": "['S4']",
+    "TASK DETAILS": ""
+  },
+  {
+    "Task": "Review Application and Certificate for Payment",
+    "Competency": 9,
+    "Color": "#F59165",
+    "Level": "Advanced",
+    "NAAB": [],
+    "TASK DETAILS": ""
+  }
+]
