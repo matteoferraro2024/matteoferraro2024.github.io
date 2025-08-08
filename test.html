@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Select a Competency — Responsive Masonry/Grid</title>
 
   <!-- Google Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Orienta&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Orienta&display=swap" rel="stylesheet" />
 
   <!-- Tailwind (CDN for dev; use PostCSS/CLI in prod) -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -22,19 +23,54 @@
   </script>
 
   <style>
-    body { font-family: 'Orienta', sans-serif; }
+    body {
+      font-family: 'Orienta', sans-serif;
+    }
+
     /* Masonry (mobile/tablet) via CSS columns */
-    .masonry { column-gap: 1rem; }
-    .masonry-col-1 { columns: 1; }
-    .masonry-col-2 { columns: 2; }
-    .masonry-col-3 { columns: 3; }
-    .card { break-inside: avoid; }
+    .masonry {
+      column-gap: 1rem;
+    }
+
+    .masonry-col-1 {
+      columns: 1;
+    }
+
+    .masonry-col-2 {
+      columns: 2;
+    }
+
+    .masonry-col-3 {
+      columns: 3;
+    }
+
+    .card {
+      break-inside: avoid;
+    }
 
     /* Desktop domain chrome */
-    .domain-bg { position:absolute; z-index:0; border-radius:0.5rem; border:2px dashed rgba(255,255,255,.25); }
-    .domain-label { position:absolute; z-index:1; background:rgba(0,0,0,.5); color:white; font-weight:600; padding:.25rem .5rem; border-radius:.25rem; font-size:.8rem; letter-spacing:.02em; text-transform:uppercase; }
+    .domain-bg {
+      position: absolute;
+      z-index: 0;
+      border-radius: 0.5rem;
+      border: 2px dashed rgba(255, 255, 255, .25);
+    }
+
+    .domain-label {
+      position: absolute;
+      z-index: 1;
+      background: rgba(0, 0, 0, .5);
+      color: white;
+      font-weight: 600;
+      padding: .25rem .5rem;
+      border-radius: .25rem;
+      font-size: .8rem;
+      letter-spacing: .02em;
+      text-transform: uppercase;
+    }
   </style>
 </head>
+
 <body class="bg-darkBg text-white min-h-screen">
   <header class="px-4 sm:px-6 lg:px-10 pt-4 lg:pt-6">
     <h1 class="text-2xl sm:text-3xl font-bold tracking-wide">SELECT A COMPETENCY</h1>
@@ -44,9 +80,8 @@
   <!-- LAYOUT WRAPPER -->
   <main class="relative px-4 sm:px-6 lg:px-10 pb-10 lg:pb-6">
     <!-- DESKTOP (≥lg): explicit 4×4 grid that fits the screen -->
-    <section id="gridWrap"
-             class="hidden lg:block relative"
-             style="height: calc(100vh - 120px);"> <!-- adjusts to header height -->
+    <section id="gridWrap" class="hidden lg:block relative" style="height: calc(100vh - 120px);">
+      <!-- adjusts to header height -->
       <!-- Domain backgrounds (desktop only) -->
       <!-- Top half (Design & Documenting) -->
       <div class="domain-bg" style="top:0; left:0; right:0; height:50%;"></div>
@@ -64,8 +99,7 @@
       <div class="domain-bg" style="bottom:0; left:0; right:0; height:25%;"></div>
 
       <!-- 4×4 grid area -->
-      <div id="grid16"
-           class="grid grid-cols-4 grid-rows-4 gap-6 absolute inset-0 z-10 place-items-center px-2">
+      <div id="grid16" class="grid grid-cols-4 grid-rows-4 gap-6 absolute inset-0 z-10 place-items-center px-2">
         <!-- cards injected by JS; each is sized to fit the grid comfortably -->
       </div>
     </section>
@@ -80,86 +114,118 @@
     const isMobileUA = /Mobi|Android/i.test(navigator.userAgent);
 
     const data = [
-      { img:'01.png', label:'Assess Regulatory Design Requirements', desc:[
-        'Identify local, state, and federal authorities having jurisdiction over a project.',
-        'Understand the regulatory and jurisdictional approval process applicable to a project in order to obtain the necessary approvals.',
-        'Determine the specific regulations, codes, and rules (e.g., zoning rules, building and environmental codes, historic preservation requirements, design covenants, etc.) that apply to a project.'
-      ]},
-      { img:'02.png', label:'Analyze Site and Existing Conditions', desc:[
-        'Identify characteristics of the site and surrounding context.',
-        'Evaluate environmental, historical, and existing site conditions that may impact design or construction.',
-        'Analyze site opportunities and constraints that may impact the program or design strategy.'
-      ]},
-      { img:'03.png', label:'Establish Project Goals and Programming', desc:[
-        'Identify stakeholder goals, values, and requirements.',
-        'Establish spatial, functional, and performance criteria for the project.',
-        'Define project scope, priorities, and success metrics.'
-      ]},
-      { img:'04.png', label:'Incorporate Environmental and Sustainability Principles', desc:[
-        'Evaluate environmental context and impacts.',
-        'Incorporate sustainable design principles and systems.',
-        'Design for performance outcomes related to energy, water, and material use.'
-      ]},
-      { img:'05.png', label:'Address Social and Ethical Issues', desc:[
-        'Incorporate equity, accessibility, and inclusion in design.',
-        'Consider health, safety, and welfare of users and the public.',
-        'Respond to social and cultural context.'
-      ]},
-      { img:'06.png', label:'Develop a Design Based on Programmatic Requirements', desc:[
-        'Translate programmatic requirements into design solutions.',
-        'Synthesize spatial, functional, and experiential considerations.',
-        'Iterate and refine design concepts using appropriate media.'
-      ]},
-      { img:'07.png', label:'Prepare Design Documentation', desc:[
-        'Produce drawings and documentation that convey design intent.',
-        'Coordinate documentation across disciplines.',
-        'Ensure clarity, accuracy, and consistency in design documents.'
-      ]},
-      { img:'08.png', label:'Develop the Design', desc:[
-        'Advance the design from schematic to detailed level.',
-        'Integrate building systems, materials, and assemblies.',
-        'Respond to cost, schedule, and constructability considerations.'
-      ]},
-      { img:'09.png', label:'Administer the Contract During Construction', desc:[
-        'Interpret contract documents and respond to requests for information.',
-        'Review submittals, shop drawings, and other contractor documents.',
-        'Observe construction and evaluate conformance with contract documents.'
-      ]},
-      { img:'10.png', label:'Evaluate Construction for Conformance', desc:[
-        'Monitor progress and quality of construction.',
-        'Identify nonconforming work and recommend corrective action.',
-        'Document construction observations and communications.'
-      ]},
-      { img:'11.png', label:'Manage Contracts', desc:[
-        'Understand contractual relationships among project participants.',
-        'Administer agreements with clients and consultants.',
-        'Advise on contract modifications and resolution of disputes.'
-      ]},
-      { img:'12.png', label:'Plan and Manage Projects', desc:[
-        'Develop work plans, schedules, and budgets.',
-        'Manage project teams, resources, and communication.',
-        'Monitor progress and adjust plans as needed.'
-      ]},
-      { img:'13.png', label:'Manage Practice', desc:[
-        'Understand practice structures, roles, and responsibilities.',
-        'Implement policies and procedures for quality management.',
-        'Manage risk and compliance with legal requirements.'
-      ]},
-      { img:'14.png', label:'Comply with Legal Requirements', desc:[
-        'Understand laws and regulations governing architectural practice.',
-        'Comply with codes, licensing, and insurance requirements.',
-        'Manage legal and professional liability.'
-      ]},
-      { img:'15.png', label:'Demonstrate Ethical Practice', desc:[
-        'Adhere to professional codes of ethics and conduct.',
-        'Promote equity, sustainability, and social responsibility.',
-        'Maintain transparency and accountability in practice.'
-      ]},
-      { img:'16.png', label:'Manage Business Operations', desc:[
-        'Understand financial management and business planning.',
-        'Support marketing, client development, and strategic planning.',
-        'Contribute to operational efficiency and profitability.'
-      ]}
+      {
+        img: '01.png', label: 'Assess Regulatory Design Requirements', desc: [
+          'Identify local, state, and federal authorities having jurisdiction over a project.',
+          'Understand the regulatory and jurisdictional approval process applicable to a project in order to obtain the necessary approvals.',
+          'Determine the specific regulations, codes, and rules (e.g., zoning rules, building and environmental codes, historic preservation requirements, design covenants, etc.) that apply to a project.'
+        ]
+      },
+      {
+        img: '02.png', label: 'Analyze Site and Existing Conditions', desc: [
+          'Identify characteristics of the site and surrounding context.',
+          'Evaluate environmental, historical, and existing site conditions that may impact design or construction.',
+          'Analyze site opportunities and constraints that may impact the program or design strategy.'
+        ]
+      },
+      {
+        img: '03.png', label: 'Establish Project Goals and Programming', desc: [
+          'Identify stakeholder goals, values, and requirements.',
+          'Establish spatial, functional, and performance criteria for the project.',
+          'Define project scope, priorities, and success metrics.'
+        ]
+      },
+      {
+        img: '04.png', label: 'Incorporate Environmental and Sustainability Principles', desc: [
+          'Evaluate environmental context and impacts.',
+          'Incorporate sustainable design principles and systems.',
+          'Design for performance outcomes related to energy, water, and material use.'
+        ]
+      },
+      {
+        img: '05.png', label: 'Address Social and Ethical Issues', desc: [
+          'Incorporate equity, accessibility, and inclusion in design.',
+          'Consider health, safety, and welfare of users and the public.',
+          'Respond to social and cultural context.'
+        ]
+      },
+      {
+        img: '06.png', label: 'Develop a Design Based on Programmatic Requirements', desc: [
+          'Translate programmatic requirements into design solutions.',
+          'Synthesize spatial, functional, and experiential considerations.',
+          'Iterate and refine design concepts using appropriate media.'
+        ]
+      },
+      {
+        img: '07.png', label: 'Prepare Design Documentation', desc: [
+          'Produce drawings and documentation that convey design intent.',
+          'Coordinate documentation across disciplines.',
+          'Ensure clarity, accuracy, and consistency in design documents.'
+        ]
+      },
+      {
+        img: '08.png', label: 'Develop the Design', desc: [
+          'Advance the design from schematic to detailed level.',
+          'Integrate building systems, materials, and assemblies.',
+          'Respond to cost, schedule, and constructability considerations.'
+        ]
+      },
+      {
+        img: '09.png', label: 'Administer the Contract During Construction', desc: [
+          'Interpret contract documents and respond to requests for information.',
+          'Review submittals, shop drawings, and other contractor documents.',
+          'Observe construction and evaluate conformance with contract documents.'
+        ]
+      },
+      {
+        img: '10.png', label: 'Evaluate Construction for Conformance', desc: [
+          'Monitor progress and quality of construction.',
+          'Identify nonconforming work and recommend corrective action.',
+          'Document construction observations and communications.'
+        ]
+      },
+      {
+        img: '11.png', label: 'Manage Contracts', desc: [
+          'Understand contractual relationships among project participants.',
+          'Administer agreements with clients and consultants.',
+          'Advise on contract modifications and resolution of disputes.'
+        ]
+      },
+      {
+        img: '12.png', label: 'Plan and Manage Projects', desc: [
+          'Develop work plans, schedules, and budgets.',
+          'Manage project teams, resources, and communication.',
+          'Monitor progress and adjust plans as needed.'
+        ]
+      },
+      {
+        img: '13.png', label: 'Manage Practice', desc: [
+          'Understand practice structures, roles, and responsibilities.',
+          'Implement policies and procedures for quality management.',
+          'Manage risk and compliance with legal requirements.'
+        ]
+      },
+      {
+        img: '14.png', label: 'Comply with Legal Requirements', desc: [
+          'Understand laws and regulations governing architectural practice.',
+          'Comply with codes, licensing, and insurance requirements.',
+          'Manage legal and professional liability.'
+        ]
+      },
+      {
+        img: '15.png', label: 'Demonstrate Ethical Practice', desc: [
+          'Adhere to professional codes of ethics and conduct.',
+          'Promote equity, sustainability, and social responsibility.',
+          'Maintain transparency and accountability in practice.'
+        ]
+      },
+      {
+        img: '16.png', label: 'Manage Business Operations', desc: [
+          'Understand financial management and business planning.',
+          'Support marketing, client development, and strategic planning.',
+          'Contribute to operational efficiency and profitability.'
+        ]
+      }
     ];
 
     // ---------- Helpers to create a card ----------
@@ -265,21 +331,42 @@
       const isDesktop = window.matchMedia('(min-width: 1024px)').matches;
       const gridWrap = document.getElementById('gridWrap');
       const masonryWrap = document.getElementById('masonryWrap');
+      const gridEl = document.getElementById('grid16');
+      const masonryEl = document.getElementById('masonry');
 
-      if (isDesktop && masonryWrap.style.display !== 'none') {
-        // switch to grid
-        masonryWrap.style.display = 'none';
-        gridWrap.style.display = 'block';
-        document.getElementById('grid16').innerHTML = '';
-        renderGrid();
-      } else if (!isDesktop && gridWrap.style.display !== 'none') {
-        // switch to masonry
-        gridWrap.style.display = 'none';
-        masonryWrap.style.display = 'block';
-        document.getElementById('masonry').innerHTML = '';
-        renderMasonry();
+      function ensureLayout() {
+        const isDesktop = window.matchMedia('(min-width: 1024px)').matches;
+
+        if (isDesktop) {
+          // show desktop grid, hide masonry — via classes (no inline styles)
+          masonryWrap.classList.add('hidden');
+          gridWrap.classList.remove('hidden');
+
+          // render once
+          if (!gridEl.dataset.rendered) {
+            gridEl.innerHTML = '';
+            renderGrid();
+            gridEl.dataset.rendered = '1';
+          }
+        } else {
+          // show masonry, hide desktop grid — via classes
+          gridWrap.classList.add('hidden');
+          masonryWrap.classList.remove('hidden');
+
+          // render once
+          if (!masonryEl.dataset.rendered) {
+            masonryEl.innerHTML = '';
+            renderMasonry();
+            masonryEl.dataset.rendered = '1';
+          }
+        }
       }
-    });
+
+      // Initial + when returning via back/forward cache + on resize
+      document.addEventListener('DOMContentLoaded', ensureLayout);
+      window.addEventListener('pageshow', ensureLayout); // handles BFCache restore on back
+      window.addEventListener('resize', ensureLayout);
   </script>
 </body>
+
 </html>
