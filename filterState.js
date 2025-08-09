@@ -7,7 +7,7 @@
  *   <button data-clear-filters>Start Over</button>
  *
  * Include once per page:
- *   <script src="/js/filterState.js" defer></script>
+ *   <script src="./filterState.js" defer></script>
  */
 (() => {
   const STORE_KEY = 'licensureFilters';
@@ -30,9 +30,7 @@
     if (v == null) return v;
     const s = String(v).trim();
     if (s === '') return '';
-    // number-like?
     if (!isNaN(s)) return Number(s);
-    // try JSON (lets you pass arrays/objects as strings if needed)
     try { return JSON.parse(s); } catch { /* noop */ }
     return s;
   };
@@ -85,7 +83,6 @@
 
     /** Convenience: route based on current role */
     routeByRole(map) {
-      // map example: { student: 'competencies.html', instructor: 'naab.html', admin: 'naab.html' }
       const role = String((read().role || read().Role || '')).toLowerCase();
       const target = map[role];
       if (target) window.location.href = target;
@@ -95,28 +92,72 @@
   // expose globally
   window.LicensureFilters = Filters;
 
+  // ---------- role-based flows ----------
+  // Make sure these filenames match your actual files
+  const FLOWS = {
+    Student:    ['competencies.html', 'year.html', 'tasks.html'],
+    Instructor: ['naab.html',         'year.html', 'tasks.html'],
+    Admin:      ['naab.html',         'competencies.html', 'tasks.html'],
+  };
+
+  const currentPage = () => {
+    const file = location.pathname.split('/').pop() || 'index.html';
+    return file.toLowerCase();
+  };
+
+  function nextInFlow(roleRaw, page) {
+    const roleKey =
+      roleRaw && String(roleRaw).toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+    const flow = FLOWS[roleKey];
+    if (!flow) return null;
+    const i = flow.findIndex(p => p.toLowerCase() === page);
+    if (i === -1) return null;
+    if (i >= flow.length - 1) return flow[i]; // already last page; stay
+    return flow[i + 1];
+  }
+
   // ---------- auto-bind buttons ----------
   function handleFilterClick(e) {
     const el = e.currentTarget;
 
-    const key = el.dataset.key;                 // e.g. "Level", "NAAB", "Competency", "role"
-    const value = el.dataset.value;             // e.g. "Beginner", "S3", "1", "Student"
-    const next = el.dataset.next;               // optional URL to navigate to
+    const key = el.dataset.key;                 // e.g. "Level", "NAAB", "Competencies", "role"
+    const value = el.dataset.value;             // e.g. "Beginner", "S3", "Analyze Site...", "Student"
+    const explicitNext = el.dataset.next;       // optional URL to navigate to
     const append = el.dataset.append === 'true';
     const toggle = el.dataset.toggle === 'true';
 
-    if (!key) return;
+    if (key) {
+      Filters.set(key, value, { append, toggle });
 
-    Filters.set(key, value, { append, toggle });
-
-    // optional selected state styling (aria-pressed for accessibility)
-    if (toggle || append) {
-      const state = Filters.get();
-      const list = toArray(state[key]);
-      el.setAttribute('aria-pressed', list.some(v => String(v) === String(parseValue(value))) ? 'true' : 'false');
+      // optional selected state styling (aria-pressed for accessibility)
+      if (toggle || append) {
+        const state = Filters.get();
+        const list = toArray(state[key]);
+        el.setAttribute(
+          'aria-pressed',
+          list.some(v => String(v) === String(parseValue(value))) ? 'true' : 'false'
+        );
+      }
     }
 
-    if (next) window.location.href = next;
+    // Decide where to go next:
+    // Priority: data-next > computed by role+currentPage > anchor href (default)
+    const state = Filters.get();
+    const role = state.role ?? state.Role ?? state.ROLE;
+    const cur = currentPage();
+
+    let target = explicitNext || nextInFlow(role, cur);
+
+    // If no target yet and it's an anchor with a real href, let the browser handle it
+    if (!target && el.tagName === 'A') {
+      const href = el.getAttribute('href');
+      if (href && href !== '#') return; // allow default navigation
+    }
+
+    if (target) {
+      e.preventDefault();              // avoid double navigation
+      window.location.href = target;
+    }
   }
 
   function handleClearClick() {
@@ -125,10 +166,13 @@
 
   function initBindings(root = document) {
     root.querySelectorAll('[data-filter]').forEach(btn => {
+      if (btn.__fsBound) return;
+      btn.__fsBound = true;
       btn.addEventListener('click', handleFilterClick);
+
       // initialize aria-pressed if toggle/append and already selected
-      const append = btn.dataset.append === 'true' || btn.dataset.toggle === 'true';
-      if (append) {
+      const appendOrToggle = btn.dataset.append === 'true' || btn.dataset.toggle === 'true';
+      if (appendOrToggle) {
         const state = Filters.get();
         const key = btn.dataset.key;
         const value = btn.dataset.value;
@@ -138,6 +182,8 @@
     });
 
     root.querySelectorAll('[data-clear-filters]').forEach(btn => {
+      if (btn.__fsBoundClear) return;
+      btn.__fsBoundClear = true;
       btn.addEventListener('click', handleClearClick);
     });
   }
