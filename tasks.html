@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Task Results</title>
 
+  <!-- Font + Tailwind -->
   <link href="https://fonts.googleapis.com/css2?family=Orienta&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -17,13 +18,18 @@
       }
     };
   </script>
+
+  <!-- Optional helper; safe if missing -->
   <script src="./filterState.js" defer></script>
+
   <style>
     body { font-family: 'Orienta', sans-serif; background:#0b0b0b; color:#fff; }
     .tap { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
   </style>
 </head>
 <body class="min-h-screen">
+
+  <!-- Top bar -->
   <header class="sticky top-0 z-50 bg-black/80 backdrop-blur supports-[backdrop-filter]:bg-black/60 border-b border-white/10">
     <div class="mx-auto max-w-4xl px-4 py-3 flex items-center justify-between">
       <div class="flex items-center gap-2">
@@ -31,11 +37,13 @@
           class="tap inline-flex items-center gap-2 rounded px-3 py-2 text-sm font-semibold bg-white text-black hover:bg-brandYellow focus:outline-none focus:ring-2 focus:ring-white/50">
           ← Back
         </button>
+
         <button type="button" id="restartBtn"
           class="tap inline-flex items-center gap-2 rounded px-3 py-2 text-sm font-semibold bg-white text-black hover:bg-brandYellow focus:outline-none focus:ring-2 focus:ring-white/50">
           Restart
         </button>
       </div>
+
       <button id="toggleButton" type="button"
         class="tap inline-flex items-center gap-2 rounded px-3 py-2 text-sm font-semibold bg-white text-black hover:bg-brandYellow focus:outline-none focus:ring-2 focus:ring-white/50">
         SHOW ALL
@@ -47,6 +55,7 @@
     <h1 class="text-2xl md:text-3xl font-bold mb-2">CHOOSE A TASK TO PRACTICE AN EXERCISE:</h1>
     <p id="selectPrompt" class="text-white/80 mb-6">Select one:</p>
 
+    <!-- Zero-results helper -->
     <section id="noResults" class="hidden rounded-xl border border-white/10 bg-white/5 p-4 md:p-5 mb-6">
       <p class="text-base md:text-lg font-semibold mb-2">There are no tasks that directly meet your criteria.</p>
       <p class="text-white/80 mb-4">Let’s broaden your search. Which criteria is more important for you?</p>
@@ -57,44 +66,26 @@
   </main>
 
   <script>
-    // ---- DEBUG ----
-    const DEBUG = true;
-    const log = (...a)=>DEBUG && console.log('[tasks-mobile]', ...a);
-    window.addEventListener('error', e => console.error('window.onerror:', e.message, e.filename, e.lineno));
-    window.addEventListener('unhandledrejection', e => console.error('unhandledrejection:', e.reason));
-
-    // ---- Mobile-robust activation helper ----
+    // ---- Mobile-safe activation (pointerup + click fallback; de-duped) ----
     function onActivate(el, handler) {
-      // Avoid double-fire by gating repeated activation within a short window
       let armed = true;
-      const fire = (ev) => {
-        if (!armed) return;
-        armed = false;
-        try { handler(ev); } finally {
-          setTimeout(()=> armed = true, 250);
-        }
-      };
-      // Pointer events first (works across mouse/touch/pen)
+      const fire = (ev) => { if (!armed) return; armed = false; try { handler(ev); } finally { setTimeout(()=>armed=true, 220); } };
       el.addEventListener('pointerup', fire, { passive: true });
-      // Fallbacks for older Safari
-      el.addEventListener('touchend', fire, { passive: true });
       el.addEventListener('click', fire);
     }
 
-    // ---------- Storage layer (write-through; LS overrides) ----------
+    // ---- Storage (write-through; localStorage wins) ----
     const STORAGE_KEY = 'licensureFilters';
-    const lsRead  = () => { try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch { return {}; } };
-    const lsWrite = (obj) => localStorage.setItem(STORAGE_KEY, JSON.stringify(obj || {}));
+    function lsRead()  { try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch { return {}; } }
+    function lsWrite(o){ localStorage.setItem(STORAGE_KEY, JSON.stringify(o || {})); }
 
     function filtersGet() {
-      const fromAPI = (window.LicensureFilters?.get ? window.LicensureFilters.get() : {}) || {};
-      const fromLS  = lsRead();
-      const merged = Object.assign({}, fromAPI, fromLS);
-      log('filtersGet -> merged:', merged);
-      return merged;
+      const api = (window.LicensureFilters?.get ? window.LicensureFilters.get() : {}) || {};
+      const ls  = lsRead();
+      return Object.assign({}, api, ls); // ls overrides on same keys
     }
     function filtersSet(next) {
-      try { window.LicensureFilters?.set && window.LicensureFilters.set(next); } catch(e){ console.warn('LF.set failed', e); }
+      try { window.LicensureFilters?.set && window.LicensureFilters.set(next); } catch {}
       lsWrite(next);
       document.dispatchEvent(new CustomEvent('filters:change'));
     }
@@ -112,31 +103,38 @@
       return s.Role || s.role || localStorage.getItem('selectedRole') || null;
     }
 
+    // ---- Keep-only action ----
     function keepOnly(keepKey) {
-      log('keepOnly:', keepKey);
       const state = filtersGet();
-      const before = JSON.parse(JSON.stringify(state));
       ['Competency','Level','NAAB'].forEach(k => { if (k !== keepKey) delete state[k]; });
       filtersSet(state);
       filters = readFilters();
-      log('state before:', before, 'after keepOnly:', state, 'computed filters:', filters);
       renderTasks(taskData);
-      // Bring results into view on mobile
       document.getElementById('taskList')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    // ---------- Page controls ----------
-    onActivate(document.getElementById('backBtn'), () => {
-      if (history.length > 1) history.back();
-      else window.location.href = 'index.html';
-    });
-    onActivate(document.getElementById('restartBtn'), () => {
-      filtersSet({});
-      localStorage.removeItem('selectedRole');
-      window.location.href = 'index.html';
-    });
+    // ---- Page controls ----
+    function wireChromeSafeHandlers() {
+      onActivate(document.getElementById('backBtn'), () => {
+        if (history.length > 1) history.back(); else window.location.href = 'index.html';
+      });
+      onActivate(document.getElementById('restartBtn'), () => {
+        filtersSet({});
+        localStorage.removeItem('selectedRole');
+        window.location.href = 'index.html';
+      });
+      onActivate(document.getElementById('toggleButton'), () => {
+        showGrey = !showGrey;
+        document.getElementById('toggleButton').innerText = showGrey ? 'HIDE' : 'SHOW ALL';
+        const items = document.getElementById('taskList').children;
+        for (const el of items) {
+          const matched = el.dataset.match === 'true';
+          if (!matched) el.classList.toggle('hidden', !showGrey);
+        }
+      });
+    }
 
-    // ---------- Data + render ----------
+    // ---- Data + render ----
     let filters = readFilters();
     let showGrey = false;
     let taskData = [];
@@ -151,13 +149,10 @@
     }
 
     async function loadTasks() {
-      log('loadTasks: fetching task_data.json…');
-      const r = await fetch('task_data.json');
-      log('fetch status=', r.status);
+      // cache-bust to avoid stale JSON in iOS Chrome
+      const r = await fetch('task_data.json?v=' + Date.now(), { cache: 'no-store' });
       if (!r.ok) throw new Error('Could not load task_data.json');
       taskData = await r.json();
-      log('loaded tasks:', taskData.length, 'role=', getRole(), 'filters=', filters);
-      document.getElementById('toggleButton').innerText = showGrey ? 'HIDE' : 'SHOW ALL';
       renderTasks(taskData);
     }
 
@@ -204,13 +199,12 @@
           <div class="text-base md:text-lg font-semibold">${labels[keepKey].title}</div>
           <div class="text-sm text-white/70 mt-0.5">${labels[keepKey].desc}</div>
         `;
-        onActivate(btn, () => { log('Keep pressed:', keepKey); keepOnly(keepKey); });
+        onActivate(btn, () => keepOnly(keepKey));
         wrap.appendChild(btn);
       });
     }
 
     function renderTasks(data) {
-      log('renderTasks start. filters=', filters);
       const list = document.getElementById('taskList');
       list.innerHTML = '';
 
@@ -233,10 +227,10 @@
         (meets ? matched : unmatched).push({ task, index, meets });
       });
 
-      log('renderTasks matched=', matched.length, 'unmatched=', unmatched.length);
-
+      // Zero-match UX
       buildKeepButtons(matched.length);
 
+      // Render matched (colored) first, then unmatched (grey)
       [...matched, ...unmatched].forEach(({ task, index, meets }) => {
         const fontColor = meets ? task.Color : '#6B7280';
         const hasDetails = Boolean(task['TASK DETAILS']);
@@ -284,8 +278,6 @@
         if (hasDetails) wrap.appendChild(details);
         list.appendChild(wrap);
       });
-
-      log('renderTasks DOM updated');
     }
 
     function toggleDetails(id, btn) {
@@ -298,22 +290,16 @@
       if (arrow) arrow.textContent = isHidden ? '↑' : '↓';
     }
 
-    onActivate(document.getElementById('toggleButton'), () => {
-      showGrey = !showGrey;
-      document.getElementById('toggleButton').innerText = showGrey ? 'HIDE' : 'SHOW ALL';
-      const items = document.getElementById('taskList').children;
-      for (const el of items) {
-        const matched = el.dataset.match === 'true';
-        if (!matched) el.classList.toggle('hidden', !showGrey);
-      }
-    });
-
-    document.addEventListener('filters:change', () => {
-      filters = readFilters();
-      renderTasks(taskData);
-    });
-
-    loadTasks();
+    // ---- Boot after DOM is ready (prevents race with defer'ed scripts on iOS Chrome) ----
+    function boot() {
+      wireChromeSafeHandlers();
+      loadTasks();
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', boot, { once: true });
+    } else {
+      boot();
+    }
   </script>
 </body>
 </html>
