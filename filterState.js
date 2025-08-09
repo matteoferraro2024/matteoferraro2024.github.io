@@ -114,7 +114,7 @@
   // ---------- role-based flows (filenames must match your site) ----------
   const FLOWS = {
     Student:    ['competencies.html', 'year.html', 'tasks.html'],
-    Instructor: ['naab.html',         'year.html', 'tasks.html'],
+    Instructor: ['year.html',         'naab.html', 'tasks.html'],
     Admin:      ['naab.html',         'competencies.html', 'tasks.html'],
   };
 
