@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Task Results</title>
 
-  <!-- Font + Tailwind -->
   <link href="https://fonts.googleapis.com/css2?family=Orienta&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -18,35 +17,25 @@
       }
     };
   </script>
-
-  <!-- Your state helper -->
   <script src="./filterState.js" defer></script>
-
   <style>
     body { font-family: 'Orienta', sans-serif; background:#0b0b0b; color:#fff; }
     .tap { -webkit-tap-highlight-color: transparent; }
   </style>
 </head>
 <body class="min-h-screen">
-
-  <!-- Top bar -->
   <header class="sticky top-0 z-50 bg-black/80 backdrop-blur supports-[backdrop-filter]:bg-black/60 border-b border-white/10">
     <div class="mx-auto max-w-4xl px-4 py-3 flex items-center justify-between">
       <div class="flex items-center gap-2">
-        <!-- Back -->
         <button type="button" id="backBtn" aria-label="Go back"
           class="tap inline-flex items-center gap-2 rounded px-3 py-2 text-sm font-semibold bg-white text-black hover:bg-brandYellow focus:outline-none focus:ring-2 focus:ring-white/50">
           ← Back
         </button>
-
-        <!-- Restart -->
         <button type="button" id="restartBtn"
           class="tap inline-flex items-center gap-2 rounded px-3 py-2 text-sm font-semibold bg-white text-black hover:bg-brandYellow focus:outline-none focus:ring-2 focus:ring-white/50">
           Restart
         </button>
       </div>
-
-      <!-- Toggle unmatched -->
       <button id="toggleButton" type="button"
         class="tap inline-flex items-center gap-2 rounded px-3 py-2 text-sm font-semibold bg-white text-black hover:bg-brandYellow focus:outline-none focus:ring-2 focus:ring-white/50">
         SHOW ALL
@@ -58,7 +47,6 @@
     <h1 class="text-2xl md:text-3xl font-bold mb-2">CHOOSE A TASK TO PRACTICE AN EXERCISE:</h1>
     <p id="selectPrompt" class="text-white/80 mb-6">Select one:</p>
 
-    <!-- Zero-results helper -->
     <section id="noResults" class="hidden rounded-xl border border-white/10 bg-white/5 p-4 md:p-5 mb-6">
       <p class="text-base md:text-lg font-semibold mb-2">There are no tasks that directly meet your criteria.</p>
       <p class="text-white/80 mb-4">Let’s broaden your search. Which criteria is more important for you?</p>
@@ -69,32 +57,38 @@
   </main>
 
   <script>
+    // ---- DEBUG ----
+    const DEBUG = true;
+    const log = (...a)=>DEBUG && console.log('[tasks]', ...a);
+    window.addEventListener('error', e => console.error('window.onerror:', e.message, e.filename, e.lineno));
+    window.addEventListener('unhandledrejection', e => console.error('unhandledrejection:', e.reason));
 
-// ---- DEBUG MODE ----
-const DEBUG = true;
-const log = (...a)=>DEBUG && console.log('[tasks]', ...a);
-window.addEventListener('error', e => console.error('window.onerror:', e.message, e.filename, e.lineno));
-window.addEventListener('unhandledrejection', e => console.error('unhandledrejection:', e.reason));
-
-
-    // ---------- Minimal storage wrapper ----------
+    // ---------- Storage layer (merge: LicensureFilters + localStorage; local overrides) ----------
     const STORAGE_KEY = 'licensureFilters';
 
+    function lsRead() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch { return {}; }
+    }
+    function lsWrite(obj) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(obj || {}));
+    }
+
     function filtersGet() {
-  if (window.LicensureFilters?.get) {
-    const s = window.LicensureFilters.get();
-    log('filtersGet (LicensureFilters):', s);
-    return s;
-  }
-  const s = JSON.parse(localStorage.getItem('licensureFilters') || '{}');
-  log('filtersGet (localStorage):', s);
-  return s;
-}
+      const fromAPI = (window.LicensureFilters?.get ? window.LicensureFilters.get() : {}) || {};
+      const fromLS  = lsRead();
+      // localStorage wins (so we can hotfix write-only APIs)
+      const merged = Object.assign({}, fromAPI, fromLS);
+      log('filtersGet -> merged:', merged, '(api:', fromAPI, 'ls:', fromLS, ')');
+      return merged;
+    }
+
     function filtersSet(next) {
-      if (window.LicensureFilters?.set) window.LicensureFilters.set(next);
-      else localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      // write-through to both stores
+      try { window.LicensureFilters?.set && window.LicensureFilters.set(next); } catch(e){ console.warn('LF.set failed', e); }
+      lsWrite(next);
       document.dispatchEvent(new CustomEvent('filters:change'));
     }
+
     function readFilters() {
       const state = filtersGet();
       return {
@@ -106,21 +100,20 @@ window.addEventListener('unhandledrejection', e => console.error('unhandledrejec
     }
     function getRole() {
       const s = filtersGet();
-      return s.Role || localStorage.getItem('selectedRole') || null;
+      return s.Role || s.role || localStorage.getItem('selectedRole') || null;
     }
 
-    // Keep-only helper: remove all other criteria, persist, refresh, re-render
     function keepOnly(keepKey) {
-  log('keepOnly clicked:', keepKey);
-  const state = filtersGet();
-  const before = JSON.parse(JSON.stringify(state));
-  ['Competency','Level','NAAB'].forEach(k => { if (k !== keepKey) delete state[k]; });
-  filtersSet(state);
-  filters = readFilters();
-  log('state before:', before, 'after keepOnly:', state, 'computed filters:', filters);
-  renderTasks(taskData);
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
+      log('keepOnly clicked:', keepKey);
+      const state = filtersGet();
+      const before = JSON.parse(JSON.stringify(state));
+      ['Competency','Level','NAAB'].forEach(k => { if (k !== keepKey) delete state[k]; });
+      filtersSet(state);
+      filters = readFilters();
+      log('state before:', before, 'after keepOnly:', state, 'computed filters:', filters);
+      renderTasks(taskData);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 
     // ---------- Page controls ----------
     document.getElementById('backBtn').addEventListener('click', () => {
@@ -128,8 +121,7 @@ window.addEventListener('unhandledrejection', e => console.error('unhandledrejec
       else window.location.href = 'index.html';
     });
     document.getElementById('restartBtn').addEventListener('click', () => {
-      if (window.LicensureFilters?.set) window.LicensureFilters.set({});
-      else localStorage.setItem(STORAGE_KEY, JSON.stringify({}));
+      filtersSet({}); // clears both
       localStorage.removeItem('selectedRole');
       window.location.href = 'index.html';
     });
@@ -142,22 +134,22 @@ window.addEventListener('unhandledrejection', e => console.error('unhandledrejec
     function getNaabArray(raw) {
       if (Array.isArray(raw)) return raw;
       if (typeof raw === 'string') {
-        try { return JSON.parse(raw.replace(/'/g, '"')) || []; }
-        catch { return raw.replace(/[\[\]\s'"]/g, '').split(',').filter(Boolean); }
+        try { return JSON.parse(raw.replace(/'/g, '\"')) || []; }
+        catch { return raw.replace(/[\\[\\]\\s'\\\"]/g, '').split(',').filter(Boolean); }
       }
       return [];
     }
 
     async function loadTasks() {
-  log('loadTasks: fetching task_data.json…');
-  const r = await fetch('task_data.json');
-  log('fetch status=', r.status);
-  const json = await r.json();
-  taskData = json;
-  log('loaded tasks:', taskData.length, 'role=', getRole(), 'filters=', filters);
-  document.getElementById('toggleButton').innerText = showGrey ? 'HIDE' : 'SHOW ALL';
-  renderTasks(taskData);
-}
+      log('loadTasks: fetching task_data.json…');
+      const r = await fetch('task_data.json');
+      log('fetch status=', r.status);
+      if (!r.ok) throw new Error('Could not load task_data.json');
+      taskData = await r.json();
+      log('loaded tasks:', taskData.length, 'role=', getRole(), 'filters=', filters);
+      document.getElementById('toggleButton').innerText = showGrey ? 'HIDE' : 'SHOW ALL';
+      renderTasks(taskData);
+    }
 
     function buildKeepButtons(matchedCount) {
       const prompt = document.getElementById('selectPrompt');
@@ -202,10 +194,10 @@ window.addEventListener('unhandledrejection', e => console.error('unhandledrejec
           <div class="text-base md:text-lg font-semibold">${labels[keepKey].title}</div>
           <div class="text-sm text-white/70 mt-0.5">${labels[keepKey].desc}</div>
         `;
-        btn.addEventListener('click', () => {
-  log('Keep button pressed for', keepKey);
-  keepOnly(keepKey);
-});
+        btn.addEventListener('click', () => { log('Keep button pressed for', keepKey); keepOnly(keepKey); });
+        wrap.appendChild(btn);
+      });
+    }
 
     function renderTasks(data) {
       log('renderTasks start. filters=', filters);
@@ -233,10 +225,8 @@ window.addEventListener('unhandledrejection', e => console.error('unhandledrejec
 
       log('renderTasks matched=', matched.length, 'unmatched=', unmatched.length);
 
-      // Zero-match UX
       buildKeepButtons(matched.length);
 
-      // Render matched (colored) first, then unmatched (grey)
       [...matched, ...unmatched].forEach(({ task, index, meets }) => {
         const fontColor = meets ? task.Color : '#6B7280';
         const hasDetails = Boolean(task['TASK DETAILS']);
@@ -284,6 +274,8 @@ window.addEventListener('unhandledrejection', e => console.error('unhandledrejec
         if (hasDetails) wrap.appendChild(details);
         list.appendChild(wrap);
       });
+
+      log('renderTasks DOM updated');
     }
 
     function toggleDetails(id, btn) {
@@ -306,7 +298,6 @@ window.addEventListener('unhandledrejection', e => console.error('unhandledrejec
       }
     });
 
-    // If anything else changes filters elsewhere on the site
     document.addEventListener('filters:change', () => {
       filters = readFilters();
       renderTasks(taskData);
