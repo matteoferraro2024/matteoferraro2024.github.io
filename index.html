@@ -32,6 +32,7 @@
       font-family: 'Orienta', sans-serif;
     }
   </style>
+  <script src="./filterState.js" defer></script>
 </head>
 
 <body class="bg-darkBg text-white min-h-screen flex items-center justify-center px-4">
@@ -87,28 +88,6 @@
 
   </div>
   </div>
-  <script src="/js/filterState.js"></script>
-  <script>
-  // minimal router + state save
-  document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('[data-filter]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const key = btn.dataset.key;
-        const value = btn.dataset.value;
-        const next = btn.dataset.next;
-
-        // store / merge filter state
-        const state = JSON.parse(localStorage.getItem('filterState') || '{}');
-        state[key] = value;
-        localStorage.setItem('filterState', JSON.stringify(state));
-        localStorage.setItem('selectedRole', value); // if you also use this key elsewhere
-
-        if (next) window.location.href = next;
-      });
-    });
-  });
-</script>
-
 </body>
 
 </html>

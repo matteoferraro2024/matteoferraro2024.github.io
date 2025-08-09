@@ -6,6 +6,7 @@
   <title>Competency Description</title>
   <link href="https://fonts.googleapis.com/css2?family=Orienta&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="./filterState.js" defer></script>
   <style>
     body {
       font-family: 'Orienta', sans-serif;
@@ -182,10 +183,9 @@
       </p>
       <div class="flex gap-4 mt-6">
         <a href="/competencies.html" class="bg-gray-100 text-black px-4 py-2 rounded font-bold text-sm">BACK</a>
-        <a href="/info.html?index=${index}" class="bg-gray-100 text-black px-4 py-2 rounded font-bold text-sm">SELECT</a>
+        <a href="#" data-filter data-key="Competency" data-value="${index + 1}" class="bg-gray-100 text-black px-4 py-2 rounded font-bold text-sm">SELECT</a>
       </div>
     `;
   </script>
-  <script src="/js/filterState.js"></script>
 </body>
 </html>

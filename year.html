@@ -11,6 +11,7 @@
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="./filterState.js" defer></script>
   <style>
     body {
       font-family: 'Orienta', sans-serif;
@@ -55,26 +56,6 @@
     </div>
   </div>
   <!-- fixed path + minimal fallback click handler -->
-  <script src="./filterState.js"></script>
-  <script>
-    // Fallback in case filterState.js didn't bind listeners yet
-    document.addEventListener('DOMContentLoaded', () => {
-      document.querySelectorAll('[data-filter]').forEach(btn => {
-        if (btn.__fsBound) return; // prevent double-binding
-        btn.__fsBound = true;
-
-        btn.addEventListener('click', () => {
-          const { key, value, next } = btn.dataset;
-
-          const state = JSON.parse(localStorage.getItem('filterState') || '{}');
-          state[key] = value;
-          localStorage.setItem('filterState', JSON.stringify(state));
-
-          if (next) window.location.href = next;
-        });
-      });
-    });
-  </script>
 </body>
 
 </html>

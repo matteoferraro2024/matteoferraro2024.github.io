@@ -1,17 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Select a Competency</title>
   <link href="https://fonts.googleapis.com/css2?family=Orienta&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="./filterState.js" defer></script>
   <style>
-    body {
-      font-family: 'Orienta', sans-serif;
-    }
-
+    body { font-family: 'Orienta', sans-serif; }
     .grid-container {
       position: relative;
       display: grid;
@@ -20,27 +17,13 @@
       gap: 1rem;
       height: 100%;
     }
-
-    .domain-bg {
-      position: absolute;
-      z-index: 0;
-      border-radius: 0.5rem;
-    }
-
+    .domain-bg { position: absolute; z-index: 0; border-radius: 0.5rem; }
     .domain-label {
-      position: absolute;
-      z-index: 10;
-      background-color: rgba(0, 0, 0, 0.5);
-      color: white;
-      font-weight: bold;
-      padding: 0.25rem 0.5rem;
-      border-radius: 0.25rem;
-      font-size: 0.875rem;
+      position: absolute; z-index: 10;
+      background-color: rgba(0,0,0,0.5); color: white; font-weight: bold;
+      padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.875rem;
     }
-
-    .button-cell {
-      z-index: 10;
-    }
+    .button-cell { z-index: 10; }
   </style>
 </head>
 
@@ -49,17 +32,16 @@
     <h1 class="text-2xl sm:text-3xl font-bold text-center py-2 sm:py-4">SELECT A COMPETENCY</h1>
 
     <div class="relative flex-1 px-4 pb-4">
-      <!-- Background Regions with padding for border effect -->
-      <div class="domain-bg bg-zinc-800" style="top: -0.5rem; left: -0.5rem; width: calc(100% + 1rem); height: 50%;">
-      </div>
-      <div class="domain-bg bg-zinc-800" style="top: 50%; left: -0.5rem; width: 50%; height: 20%;"></div>
-      <div class="domain-bg bg-zinc-800" style="top: 50%; left: 50%; width: 50%; height: 20%;"></div>
-      <div class="domain-bg bg-zinc-800" style="top: 75%; left: -0.5rem; width: calc(100% + 1rem); height: 25%;"></div>
+      <!-- Background Regions -->
+      <div class="domain-bg bg-zinc-800" style="top:-0.5rem; left:-0.5rem; width:calc(100% + 1rem); height:50%;"></div>
+      <div class="domain-bg bg-zinc-800" style="top:50%; left:-0.5rem; width:50%; height:20%;"></div>
+      <div class="domain-bg bg-zinc-800" style="top:50%; left:50%; width:50%; height:20%;"></div>
+      <div class="domain-bg bg-zinc-800" style="top:75%; left:-0.5rem; width:calc(100% + 1rem); height:25%;"></div>
 
       <!-- Domain Labels -->
-      <div class="domain-label" style="top: 0.5rem; left: 0.5rem;">Design & Documenting Domain</div>
-      <div class="domain-label" style="top: 52%; left: 0.5rem;">Construction Administration Domain</div>
-      <div class="domain-label" style="top: 76%; left: 0.5rem;">Practice & Project Management Domain</div>
+      <div class="domain-label" style="top:0.5rem; left:0.5rem;">Design & Documenting Domain</div>
+      <div class="domain-label" style="top:52%; left:0.5rem;">Construction Administration Domain</div>
+      <div class="domain-label" style="top:76%; left:0.5rem;">Practice & Project Management Domain</div>
 
       <!-- Button Grid -->
       <div class="grid-container" id="buttonGrid"></div>
@@ -67,245 +49,170 @@
   </div>
 
   <script>
-  const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+    const isMobile = /Mobi|Android/i.test(navigator.userAgent);
 
-  const data = [
-    {
-      img: '01.png',
-      label: 'Assess Regulatory Design Requirements',
-      desc: [
+    const data = [
+      { img:'01.png', label:'Assess Regulatory Design Requirements', desc:[
         'Identify local, state, and federal authorities having jurisdiction over a project.',
         'Understand the regulatory and jurisdictional approval process applicable to a project in order to obtain the necessary approvals.',
         'Determine the specific regulations, codes, and rules (e.g., zoning rules, building and environmental codes, historic preservation requirements, design covenants, etc.) that apply to a project.'
-      ]
-    },
-    {
-      img: '02.png',
-      label: 'Analyze Site and Existing Conditions',
-      desc: [
+      ]},
+      { img:'02.png', label:'Analyze Site and Existing Conditions', desc:[
         'Identify characteristics of the site and surrounding context.',
         'Evaluate environmental, historical, and existing site conditions that may impact design or construction.',
         'Analyze site opportunities and constraints that may impact the program or design strategy.'
-      ]
-    },
-    {
-      img: '03.png',
-      label: 'Establish Project Goals and Programming',
-      desc: [
+      ]},
+      { img:'03.png', label:'Establish Project Goals and Programming', desc:[
         'Identify stakeholder goals, values, and requirements.',
         'Establish spatial, functional, and performance criteria for the project.',
         'Define project scope, priorities, and success metrics.'
-      ]
-    },
-    {
-      img: '04.png',
-      label: 'Incorporate Environmental and Sustainability Principles',
-      desc: [
+      ]},
+      { img:'04.png', label:'Incorporate Environmental and Sustainability Principles', desc:[
         'Evaluate environmental context and impacts.',
         'Incorporate sustainable design principles and systems.',
         'Design for performance outcomes related to energy, water, and material use.'
-      ]
-    },
-    {
-      img: '05.png',
-      label: 'Address Social and Ethical Issues',
-      desc: [
+      ]},
+      { img:'05.png', label:'Address Social and Ethical Issues', desc:[
         'Incorporate equity, accessibility, and inclusion in design.',
         'Consider health, safety, and welfare of users and the public.',
         'Respond to social and cultural context.'
-      ]
-    },
-    {
-      img: '06.png',
-      label: 'Develop a Design Based on Programmatic Requirements',
-      desc: [
+      ]},
+      { img:'06.png', label:'Develop a Design Based on Programmatic Requirements', desc:[
         'Translate programmatic requirements into design solutions.',
         'Synthesize spatial, functional, and experiential considerations.',
         'Iterate and refine design concepts using appropriate media.'
-      ]
-    },
-    {
-      img: '07.png',
-      label: 'Prepare Design Documentation',
-      desc: [
+      ]},
+      { img:'07.png', label:'Prepare Design Documentation', desc:[
         'Produce drawings and documentation that convey design intent.',
         'Coordinate documentation across disciplines.',
         'Ensure clarity, accuracy, and consistency in design documents.'
-      ]
-    },
-    {
-      img: '08.png',
-      label: 'Develop the Design',
-      desc: [
+      ]},
+      { img:'08.png', label:'Develop the Design', desc:[
         'Advance the design from schematic to detailed level.',
         'Integrate building systems, materials, and assemblies.',
         'Respond to cost, schedule, and constructability considerations.'
-      ]
-    },
-    {
-      img: '09.png',
-      label: 'Administer the Contract During Construction',
-      desc: [
+      ]},
+      { img:'09.png', label:'Administer the Contract During Construction', desc:[
         'Interpret contract documents and respond to requests for information.',
         'Review submittals, shop drawings, and other contractor documents.',
         'Observe construction and evaluate conformance with contract documents.'
-      ]
-    },
-    {
-      img: '10.png',
-      label: 'Evaluate Construction for Conformance',
-      desc: [
+      ]},
+      { img:'10.png', label:'Evaluate Construction for Conformance', desc:[
         'Monitor progress and quality of construction.',
         'Identify nonconforming work and recommend corrective action.',
         'Document construction observations and communications.'
-      ]
-    },
-    {
-      img: '11.png',
-      label: 'Manage Contracts',
-      desc: [
+      ]},
+      { img:'11.png', label:'Manage Contracts', desc:[
         'Understand contractual relationships among project participants.',
         'Administer agreements with clients and consultants.',
         'Advise on contract modifications and resolution of disputes.'
-      ]
-    },
-    {
-      img: '12.png',
-      label: 'Plan and Manage Projects',
-      desc: [
+      ]},
+      { img:'12.png', label:'Plan and Manage Projects', desc:[
         'Develop work plans, schedules, and budgets.',
         'Manage project teams, resources, and communication.',
         'Monitor progress and adjust plans as needed.'
-      ]
-    },
-    {
-      img: '13.png',
-      label: 'Manage Practice',
-      desc: [
+      ]},
+      { img:'13.png', label:'Manage Practice', desc:[
         'Understand practice structures, roles, and responsibilities.',
         'Implement policies and procedures for quality management.',
         'Manage risk and compliance with legal requirements.'
-      ]
-    },
-    {
-      img: '14.png',
-      label: 'Comply with Legal Requirements',
-      desc: [
+      ]},
+      { img:'14.png', label:'Comply with Legal Requirements', desc:[
         'Understand laws and regulations governing architectural practice.',
         'Comply with codes, licensing, and insurance requirements.',
         'Manage legal and professional liability.'
-      ]
-    },
-    {
-      img: '15.png',
-      label: 'Demonstrate Ethical Practice',
-      desc: [
+      ]},
+      { img:'15.png', label:'Demonstrate Ethical Practice', desc:[
         'Adhere to professional codes of ethics and conduct.',
         'Promote equity, sustainability, and social responsibility.',
         'Maintain transparency and accountability in practice.'
-      ]
-    },
-    {
-      img: '16.png',
-      label: 'Manage Business Operations',
-      desc: [
+      ]},
+      { img:'16.png', label:'Manage Business Operations', desc:[
         'Understand financial management and business planning.',
         'Support marketing, client development, and strategic planning.',
         'Contribute to operational efficiency and profitability.'
-      ]
-    }
-  ];
+      ]}
+    ];
 
-  const container = document.getElementById('buttonGrid');
+    const container = document.getElementById('buttonGrid');
 
-  data.forEach((item, index) => {
-    const row = Math.floor(index / 4) + 1;
-    const col = (index % 4) + 1;
+    data.forEach((item, index) => {
+      const row = Math.floor(index / 4) + 1;
+      const col = (index % 4) + 1;
 
-    const div = document.createElement('div');
-    div.className = 'relative group bg-transparent text-white rounded text-center button-cell flex flex-col items-center justify-center gap-2';
-    div.style.gridRow = row;
-    div.style.gridColumn = col;
+      const div = document.createElement('div');
+      div.className = 'relative group bg-transparent text-white rounded text-center button-cell flex flex-col items-center justify-center gap-2';
+      div.style.gridRow = row;
+      div.style.gridColumn = col;
 
-    const href = isMobile ? `desc.html?index=${index}` : `info.html?index=${index}`;
-    const cardId = `hoverCard${index}`;
+      const cardId = `hoverCard${index}`;
+      const compNumber = index + 1;
 
-    div.innerHTML = `
-      <a href="${href}" data-filter data-key="Competencies" data-value="${item.label}" class="flex flex-col items-center cursor-pointer">
-        <img src="/comp_icons/${item.img}" alt="${item.label}" class="w-12 h-12 sm:w-16 sm:h-16 mb-1" />
-        <div class="text-sm sm:text-base font-semibold text-center">${item.label}</div>
-      </a>
+      // Decide behavior: mobile gets desc.html, desktop routes via filterState.js
+      const href = isMobile ? `desc.html?index=${index}` : '#';
+      const nextAttr = isMobile ? ` data-next="${href}"` : '';
 
-      <div id="${cardId}" class="hover-card fixed z-[9999] w-80 sm:w-96 bg-gray-100 text-black p-4 rounded shadow-lg hidden flex-col gap-2 text-left pointer-events-none">
-        <div class="font-bold uppercase text-base">COMPETENCY ${String(index + 1).padStart(2, '0')}</div>
-        <div class="font-semibold">${item.label}</div>
-        <ul class="list-disc list-inside space-y-1 text-sm">
-          ${item.desc.map(line => `<li>${line}</li>`).join('')}
-        </ul>
-      </div>
-    `;
+      div.innerHTML = `
+        <a href="${href}"
+           data-filter
+           data-key="Competency"
+           data-value="${compNumber}"${nextAttr}
+           class="flex flex-col items-center cursor-pointer">
+          <img src="/comp_icons/${item.img}" alt="${item.label}" class="w-12 h-12 sm:w-16 sm:h-16 mb-1" />
+          <div class="text-sm sm:text-base font-semibold text-center">${item.label}</div>
+        </a>
 
-    container.appendChild(div);
+        <div id="${cardId}" class="hover-card fixed z-[9999] w-80 sm:w-96 bg-gray-100 text-black p-4 rounded shadow-lg hidden flex-col gap-2 text-left pointer-events-none">
+          <div class="font-bold uppercase text-base">COMPETENCY ${String(compNumber).padStart(2, '0')}</div>
+          <div class="font-semibold">${item.label}</div>
+          <ul class="list-disc list-inside space-y-1 text-sm">
+            ${item.desc.map(line => `<li>${line}</li>`).join('')}
+          </ul>
+        </div>
+      `;
 
-    // Hover logic with delay (desktop only)
-    if (!isMobile) {
-      const hoverCard = document.getElementById(cardId);
-      let hoverTimeout;
+      container.appendChild(div);
 
-      div.addEventListener('mouseenter', () => {
-        hoverTimeout = setTimeout(() => {
-          hoverCard.style.display = 'flex';
-          hoverCard.style.opacity = '1';
-        }, 250); // 250ms delay before showing
-      });
+      // Hover logic with delay (desktop only)
+      if (!isMobile) {
+        const hoverCard = document.getElementById(cardId);
+        let hoverTimeout;
 
-      div.addEventListener('mousemove', (e) => {
-  const padding = 16;
-  const cardWidth = hoverCard.offsetWidth || 320;
-  const cardHeight = hoverCard.offsetHeight || 200;
-  const viewportWidth = window.innerWidth;
-  const viewportHeight = window.innerHeight;
+        div.addEventListener('mouseenter', () => {
+          hoverTimeout = setTimeout(() => {
+            hoverCard.style.display = 'flex';
+            hoverCard.style.opacity = '1';
+          }, 250);
+        });
 
-  let left = e.pageX + 10;
-  let top = e.pageY + 10;
+        div.addEventListener('mousemove', (e) => {
+          const padding = 16;
+          const cardWidth = hoverCard.offsetWidth || 320;
+          const cardHeight = hoverCard.offsetHeight || 200;
+          const viewportWidth = window.innerWidth;
+          const viewportHeight = window.innerHeight;
 
-  if (left + cardWidth + padding > viewportWidth) {
-    left = viewportWidth - cardWidth - padding;
-  }
-  if (top + cardHeight + padding > viewportHeight) {
-    top = viewportHeight - cardHeight - padding;
-  }
+          let left = e.pageX + 10;
+          let top = e.pageY + 10;
 
-  hoverCard.style.left = `${left}px`;
-  hoverCard.style.top = `${top}px`;
-});
+          if (left + cardWidth + padding > viewportWidth) {
+            left = viewportWidth - cardWidth - padding;
+          }
+          if (top + cardHeight + padding > viewportHeight) {
+            top = viewportHeight - cardHeight - padding;
+          }
 
+          hoverCard.style.left = `${left}px`;
+          hoverCard.style.top = `${top}px`;
+        });
 
-      div.addEventListener('mouseleave', () => {
-        clearTimeout(hoverTimeout);
-        hoverCard.style.display = 'none';
-        hoverCard.style.opacity = '0';
-      });
-    }
-  });
-</script>
-<script src="./filterState.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('[data-filter]').forEach(el => {
-    if (el.__fsBound) return;
-    el.__fsBound = true;
-    el.addEventListener('click', () => {
-      const { key, value } = el.dataset;
-      const state = JSON.parse(localStorage.getItem('filterState') || '{}');
-      state[key] = value;
-      localStorage.setItem('filterState', JSON.stringify(state));
-      // anchor will proceed to its href (desc.html/info.html)
-    }, { passive: true });
-  });
-});
-</script>
-
+        div.addEventListener('mouseleave', () => {
+          clearTimeout(hoverTimeout);
+          hoverCard.style.display = 'none';
+          hoverCard.style.opacity = '0';
+        });
+      }
+    });
+  </script>
 </body>
-
 </html>

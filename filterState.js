@@ -10,40 +10,29 @@
  *   <script src="./filterState.js" defer></script>
  */
 (() => {
-  const STORE_KEY = 'licensureFilters';
+  // ---------- constants ----------
+  const STORAGE_KEY = 'licensureFilters';
 
-  // One-time migration from old key name
-(function migrateOldKey(){
-  const old = localStorage.getItem('filterState');
-  const cur = localStorage.getItem(STORAGE_KEY);
-  if (old && !cur) {
-    localStorage.setItem(STORAGE_KEY, old);
-    localStorage.removeItem('filterState');
-  }
-})();
+  // ---------- one-time migration from old key name ----------
+  (function migrateOldKey() {
+    try {
+      const old = localStorage.getItem('filterState');
+      const cur = localStorage.getItem(STORAGE_KEY);
+      if (old && !cur) {
+        localStorage.setItem(STORAGE_KEY, old);
+        localStorage.removeItem('filterState');
+      }
+    } catch { /* noop */ }
+  })();
 
-// ---- CLEAN HELPERS (expose on window) ----
-window.LicensureFilters = {
-  get() {
+  // ---------- storage (localStorage, not session) ----------
+  const read = () => {
     try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
     catch { return {}; }
-  },
-  set(update) {
-    const cur = this.get();
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...cur, ...update }));
-  },
-  clear() {
-    localStorage.removeItem(STORAGE_KEY);
-  }
-};
-
-  // ---------- storage ----------
-  const read = () => {
-    try { return JSON.parse(sessionStorage.getItem(STORE_KEY)) || {}; }
-    catch { return {}; }
   };
+
   const write = (state) => {
-    sessionStorage.setItem(STORE_KEY, JSON.stringify(state));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     // broadcast change for listeners on the page (e.g., results rendering)
     document.dispatchEvent(new CustomEvent('filters:change', { detail: { state } }));
   };
@@ -55,9 +44,14 @@ window.LicensureFilters = {
     if (v == null) return v;
     const s = String(v).trim();
     if (s === '') return '';
-    if (!isNaN(s)) return Number(s);
-    try { return JSON.parse(s); } catch { /* noop */ }
+    if (!Number.isNaN(Number(s)) && /^\d+(\.\d+)?$/.test(s)) return Number(s);
+    try { return JSON.parse(s); } catch { /* leave as string */ }
     return s;
+  };
+
+  const currentPage = () => {
+    const file = location.pathname.split('/').pop() || 'index.html';
+    return file.toLowerCase();
   };
 
   // ---------- public API ----------
@@ -74,14 +68,12 @@ window.LicensureFilters = {
       if (append || toggle) {
         const list = toArray(state[key]);
         const idx = list.findIndex((x) => String(x) === String(val));
-
         if (toggle) {
           if (idx >= 0) list.splice(idx, 1);
           else list.push(val);
         } else if (append) {
           if (idx === -1) list.push(val);
         }
-
         state[key] = list;
       } else {
         state[key] = val;
@@ -95,7 +87,7 @@ window.LicensureFilters = {
     removeFromList(key, value) {
       const state = read();
       if (!Array.isArray(state[key])) return state;
-      state[key] = state[key].filter(v => String(v) !== String(value));
+      state[key] = state[key].filter(v => String(v) !== String(parseValue(value)));
       write(state);
       return state;
     },
@@ -108,32 +100,29 @@ window.LicensureFilters = {
 
     /** Convenience: route based on current role */
     routeByRole(map) {
-      const role = String((read().role || read().Role || '')).toLowerCase();
+      const state = read();
+      const raw = state.role ?? state.Role ?? state.ROLE;
+      const role = raw ? String(raw).toLowerCase() : '';
       const target = map[role];
       if (target) window.location.href = target;
     }
   };
 
-  // expose globally
+  // expose globally (single export)
   window.LicensureFilters = Filters;
 
-  // ---------- role-based flows ----------
-  // Make sure these filenames match your actual files
+  // ---------- role-based flows (filenames must match your site) ----------
   const FLOWS = {
     Student:    ['competencies.html', 'year.html', 'tasks.html'],
     Instructor: ['naab.html',         'year.html', 'tasks.html'],
     Admin:      ['naab.html',         'competencies.html', 'tasks.html'],
   };
 
-  const currentPage = () => {
-    const file = location.pathname.split('/').pop() || 'index.html';
-    return file.toLowerCase();
-  };
-
   function nextInFlow(roleRaw, page) {
-    const roleKey =
-      roleRaw && String(roleRaw).toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
-    const flow = FLOWS[roleKey];
+    const roleKey = roleRaw
+      ? String(roleRaw).toLowerCase().replace(/^\w/, c => c.toUpperCase())
+      : null;
+    const flow = roleKey ? FLOWS[roleKey] : null;
     if (!flow) return null;
     const i = flow.findIndex(p => p.toLowerCase() === page);
     if (i === -1) return null;
@@ -141,12 +130,12 @@ window.LicensureFilters = {
     return flow[i + 1];
   }
 
-  // ---------- auto-bind buttons ----------
+  // ---------- click handlers ----------
   function handleFilterClick(e) {
     const el = e.currentTarget;
 
-    const key = el.dataset.key;                 // e.g. "Level", "NAAB", "Competencies", "role"
-    const value = el.dataset.value;             // e.g. "Beginner", "S3", "Analyze Site...", "Student"
+    const key = el.dataset.key;                 // e.g. "Level", "NAAB", "Competency", "role"
+    const value = el.dataset.value;             // e.g. "Beginner", "S3", "1", "Student"
     const explicitNext = el.dataset.next;       // optional URL to navigate to
     const append = el.dataset.append === 'true';
     const toggle = el.dataset.toggle === 'true';
@@ -215,7 +204,7 @@ window.LicensureFilters = {
 
   // ---------- boot ----------
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initBindings);
+    document.addEventListener('DOMContentLoaded', () => initBindings());
   } else {
     initBindings();
   }
