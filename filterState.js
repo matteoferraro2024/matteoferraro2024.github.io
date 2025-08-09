@@ -1,73 +1,46 @@
+
 /*!
- * filterState.js
- * Minimal cross-page filter state + button wiring
- * Usage:
- *   <button data-filter data-key="Level" data-value="Beginner" data-next="results.html">Beginner</button>
- *   <button data-filter data-key="NAAB" data-value="S3" data-append="true">S3</button>
- *   <button data-clear-filters>Start Over</button>
+ * filterState.js — robust, single-file filter state + navigation
+ * - Stores across pages in localStorage under 'licensureFilters'
+ * - <button data-filter data-key="Level" data-value="Beginner" data-next="year.html">
+ * - <button data-filter data-key="NAAB" data-value="S3" data-append="true">
+ * - <button data-back> ← Back </button>   // pops the filter for the current page & routes to previous step
+ * - <button data-clear-filters data-next="index.html">Restart</button> // clears everything, then navigates
  *
  * Include once per page:
  *   <script src="./filterState.js" defer></script>
  */
 (() => {
-  // ---------- constants ----------
   const STORAGE_KEY = 'licensureFilters';
 
-  // ---------- one-time migration from old key name ----------
-  (function migrateOldKey() {
-    try {
-      const old = localStorage.getItem('filterState');
-      const cur = localStorage.getItem(STORAGE_KEY);
-      if (old && !cur) {
-        localStorage.setItem(STORAGE_KEY, old);
-        localStorage.removeItem('filterState');
-      }
-    } catch { /* noop */ }
-  })();
-
-  // ---------- storage (localStorage, not session) ----------
+  // ---------- storage helpers ----------
   const read = () => {
     try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
     catch { return {}; }
   };
-
   const write = (state) => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    // broadcast change for listeners on the page (e.g., results rendering)
-    document.dispatchEvent(new CustomEvent('filters:change', { detail: { state } }));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state || {}));
+    document.dispatchEvent(new CustomEvent('filters:change', { detail: { state: state || {} } }));
   };
-
-  // ---------- helpers ----------
-  const toArray = (v) => Array.isArray(v) ? v : (v == null ? [] : [v]);
-
+  const toArray = (v) => Array.isArray(v) ? v : v == null || v === '' ? [] : [v];
   const parseValue = (v) => {
     if (v == null) return v;
     const s = String(v).trim();
     if (s === '') return '';
-    if (!Number.isNaN(Number(s)) && /^\d+(\.\d+)?$/.test(s)) return Number(s);
-    try { return JSON.parse(s); } catch { /* leave as string */ }
-    return s;
-  };
-
-  const currentPage = () => {
-    const file = location.pathname.split('/').pop() || 'index.html';
-    return file.toLowerCase();
+    if (/^\d+(\.\d+)?$/.test(s)) return Number(s);
+    try { return JSON.parse(s); } catch { return s; }
   };
 
   // ---------- public API ----------
   const Filters = {
-    /** Get full state object */
     get() { return read(); },
-
-    /** Set a value (replace) or append/toggle in an array */
-    set(key, value, opts = {}) {
-      const { append = false, toggle = false } = opts;
+    set(key, rawValue, { append = false, toggle = false } = {}) {
       const state = read();
-      const val = parseValue(value);
+      const val = parseValue(rawValue);
 
       if (append || toggle) {
         const list = toArray(state[key]);
-        const idx = list.findIndex((x) => String(x) === String(val));
+        const idx = list.findIndex((x) => String(x) == String(val));
         if (toggle) {
           if (idx >= 0) list.splice(idx, 1);
           else list.push(val);
@@ -78,160 +51,105 @@
       } else {
         state[key] = val;
       }
-
       write(state);
       return state;
     },
-
-    /** Remove a single value from an array key */
-    removeFromList(key, value) {
+    remove(key) {
       const state = read();
-      if (!Array.isArray(state[key])) return state;
-      state[key] = state[key].filter(v => String(v) !== String(parseValue(value)));
+      delete state[key];
       write(state);
       return state;
     },
-
-    /** Clear whole filter state */
     clear() { write({}); },
-
-    /** Replace entire state (advanced) */
-    replace(nextState) { write({ ...(nextState || {}) }); },
-
-    /** Convenience: route based on current role */
-    routeByRole(map) {
-      const state = read();
-      const raw = state.role ?? state.Role ?? state.ROLE;
-      const role = raw ? String(raw).toLowerCase() : '';
-      const target = map[role];
-      if (target) window.location.href = target;
-    }
   };
-
-  // expose globally (single export)
   window.LicensureFilters = Filters;
 
-  // ---------- role-based flows (filenames must match your site) ----------
+  // ---------- flow + back behavior ----------
   const FLOWS = {
-    Student: ['competencies.html', 'year.html', 'tasks.html'],
-    Instructor: ['year.html', 'naab.html', 'tasks.html'],
-    Admin: ['naab.html', 'competencies.html', 'tasks.html'],
+    student: ['competencies.html', 'year.html', 'tasks.html'],
+    instructor: ['year.html', 'naab.html', 'tasks.html'],
+    admin: ['naab.html', 'competencies.html', 'tasks.html'],
   };
-
-  // Which filter key is set on each page?
-  const PAGE_TO_KEY = {
+  const PAGE_KEYS = {
+    'index.html': 'role',
+    'competencies.html': 'Competency',
     'year.html': 'Level',
     'naab.html': 'NAAB',
-    'competencies.html': 'Competency',
+    'tasks.html': null, // back from tasks clears nothing by default
   };
 
-  function nextInFlow(roleRaw, page) {
-    const roleKey = roleRaw
-      ? String(roleRaw).toLowerCase().replace(/^\w/, c => c.toUpperCase())
-      : null;
-    const flow = roleKey ? FLOWS[roleKey] : null;
+  const getPageName = () => {
+    const u = new URL(window.location.href);
+    return u.pathname.split('/').pop().toLowerCase() || 'index.html';
+  };
+  const getRoleKey = () => {
+    const s = read();
+    const raw = s.role ?? s.Role ?? s.ROLE;
+    return raw ? String(raw).toLowerCase() : '';
+  };
+  const prevInFlow = () => {
+    const role = getRoleKey();
+    const flow = FLOWS[role];
     if (!flow) return null;
+    const page = getPageName();
     const i = flow.findIndex(p => p.toLowerCase() === page);
-    if (i === -1) return null;
-    if (i >= flow.length - 1) return flow[i]; // already last page; stay
-    return flow[i + 1];
-  }
-
-  function prevInFlow(roleRaw, page) {
-    const roleKey = roleRaw
-      ? String(roleRaw).toLowerCase().replace(/^\w/, c => c.toUpperCase())
-      : null;
-    const flow = roleKey ? FLOWS[roleKey] : null;
-    if (!flow) return null;
-    const i = flow.findIndex(p => p.toLowerCase() === page);
-    if (i === -1) return null;
-    if (i <= 0) return flow[i]; // already first page; stay
+    if (i <= 0) return flow?.[0] || null;
     return flow[i - 1];
-  }
+  };
 
-
-  // ---------- click handlers ----------
+  // ---------- event handlers ----------
   function handleFilterClick(e) {
     const el = e.currentTarget;
-
-    const key = el.dataset.key;                 // e.g. "Level", "NAAB", "Competency", "role"
-    const value = el.dataset.value;             // e.g. "Beginner", "S3", "1", "Student"
-    const explicitNext = el.dataset.next;       // optional URL to navigate to
+    const key = el.dataset.key;
+    const value = el.dataset.value;
+    const next = el.dataset.next;
     const append = el.dataset.append === 'true';
     const toggle = el.dataset.toggle === 'true';
 
     if (key) {
       Filters.set(key, value, { append, toggle });
 
-      // optional selected state styling (aria-pressed for accessibility)
-      if (toggle || append) {
+      // accessibility / visual pressed state for multi-select buttons
+      if (append || toggle) {
         const state = Filters.get();
         const list = toArray(state[key]);
-        el.setAttribute(
-          'aria-pressed',
-          list.some(v => String(v) === String(parseValue(value))) ? 'true' : 'false'
-        );
+        el.setAttribute('aria-pressed', list.some(v => String(v) === String(parseValue(value))) ? 'true' : 'false');
       }
     }
 
-    // Decide where to go next:
-    // Priority: data-next > computed by role+currentPage > anchor href (default)
-    const state = Filters.get();
-    const role = state.role ?? state.Role ?? state.ROLE;
-    const cur = currentPage();
-
-    let target = explicitNext || nextInFlow(role, cur);
-
-    // If no target yet and it's an anchor with a real href, let the browser handle it
-    if (!target && el.tagName === 'A') {
-      const href = el.getAttribute('href');
-      if (href && href !== '#') return; // allow default navigation
-    }
-
-    if (target) {
-      e.preventDefault();              // avoid double navigation
-      window.location.href = target;
+    // routing
+    if (next) {
+      window.location.href = next;
+    } else if (!append && !toggle) {
+      // only auto-advance on single-choice steps when next isn't explicitly given
+      const go = (() => {
+        const role = getRoleKey();
+        const flow = FLOWS[role];
+        if (!flow) return null;
+        const page = getPageName();
+        const i = flow.findIndex(p => p.toLowerCase() === page);
+        return i >= 0 && i < flow.length - 1 ? flow[i + 1] : null;
+      })();
+      if (go) window.location.href = go;
     }
   }
 
-  function handleClearClick() {
+  function handleBackClick(_e) {
+    // clear the filter for THIS page (if mapped), then route to previous step in the selected role's flow
+    const page = getPageName();
+    const key = PAGE_KEYS[page];
+    if (key) Filters.remove(key);
+
+    const prev = prevInFlow();
+    if (prev) window.location.href = prev;
+    else window.history.back();
+  }
+
+  function handleClearAllClick(e) {
+    const el = e.currentTarget;
+    const next = el.dataset.next;
     Filters.clear();
-  }
-
-  function handleBackClick(e) {
-    e.preventDefault();
-
-    const btn = e.currentTarget;
-    const state = Filters.get();
-    const role = state.role ?? state.Role ?? state.ROLE;
-    const cur = currentPage();                 // e.g., "year.html"
-
-    let prev = prevInFlow(role, cur);          // previous page in flow (if any)
-    let keyToClear =
-      btn.dataset.backKey ||
-      (prev ? PAGE_TO_KEY[prev.toLowerCase()] : null);
-
-    // If we are on the first step, prev is null or equal to cur.
-    // In that case, go to index.html and clear the role.
-    if (!prev || prev === cur) {
-      prev = 'index.html';
-      if (!keyToClear) keyToClear = 'role';
-    }
-
-    // Clear the appropriate key (if present)
-    if (keyToClear) {
-      const s = Filters.get();
-      delete s[keyToClear];
-      localStorage.setItem('licensureFilters', JSON.stringify(s));
-      document.dispatchEvent(new CustomEvent('filters:change', { detail: { state: s } }));
-    }
-
-    // Navigate
-    if (prev && prev !== cur) {
-      window.location.href = prev;
-    } else {
-      window.history.back();
-    }
+    if (next) window.location.href = next;
   }
 
   function initBindings(root = document) {
@@ -255,21 +173,19 @@
       if (btn.__fsBoundBack) return;
       btn.__fsBoundBack = true;
       btn.addEventListener('click', handleBackClick);
-
-      // Show on every page except index.html
-      const cur = currentPage();
-      if (cur === 'index.html') {
-        btn.classList.add('hidden');
-      } else {
-        btn.classList.remove('hidden');
-      }
+      // show back button on all pages except index
+      if (getPageName() === 'index.html') btn.hidden = true;
     });
 
+    root.querySelectorAll('[data-clear-filters]').forEach(btn => {
+      if (btn.__fsBoundClear) return;
+      btn.__fsBoundClear = true;
+      btn.addEventListener('click', handleClearAllClick);
+    });
   }
 
   window.LicensureFiltersRebind = initBindings;
 
-  // ---------- boot ----------
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => initBindings());
   } else {

@@ -37,31 +37,31 @@
 </head>
 
 <body class="min-h-screen">
-<header
-  class="sticky top-0 z-50 bg-black/80 backdrop-blur supports-[backdrop-filter]:bg-black/60 border-b border-white/10">
-  <div class="mx-auto max-w-4xl px-4 py-3 flex items-center justify-between">
-    
-    <div class="flex items-center gap-2">
-      <!-- Back Button -->
-      <button type="button" data-back aria-label="Go back"
-        class="tap inline-flex items-center gap-2 rounded px-3 py-2 text-sm font-semibold bg-white text-black hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-white/50">
-        ← Back
-      </button>
+  <header
+    class="sticky top-0 z-50 bg-black/80 backdrop-blur supports-[backdrop-filter]:bg-black/60 border-b border-white/10">
+    <div class="mx-auto max-w-4xl px-4 py-3 flex items-center justify-between">
 
-      <!-- Restart Button -->
-      <button onclick="resetFilters()" data-clear-filters data-next="index.html"
+      <div class="flex items-center gap-2">
+        <!-- Back Button -->
+        <button type="button" data-back aria-label="Go back"
+          class="tap inline-flex items-center gap-2 rounded px-3 py-2 text-sm font-semibold bg-white text-black hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-white/50">
+          ← Back
+        </button>
+
+        <!-- Restart Button -->
+        <button data-clear-filters data-next="index.html"
+          class="tap inline-flex items-center gap-2 rounded px-3 py-2 bg-white text-black font-semibold hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-white/50">
+          Restart
+        </button>
+      </div>
+
+      <!-- Toggle Button -->
+      <button id="toggleButton" onclick="toggleGreyTasks()"
         class="tap inline-flex items-center gap-2 rounded px-3 py-2 text-sm font-semibold bg-white text-black hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-white/50">
-        Restart
+        SHOW ALL
       </button>
     </div>
-
-    <!-- Toggle Button -->
-    <button id="toggleButton" onclick="toggleGreyTasks()"
-      class="tap inline-flex items-center gap-2 rounded px-3 py-2 text-sm font-semibold bg-white text-black hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-white/50">
-      SHOW ALL
-    </button>
-  </div>
-</header>
+  </header>
 
 
   <main class="mx-auto max-w-4xl px-4 py-6">
@@ -123,6 +123,13 @@
     function renderTasks(data) {
       const taskList = document.getElementById('taskList');
       taskList.innerHTML = '';
+
+      // When filters are changed anywhere (Back / Restart / re-select), update and re-render
+document.addEventListener('filters:change', () => {
+  filters = readFilters();     // your existing helper that reads from localStorage
+  renderTasks(taskData);       // re-run your renderer with the fresh filters
+});
+
 
       // UPDATED: split into matched and unmatched first to "pop to front"
       const matched = [];
