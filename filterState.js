@@ -201,31 +201,38 @@
   function handleBackClick(e) {
     e.preventDefault();
 
+    const btn = e.currentTarget;
     const state = Filters.get();
     const role = state.role ?? state.Role ?? state.ROLE;
-    const cur = currentPage();                // e.g., "naab.html"
-    const prev = prevInFlow(role, cur);       // e.g., "year.html"
+    const cur = currentPage();                 // e.g., "year.html"
 
-    if (prev) {
-      // Clear the filter key that belongs to the page we’re going back to
-      const keyToClear = e.currentTarget.dataset.backKey || PAGE_TO_KEY[prev.toLowerCase()];
-      if (keyToClear) {
-        const s = Filters.get();
-        delete s[keyToClear];  // remove that choice
-        localStorage.setItem('licensureFilters', JSON.stringify(s));
-        document.dispatchEvent(new CustomEvent('filters:change', { detail: { state: s } }));
-      }
+    let prev = prevInFlow(role, cur);          // previous page in flow (if any)
+    let keyToClear =
+      btn.dataset.backKey ||
+      (prev ? PAGE_TO_KEY[prev.toLowerCase()] : null);
 
-      if (prev !== cur) {
-        window.location.href = prev;
-        return;
-      }
+    // If we are on the first step, prev is null or equal to cur.
+    // In that case, go to index.html and clear the role.
+    if (!prev || prev === cur) {
+      prev = 'index.html';
+      if (!keyToClear) keyToClear = 'role';
     }
 
-    // Fallback if flow isn't known
-    window.history.back();
-  }
+    // Clear the appropriate key (if present)
+    if (keyToClear) {
+      const s = Filters.get();
+      delete s[keyToClear];
+      localStorage.setItem('licensureFilters', JSON.stringify(s));
+      document.dispatchEvent(new CustomEvent('filters:change', { detail: { state: s } }));
+    }
 
+    // Navigate
+    if (prev && prev !== cur) {
+      window.location.href = prev;
+    } else {
+      window.history.back();
+    }
+  }
 
   function initBindings(root = document) {
     root.querySelectorAll('[data-filter]').forEach(btn => {
@@ -244,25 +251,20 @@
       }
     });
 
-    root.querySelectorAll('[data-clear-filters]').forEach(btn => {
-      if (btn.__fsBoundClear) return;
-      btn.__fsBoundClear = true;
-      btn.addEventListener('click', handleClearClick);
-    });
     root.querySelectorAll('[data-back]').forEach(btn => {
-    if (btn.__fsBoundBack) return;
-    btn.__fsBoundBack = true;
-    btn.addEventListener('click', handleBackClick);
+      if (btn.__fsBoundBack) return;
+      btn.__fsBoundBack = true;
+      btn.addEventListener('click', handleBackClick);
 
-    // Auto-hide on the first step of the flow
-    const state = Filters.get();
-    const role = state.role ?? state.Role ?? state.ROLE;
-    const cur = currentPage();
-    const prev = prevInFlow(role, cur);
-    if (!prev || prev === cur) {
-      btn.classList.add('hidden'); // nothing to go back to
-    }
-  });
+      // Show on every page except index.html
+      const cur = currentPage();
+      if (cur === 'index.html') {
+        btn.classList.add('hidden');
+      } else {
+        btn.classList.remove('hidden');
+      }
+    });
+
   }
 
   // ---------- boot ----------

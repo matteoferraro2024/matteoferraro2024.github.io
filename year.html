@@ -26,13 +26,14 @@
 </head>
 
 <body class="bg-[#212120] text-white min-h-screen flex items-center justify-center px-4">
-  <header class="max-w-5xl mx-auto w-full px-4 pt-4">
-  <button type="button" data-back aria-label="Go back"
-    class="inline-flex items-center gap-2 text-sm text-black/70 px-3 py-2 rounded-md
-           hover:bg-[#fedc4b] hover:text-black focus:outline-none focus:ring-2 focus:ring-black/10">
-    <span aria-hidden="true">←</span><span>Back</span>
-  </button>
-</header>
+  <!-- Back Button (anchored top-left) -->
+<button type="button" data-back aria-label="Go back"
+  class="fixed top-4 left-4 z-50 flex items-center gap-2 text-sm text-black/70
+         bg-gray-200 px-3 py-2 rounded-md
+         hover:bg-[#fedc4b] hover:text-black focus:outline-none focus:ring-2 focus:ring-black/10">
+  <span aria-hidden="true">←</span>
+  <span>Back</span>
+</button>
 
   <div class="max-w-4xl w-full text-center">
     <h1 class="text-2xl sm:text-3xl font-semibold tracking-wide mb-2">
