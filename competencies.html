@@ -4,224 +4,483 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Select a Competency</title>
+
+  <!-- Google Font: Orienta -->
   <link href="https://fonts.googleapis.com/css2?family=Orienta&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS (CDN) -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brandYellow: '#fedc4b',
+            darkBg: '#212120',
+          },
+          fontFamily: {
+            orienta: ['Orienta', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+
+  <!-- Shared state/router helpers -->
   <script src="./filterState.js" defer></script>
+
   <style>
-    body { font-family: 'Orienta', sans-serif; }
-    .grid-container {
-      position: relative;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      grid-template-rows: repeat(4, 1fr);
-      gap: 1rem;
-      height: 100%;
-    }
-    .domain-bg { position: absolute; z-index: 0; border-radius: 0.5rem; }
-    .domain-label {
-      position: absolute; z-index: 10;
-      background-color: rgba(0,0,0,0.5); color: white; font-weight: bold;
-      padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.875rem;
-    }
-    .button-cell { z-index: 10; }
+    body { font-family: 'Orienta', sans-serif; background:#212120; }
+    .elevate { position: relative; z-index: 30; }
+    .cell-wrap { transition: background-color .15s ease; }
+    .hover-card { pointer-events: none; }
   </style>
 </head>
+<body class="min-h-screen text-white">
+  <!-- Back Button -->
+  <button type="button" id="backBtn" aria-label="Go back"
+    class="fixed top-4 left-4 z-50 flex items-center gap-2 text-sm text-black/70
+           bg-gray-200 px-3 py-2 rounded-md
+           hover:bg-brandYellow hover:text-black focus:outline-none focus:ring-2 focus:ring-black/10">
+    <span aria-hidden="true">←</span>
+    <span>Back</span>
+  </button>
 
-<body class="bg-neutral-900 text-white h-screen overflow-hidden">
-  <!-- Back Button (anchored top-left) -->
-<button type="button" data-back aria-label="Go back"
-  class="fixed top-4 left-4 z-50 flex items-center gap-2 text-sm text-black/70
-         bg-gray-200 px-3 py-2 rounded-md
-         hover:bg-[#fedc4b] hover:text-black focus:outline-none focus:ring-2 focus:ring-black/10">
-  <span aria-hidden="true">←</span>
-  <span>Back</span>
-</button>
+  <main class="mx-auto max-w-6xl px-5 sm:px-8 pt-16 pb-6 md:pb-8">
+    <h1 class="text-xl sm:text-2xl font-semibold tracking-wide mb-4 md:mb-6">SELECT A COMPETENCY</h1>
 
-  <div class="w-full h-full flex flex-col">
-    <h1 class="text-2xl sm:text-3xl font-bold text-center py-2 sm:py-4">SELECT A COMPETENCY</h1>
+    <!-- Desktop 4×4 Grid with SVG clusters (md+) -->
+    <section id="gridDesktop"
+      class="hidden md:grid relative grid-cols-4 auto-rows-[1fr] gap-4 p-1 md:p-2 overflow-hidden">
+      <!-- SVG overlay for regions -->
+      <svg id="groupBorders" class="absolute inset-0 w-full h-full pointer-events-none z-0"
+           xmlns="http://www.w3.org/2000/svg"
+           fill="none" shape-rendering="crispEdges"></svg>
+      <!-- Labels container -->
+      <div id="groupLabels" class="absolute inset-0 z-10 pointer-events-none"></div>
+    </section>
 
-    <div class="relative flex-1 px-4 pb-4">
-      <!-- Background Regions -->
-      <div class="domain-bg bg-zinc-800" style="top:-0.5rem; left:-0.5rem; width:calc(100% + 1rem); height:50%;"></div>
-      <div class="domain-bg bg-zinc-800" style="top:50%; left:-0.5rem; width:50%; height:20%;"></div>
-      <div class="domain-bg bg-zinc-800" style="top:50%; left:50%; width:50%; height:20%;"></div>
-      <div class="domain-bg bg-zinc-800" style="top:75%; left:-0.5rem; width:calc(100% + 1rem); height:25%;"></div>
-
-      <!-- Domain Labels -->
-      <div class="domain-label" style="top:0.5rem; left:0.5rem;">Design & Documenting Domain</div>
-      <div class="domain-label" style="top:52%; left:0.5rem;">Construction Administration Domain</div>
-      <div class="domain-label" style="top:76%; left:0.5rem;">Practice & Project Management Domain</div>
-
-      <!-- Button Grid -->
-      <div class="grid-container" id="buttonGrid"></div>
-    </div>
-  </div>
+    <!-- Mobile list (smaller screens) uses desc.html navigation -->
+    <section id="mobileList" class="md:hidden divide-y divide-white/10 rounded-xl border border-white/10 bg-black/20"></section>
+  </main>
 
   <script>
-    const isMobile = /Mobi|Android/i.test(navigator.userAgent);
-
-    const data = [
-      { img:'01.png', label:'Assess Regulatory Design Requirements', desc:[
+    // ---------------- Data (long titles kept for hover + mobile) ----------------
+    const DATA = [
+      { img:'01.png', label:'Assess regulatory design requirements', desc:[
         'Identify local, state, and federal authorities having jurisdiction over a project.',
         'Understand the regulatory and jurisdictional approval process applicable to a project in order to obtain the necessary approvals.',
         'Determine the specific regulations, codes, and rules (e.g., zoning rules, building and environmental codes, historic preservation requirements, design covenants, etc.) that apply to a project.'
       ]},
-      { img:'02.png', label:'Analyze Site and Existing Conditions', desc:[
-        'Identify characteristics of the site and surrounding context.',
-        'Evaluate environmental, historical, and existing site conditions that may impact design or construction.',
-        'Analyze site opportunities and constraints that may impact the program or design strategy.'
+      { img:'02.png', label:'Evaluate existing project conditions', desc:[
+        'Assess existing site and building conditions',
+        'Evaluate project feasibility based on budget, schedule, constraints, and risks.',
+        'Assess how a proposed project aligns with planning and zoning policies in place and impacts the broader context (e.g. neighborhood, community, environmental, etc.).'
       ]},
-      { img:'03.png', label:'Establish Project Goals and Programming', desc:[
-        'Identify stakeholder goals, values, and requirements.',
-        'Establish spatial, functional, and performance criteria for the project.',
-        'Define project scope, priorities, and success metrics.'
+      { img:'03.png', label:'Develop a program that establishes project criteria', desc:[
+        'Translate client vision and goals into requirements (e.g. spatial, planning, material, technical, etc.) that outline the specific objectives and design criteria for a project, and that meet the project’s feasibility requirements.',
+        'Review precedents relevant to the history, function, organization, and technical requirements of related projects and integrate findings into a building program.',
+        'Evaluate and integrate collected feedback and input from users, the community, and any other stakeholders.'
       ]},
-      { img:'04.png', label:'Incorporate Environmental and Sustainability Principles', desc:[
-        'Evaluate environmental context and impacts.',
-        'Incorporate sustainable design principles and systems.',
-        'Design for performance outcomes related to energy, water, and material use.'
+      { img:'04.png', label:'Create design solutions that support public and environmental well-being', desc:[
+        'Implement design strategies that minimize environmental impact, safeguard environmental sustainability, ensure longevity and durability of projects, and adapt to evolving environmental and societal conditions.',
+        'Implement design strategies that support the health, safety, and welfare of building occupants and the neighboring community.',
+        'Advise clients and consultants regarding the sustainability and resiliency of design options in accordance with relevant codes, regulations, ratings, industry standards, and technical information.'
       ]},
-      { img:'05.png', label:'Address Social and Ethical Issues', desc:[
-        'Incorporate equity, accessibility, and inclusion in design.',
-        'Consider health, safety, and welfare of users and the public.',
-        'Respond to social and cultural context.'
+      { img:'05.png', label:'Integrate socio-demographic considerations and universal design principles.', desc:[
+        'Implement design strategies that address diverse cultural, social, and functional considerations, ensuring built environments are inclusive, accessible, and adaptive.',
+        'Understand how diversity, equity, inclusivity, and justice principles impact architectural projects and practice.',
+        'Utilize meaningful engagement processes that incorporate diverse perspectives into design solutions.'
       ]},
-      { img:'06.png', label:'Develop a Design Based on Programmatic Requirements', desc:[
-        'Translate programmatic requirements into design solutions.',
-        'Synthesize spatial, functional, and experiential considerations.',
-        'Iterate and refine design concepts using appropriate media.'
+      { img:'06.png', label:'Create design solutions that address project requirements', desc:[
+        'Apply design principles, applicable codes and regulations, and knowledge of materials, systems, and constructability to achieve programmatic requirements and goals for the site and building.',
+        'Evaluate design for conformance with a project’s program, including the client’s objectives and regulatory requirements.',
+        'Analyze cost estimates for conformance with proposed design solution and project budget in order to advise clients about alternatives for managing initial and long-term project costs.'
       ]},
-      { img:'07.png', label:'Prepare Design Documentation', desc:[
-        'Produce drawings and documentation that convey design intent.',
-        'Coordinate documentation across disciplines.',
-        'Ensure clarity, accuracy, and consistency in design documents.'
+      { img:'07.png', label:'Create deliverables that convey a design solution', desc:[
+        'Communicate the proposed design to clients and other stakeholders using appropriate and responsive methods (e.g., written, verbal, graphic, modeling techniques, etc.).',
+        'Develop comprehensive and coordinated Instruments of Service (e.g., plans, sections, elevations and/or details, models, etc.) that convey design intent and project requirements, can be used to obtain approvals and permits, and guide the construction of a project.',
+        'Develop specifications that describe the materials, qualitative requirements, and execution.'
       ]},
-      { img:'08.png', label:'Develop the Design', desc:[
-        'Advance the design from schematic to detailed level.',
-        'Integrate building systems, materials, and assemblies.',
-        'Respond to cost, schedule, and constructability considerations.'
+      { img:'08.png', label:'Coordinate the integration of building systems into a project design', desc:[
+        'Understand and integrate appropriate building and engineering systems utilizing project consultants and specialists (e.g., acoustic, structural, civil, mechanical, electrical, plumbing, etc.).',
+        'Coordinate selected systems into the building design and identify and resolve conflicts.'
       ]},
-      { img:'09.png', label:'Administer the Contract During Construction', desc:[
-        'Interpret contract documents and respond to requests for information.',
-        'Review submittals, shop drawings, and other contractor documents.',
-        'Observe construction and evaluate conformance with contract documents.'
+      { img:'09.png', label:'Prepare and administer documentation of the construction phase', desc:[
+        'Advise clients on the impact (e.g., process, cost, time, quality control, etc.) of a selected procurement method on the delivery of the project.',
+        'Assist in bidding and negotiation for selected procurement method.',
+        'Apply appropriate systems for record-keeping, document control, and revision status.',
+        'Provide appropriate responses for questions from the client, authority-having jurisdiction, contractors, and suppliers (e.g., requests for information, substitution requests, change order requests, etc.).',
+        'Review and act on a contractor’s application for payment.',
+        'Perform closeout activities and deliver final documents to client and other parties as required.'
       ]},
-      { img:'10.png', label:'Evaluate Construction for Conformance', desc:[
-        'Monitor progress and quality of construction.',
-        'Identify nonconforming work and recommend corrective action.',
-        'Document construction observations and communications.'
+      { img:'10.png', label:'Evaluate the progress of construction for conformance with contract documents and design intent', desc:[
+        'Complete site visits and participate in meetings at appropriate intervals to observe construction progress and assist in interpreting the construction documents.',
+        'Evaluate the work performed in relation to the construction schedule; if they are not in alignment, coordinate with the client and contractor in the development of a solution.',
+        'Review, evaluate, and take appropriate action on shop drawings, submittals, testing and inspection reports, and samples.',
+        'Advise and assist the client with project closeout procedures (e.g., substantial and final completion, review and preparation of close-out materials, etc.).',
+        'Evaluate the performance of a project after completion compared to the design intent.'
       ]},
-      { img:'11.png', label:'Manage Contracts', desc:[
-        'Understand contractual relationships among project participants.',
-        'Administer agreements with clients and consultants.',
-        'Advise on contract modifications and resolution of disputes.'
+      { img:'11.png', label:'Execute contracts for professional services', desc:[
+        'Explain basic types of contracts between various project parties (e.g., Owner-Architect, ArchitectConsultant, Owner-Contractor, etc.) and how to establish scope, schedule, and fees for services',
+        'Understand the appropriateness of different agreements in relation to scale and type of project, including alternatives for partial services.',
+        'Understand basic risk implications of common contract terms and conditions for the various contract parties.'
       ]},
-      { img:'12.png', label:'Plan and Manage Projects', desc:[
-        'Develop work plans, schedules, and budgets.',
-        'Manage project teams, resources, and communication.',
-        'Monitor progress and adjust plans as needed.'
+      { img:'12.png', label:'Implement a work plan according to a project’s scope, schedule, and budget', desc:[
+        'Collaborate with the client and consultants to align expectations for design scope, schedule, and budget.',
+        'Monitor work plan throughout a project and report on progress.',
+        'Organize tasks and resources to deliver a project according to contractual requirements.',
+        'Facilitate the appropriate approval processes throughout design and documentation efforts.',
       ]},
-      { img:'13.png', label:'Manage Practice', desc:[
-        'Understand practice structures, roles, and responsibilities.',
-        'Implement policies and procedures for quality management.',
-        'Manage risk and compliance with legal requirements.'
+      { img:'13.png', label:'Organize and coordinate an interdisciplinary project team', desc:[
+        'Identify qualified consultants and team members for a project based on project requirements.',
+        'Facilitate communication and collaboration of consultants, clients, and relevant stakeholders throughout a project.',
+        'Implement processes to assess the quality of work throughout a project.'
       ]},
-      { img:'14.png', label:'Comply with Legal Requirements', desc:[
-        'Understand laws and regulations governing architectural practice.',
-        'Comply with codes, licensing, and insurance requirements.',
-        'Manage legal and professional liability.'
+      { img:'14.png', label:'Implement processes to assess the quality of work throughout a project', desc:[
+        'Comply with the laws and rules of architectural practice in the jurisdiction(s) in which they practice.',
+        'Solicit services in compliance with professional and legal practice requirements.',
+        'Understand the regulatory requirements for continuing professional development.'
       ]},
-      { img:'15.png', label:'Demonstrate Ethical Practice', desc:[
-        'Adhere to professional codes of ethics and conduct.',
-        'Promote equity, sustainability, and social responsibility.',
-        'Maintain transparency and accountability in practice.'
+      { img:'15.png', label:'Understand ethical and professional standards that govern architectural practice', desc:[
+        'Understand the role of the architect in society and the duties and responsibilities to clients, building occupants, co-professionals, and the public',
+        'Provide services that they, in collaboration with consultants, can effectively deliver.',
+        'Identify and manage risks arising from conflicts of interest.'
       ]},
-      { img:'16.png', label:'Manage Business Operations', desc:[
-        'Understand financial management and business planning.',
-        'Support marketing, client development, and strategic planning.',
-        'Contribute to operational efficiency and profitability.'
-      ]}
+      { img:'16.png', label:'Understand foundational business principles to operate a practice.', desc:[
+        'Monitor the financial health of the business to ensure a proper level of service can be provided throughout a project.',
+        'Assess and mitigate business risks (e.g., professional liability insurance).',
+        'Allocate firm resources and staff to ensure adequate delivery of services to clients.'
+      ]},
     ];
 
-    const container = document.getElementById('buttonGrid');
+    // Short captions: desktop tile text ONLY (not hover, not mobile)
+    const SHORT_LABELS = [
+      'Identify Regulations',
+      'Existing Conditions & Feasibility',
+      'Goals & Programming',
+      'Environmental & Sustainability',
+      'Social Impact',
+      'Designing',
+      'Documenting',
+      'Design Development',
+      'Construction Administration',
+      'Construction Evaluation',
+      'Contracts',
+      'Project Planning',
+      'Project Management',
+      'Legal Practice',
+      'Ethical Practice',
+      'Business Management',
+    ];
 
-    data.forEach((item, index) => {
-      const row = Math.floor(index / 4) + 1;
-      const col = (index % 4) + 1;
+    // Domain mapping (for v4 visuals)
+    function domainOf(id){
+      if (id >= 1 && id <= 8) return 'DD';     // Design & Documenting
+      if (id >= 9 && id <= 10) return 'CA';    // Construction Admin
+      return 'PPM';                             // Practice & Project Mgmt (11–16)
+    }
 
-      const div = document.createElement('div');
-      div.className = 'relative group bg-transparent text-white rounded text-center button-cell flex flex-col items-center justify-center gap-2';
-      div.style.gridRow = row;
-      div.style.gridColumn = col;
+    // Group rects (v4)
+    const G = {
+      DD:       { r1:1, c1:1, r2:2, c2:4, label:'DESIGN & DOCUMENTING DOMAIN' },
+      CA:       { r1:3, c1:1, r2:3, c2:2, label:'CONSTRUCTION ADMINISTRATION DOMAIN' },
+      PPM_TOP:  { r1:3, c1:3, r2:3, c2:4, label:'PRACTICE AND PROJECT MANAGEMENT DOMAIN' },
+      PPM_BOT:  { r1:4, c1:1, r2:4, c2:4, label:'' }
+    };
 
-      const cardId = `hoverCard${index}`;
-      const compNumber = index + 1;
+    // Next page logic (preserves flow; role decides)
+    function nextPageForRole(role) {
+      if (!role) return 'year.html';
+      const r = String(role).toLowerCase();
+      if (r.startsWith('admin')) return 'tasks.html';
+      return 'year.html'; // Students & Instructors
+    }
 
-      // Decide behavior: mobile gets desc.html, desktop routes via filterState.js
-      const href = isMobile ? `desc.html?index=${index}` : '#';
-      const nextAttr = isMobile ? ` data-next="${href}"` : '';
+    function updateNextTargets(){
+      const role = localStorage.getItem('selectedRole') || '';
+      const next = nextPageForRole(role);
+      document.querySelectorAll('#gridDesktop [data-filter]').forEach(a => {
+        a.dataset.next = next;
+      });
+    }
 
-      div.innerHTML = `
-        <a href="${href}"
-           data-filter
-           data-key="Competency"
-           data-value="${compNumber}"${nextAttr}
-           class="flex flex-col items-center cursor-pointer">
-          <img src="/comp_icons/${item.img}" alt="${item.label}" class="w-12 h-12 sm:w-16 sm:h-16 mb-1" />
-          <div class="text-sm sm:text-base font-semibold text-center">${item.label}</div>
-        </a>
+    function sizeGridToViewport() {
+      const grid = document.getElementById('gridDesktop');
+      if (!grid) return;
+      if (window.innerWidth < 768) return; // only desktop sizing
+      const top = grid.getBoundingClientRect().top;
+      const padBottom = 16;
+      const h = Math.max(560, Math.floor(window.innerHeight - top - padBottom));
+      grid.style.height = h + 'px';
+    }
 
-        <div id="${cardId}" class="hover-card fixed z-[9999] w-80 sm:w-96 bg-gray-100 text-black p-4 rounded shadow-lg hidden flex-col gap-2 text-left pointer-events-none">
-          <div class="font-bold uppercase text-base">COMPETENCY ${String(compNumber).padStart(2, '0')}</div>
-          <div class="font-semibold">${item.label}</div>
-          <ul class="list-disc list-inside space-y-1 text-sm">
-            ${item.desc.map(line => `<li>${line}</li>`).join('')}
-          </ul>
-        </div>
-      `;
+    function getCellRect(r,c){
+      const grid = document.getElementById('gridDesktop');
+      const cell = grid.querySelector(`[data-r="${r}"][data-c="${c}"]`);
+      const gRect = grid.getBoundingClientRect();
+      const cRect = cell.getBoundingClientRect();
+      return {
+        left: cRect.left - gRect.left,
+        top: cRect.top - gRect.top,
+        right: cRect.right - gRect.left,
+        bottom: cRect.bottom - gRect.top,
+        width: cRect.width,
+        height: cRect.height
+      };
+    }
 
-      container.appendChild(div);
+    function drawGroupsAndLabels(){
+      const grid = document.getElementById('gridDesktop');
+      const svg = document.getElementById('groupBorders');
+      const labelsRoot = document.getElementById('groupLabels');
+      if (!grid || !svg || !labelsRoot || window.innerWidth < 768) return;
 
-      // Hover logic with delay (desktop only)
-      if (!isMobile) {
-        const hoverCard = document.getElementById(cardId);
-        let hoverTimeout;
+      const w = grid.clientWidth, h = grid.clientHeight;
+      svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+      svg.setAttribute('width', w); svg.setAttribute('height', h);
+      svg.innerHTML = ''; labelsRoot.innerHTML = '';
 
-        div.addEventListener('mouseenter', () => {
-          hoverTimeout = setTimeout(() => {
-            hoverCard.style.display = 'flex';
-            hoverCard.style.opacity = '1';
-          }, 250);
-        });
+      // Visual style (sharp corners, thin solid stroke, dark fill)
+      const stroke = 'rgba(255,255,255,0.28)';
+      const width = 1.25;
+      const inset = 6;
+      const fill = 'rgba(0,0,0,0.18)';
 
-        div.addEventListener('mousemove', (e) => {
-          const padding = 16;
-          const cardWidth = hoverCard.offsetWidth || 320;
-          const cardHeight = hoverCard.offsetHeight || 200;
-          const viewportWidth = window.innerWidth;
-          const viewportHeight = window.innerHeight;
+      function drawRect(r1,c1,r2,c2,label){
+        const TL = getCellRect(r1,c1);
+        const BR = getCellRect(r2,c2);
+        const x1 = TL.left + inset, y1 = TL.top + inset, x2 = BR.right - inset, y2 = BR.bottom - inset;
 
-          let left = e.pageX + 10;
-          let top = e.pageY + 10;
+        const d = ['M', x1, y1, 'H', x2, 'V', y2, 'H', x1, 'V', y1, 'Z'].join(' ');
+        const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        p.setAttribute('d', d);
+        p.setAttribute('fill', fill);
+        p.setAttribute('stroke', stroke);
+        p.setAttribute('stroke-width', width);
+        p.setAttribute('vector-effect', 'non-scaling-stroke');
+        p.setAttribute('stroke-linejoin','miter');
+        p.setAttribute('stroke-linecap','square');
+        svg.appendChild(p);
 
-          if (left + cardWidth + padding > viewportWidth) {
-            left = viewportWidth - cardWidth - padding;
-          }
-          if (top + cardHeight + padding > viewportHeight) {
-            top = viewportHeight - cardHeight - padding;
-          }
-
-          hoverCard.style.left = `${left}px`;
-          hoverCard.style.top = `${top}px`;
-        });
-
-        div.addEventListener('mouseleave', () => {
-          clearTimeout(hoverTimeout);
-          hoverCard.style.display = 'none';
-          hoverCard.style.opacity = '0';
-        });
+        if (label){
+          const lab = document.createElement('span');
+          lab.className = 'text-[10px] font-bold tracking-wide px-2 py-0.5 rounded bg-black/70 inline-block';
+          lab.textContent = label;
+          lab.style.position = 'absolute';
+          lab.style.left = (x1 + 8) + 'px';
+          lab.style.top  = (y1 + 6) + 'px';
+          labelsRoot.appendChild(lab);
+        }
       }
+
+      function drawL(label){
+        const tL = getCellRect(G.PPM_TOP.r1, G.PPM_TOP.c1);
+        const tR = getCellRect(G.PPM_TOP.r2, G.PPM_TOP.c2);
+        const bL = getCellRect(G.PPM_BOT.r1, G.PPM_BOT.c1);
+        const bR = getCellRect(G.PPM_BOT.r2, G.PPM_BOT.c2);
+
+        const x1 = tL.left + inset;
+        const y1 = tL.top  + inset;
+        const x2 = tR.right - inset;
+        const y2 = bR.bottom - inset;
+        const x0 = bL.left + inset;
+        const yMid = bL.top + inset;
+
+        const d = ['M', x1, y1, 'H', x2, 'V', y2, 'H', x0, 'V', yMid, 'H', x1, 'V', y1, 'Z'].join(' ');
+        const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        p.setAttribute('d', d);
+        p.setAttribute('fill', fill);
+        p.setAttribute('stroke', stroke);
+        p.setAttribute('stroke-width', width);
+        p.setAttribute('vector-effect', 'non-scaling-stroke');
+        p.setAttribute('stroke-linejoin','miter');
+        p.setAttribute('stroke-linecap','square');
+        svg.appendChild(p);
+
+        if (label){
+          const lab = document.createElement('span');
+          lab.className = 'text-[10px] font-bold tracking-wide px-2 py-0.5 rounded bg-black/70 inline-block';
+          lab.textContent = label;
+          lab.style.position = 'absolute';
+          lab.style.left = (x1 + 8) + 'px';
+          lab.style.top  = (y1 + 6) + 'px';
+          labelsRoot.appendChild(lab);
+        }
+      }
+
+      // Draw groups
+      drawRect(G.DD.r1, G.DD.c1, G.DD.r2, G.DD.c2, G.DD.label);
+      drawRect(G.CA.r1, G.CA.c1, G.CA.r2, G.CA.c2, G.CA.label);
+      drawL(G.PPM_TOP.label);
+    }
+
+    // Build desktop grid (v4 visuals + original behavior)
+    function renderDesktop(){
+      const grid = document.getElementById('gridDesktop');
+      if (!grid) return;
+
+      // Build 4x4 cells
+      for (let r=1; r<=4; r++){
+        for (let c=1; c<=4; c++){
+          const wrap = document.createElement('div');
+          wrap.style.gridArea = `${r} / ${c} / ${r+1} / ${c+1}`;
+          wrap.className = 'cell-wrap relative overflow-hidden rounded-xl z-20 p-2';
+          wrap.dataset.r = r; wrap.dataset.c = c;
+
+          // Reserve top space for labels on top rows of labeled groups
+          const labelTopRows = [
+            { r1:G.DD.r1, c1:G.DD.c1, c2:G.DD.c2 },
+            { r1:G.CA.r1, c1:G.CA.c1, c2:G.CA.c2 },
+            { r1:G.PPM_TOP.r1, c1:G.PPM_TOP.c1, c2:G.PPM_TOP.c2 },
+          ];
+          labelTopRows.forEach(g => {
+            if (r === g.r1 && c >= g.c1 && c <= g.c2) wrap.style.paddingTop = '32px';
+          });
+
+          const idx = (r-1)*4 + (c-1); // 0..15
+          const comp = DATA[idx];
+          const compId = idx + 1;
+
+          if (comp){
+            // Anchor wired for filterState.js
+            const a = document.createElement('a');
+            a.href = '#';
+            a.setAttribute('data-filter','');
+            a.setAttribute('data-key','Competency');
+            a.setAttribute('data-value', String(compId));
+            a.className = [
+              'elevate group w-full h-full rounded-xl',
+              'flex flex-col items-center justify-center gap-2',
+              'bg-transparent transition',
+              'focus:outline-none focus-visible:ring-2 focus-visible:ring-brandYellow',
+              'relative'
+            ].join(' ');
+
+            // Halo border (no fill)
+            const halo = document.createElement('div');
+            halo.className = 'pointer-events-none absolute opacity-0 group-hover:opacity-100 transition-opacity';
+            halo.style.left = '8px'; halo.style.top = '8px'; halo.style.right = '8px'; halo.style.bottom = '8px';
+            halo.style.border = '2px solid rgba(254,220,75,0.9)';
+            halo.style.borderRadius = '12px';
+            a.appendChild(halo);
+
+            const img = document.createElement('img');
+            img.src = `comp_icons/${comp.img}`;
+            img.alt = comp.label;
+            img.className = 'w-16 h-16 md:w-20 md:h-20 object-contain transition-transform duration-150 ease-out group-hover:scale-105';
+            a.appendChild(img);
+
+            // DESKTOP CAPTION: short label (your list)
+            const caption = document.createElement('div');
+            caption.className = 'text-[11px] md:text-[12px] leading-tight text-center text-white/90 group-hover:text-brandYellow';
+            caption.textContent = SHORT_LABELS[idx] || comp.label;
+            a.appendChild(caption);
+
+            // Hover card (long title & details) — desktop only
+            const cardId = `hoverCard-${compId}`;
+            const card = document.createElement('div');
+            card.id = cardId;
+            card.className = 'hover-card fixed z-[9999] w-80 sm:w-96 bg-gray-100 text-black p-4 rounded shadow-lg hidden flex-col gap-2 text-left';
+            card.innerHTML = `
+              <div class="font-bold uppercase text-base">COMPETENCY ${String(compId).padStart(2, '0')}</div>
+              <div class="font-semibold">${comp.label}</div>
+              <ul class="list-disc list-inside space-y-1 text-sm">
+                ${comp.desc.map(line => `<li>${line}</li>`).join('')}
+              </ul>
+            `;
+            document.body.appendChild(card);
+
+            let hoverTimeout;
+            wrap.addEventListener('mouseenter', () => {
+              if (window.innerWidth < 768) return;
+              hoverTimeout = setTimeout(() => {
+                card.style.display = 'flex';
+                card.style.opacity = '1';
+              }, 250);
+            });
+            wrap.addEventListener('mousemove', (e) => {
+              if (window.innerWidth < 768) return;
+              const padding = 16;
+              const cardWidth = card.offsetWidth || 320;
+              const cardHeight = card.offsetHeight || 200;
+              const viewportWidth = window.innerWidth;
+              const viewportHeight = window.innerHeight;
+
+              let left = e.pageX + 10;
+              let top = e.pageY + 10;
+
+              if (left + cardWidth + padding > viewportWidth) {
+                left = viewportWidth - cardWidth - padding;
+              }
+              if (top + cardHeight + padding > viewportHeight) {
+                top = viewportHeight - cardHeight - padding;
+              }
+
+              card.style.left = `${left}px`;
+              card.style.top = `${top}px`;
+            });
+            wrap.addEventListener('mouseleave', () => {
+              if (window.innerWidth < 768) return;
+              clearTimeout(hoverTimeout);
+              card.style.display = 'none';
+              card.style.opacity = '0';
+            });
+
+            wrap.appendChild(a);
+          }
+
+          grid.appendChild(wrap);
+        }
+      }
+    }
+
+    // Mobile list that routes to desc.html like the original (long titles preserved)
+    function renderMobile(){
+      const mobileRoot = document.getElementById('mobileList');
+      if (!mobileRoot) return;
+
+      DATA.forEach((item, index) => {
+        const compId = index + 1;
+        const row = document.createElement('a');
+        row.href = `desc.html?index=${index}`;
+        row.setAttribute('data-filter','');
+        row.setAttribute('data-key','Competency');
+        row.setAttribute('data-value', String(compId));
+        row.setAttribute('data-next', row.href);
+        row.className = 'block px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brandYellow/40';
+
+        row.innerHTML = `
+          <div class="flex items-center gap-3">
+            <img src="comp_icons/${item.img}" alt="" class="w-12 h-12 shrink-0" />
+            <div class="flex-1">
+              <div class="text-base">${item.label}</div>
+              <div class="text-xs text-white/60">Tap to view details</div>
+            </div>
+            <span class="text-white/70">›</span>
+          </div>
+        `;
+
+        mobileRoot.appendChild(row);
+      });
+    }
+
+    // ---------------- Init & events ----------------
+    document.getElementById('backBtn').addEventListener('click', () => {
+      if (document.referrer && document.referrer !== window.location.href) history.back();
+      else window.location.href = 'index.html';
     });
+
+    (function init(){
+      renderDesktop();
+      renderMobile();
+      sizeGridToViewport();
+      updateNextTargets();
+      requestAnimationFrame(drawGroupsAndLabels);
+    })();
+
+    window.addEventListener('resize', () => { sizeGridToViewport(); drawGroupsAndLabels(); });
+    window.addEventListener('orientationchange', () => { sizeGridToViewport(); drawGroupsAndLabels(); });
   </script>
 </body>
 </html>
