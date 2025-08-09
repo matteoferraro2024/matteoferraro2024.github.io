@@ -58,7 +58,7 @@
     <!-- Toggle Button -->
     <button id="toggleButton" onclick="toggleGreyTasks()"
       class="tap inline-flex items-center gap-2 rounded px-3 py-2 text-sm font-semibold bg-white text-black hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-white/50">
-      SHOW
+      SHOW ALL
     </button>
   </div>
 </header>
@@ -116,7 +116,7 @@
       const res = await fetch('task_data.json');
       taskData = await res.json();
       // Ensure toggle button text matches initial state
-      document.getElementById('toggleButton').innerText = showGrey ? 'HIDE' : 'SHOW';
+      document.getElementById('toggleButton').innerText = showGrey ? 'HIDE' : 'SHOW ALL';
       renderTasks(taskData);
     }
 
@@ -223,7 +223,7 @@
 
     function toggleGreyTasks() {
       showGrey = !showGrey;
-      document.getElementById('toggleButton').innerText = showGrey ? 'HIDE' : 'SHOW';
+      document.getElementById('toggleButton').innerText = showGrey ? 'HIDE' : 'SHOW ALL';
 
       const items = document.getElementById('taskList').children;
       for (const el of items) {
