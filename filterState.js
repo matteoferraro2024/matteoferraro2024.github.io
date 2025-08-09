@@ -113,9 +113,16 @@
 
   // ---------- role-based flows (filenames must match your site) ----------
   const FLOWS = {
-    Student:    ['competencies.html', 'year.html', 'tasks.html'],
-    Instructor: ['year.html',         'naab.html', 'tasks.html'],
-    Admin:      ['naab.html',         'competencies.html', 'tasks.html'],
+    Student: ['competencies.html', 'year.html', 'tasks.html'],
+    Instructor: ['year.html', 'naab.html', 'tasks.html'],
+    Admin: ['naab.html', 'competencies.html', 'tasks.html'],
+  };
+
+  // Which filter key is set on each page?
+  const PAGE_TO_KEY = {
+    'year.html': 'Level',
+    'naab.html': 'NAAB',
+    'competencies.html': 'Competency',
   };
 
   function nextInFlow(roleRaw, page) {
@@ -129,6 +136,19 @@
     if (i >= flow.length - 1) return flow[i]; // already last page; stay
     return flow[i + 1];
   }
+
+  function prevInFlow(roleRaw, page) {
+    const roleKey = roleRaw
+      ? String(roleRaw).toLowerCase().replace(/^\w/, c => c.toUpperCase())
+      : null;
+    const flow = roleKey ? FLOWS[roleKey] : null;
+    if (!flow) return null;
+    const i = flow.findIndex(p => p.toLowerCase() === page);
+    if (i === -1) return null;
+    if (i <= 0) return flow[i]; // already first page; stay
+    return flow[i - 1];
+  }
+
 
   // ---------- click handlers ----------
   function handleFilterClick(e) {
@@ -178,6 +198,35 @@
     Filters.clear();
   }
 
+  function handleBackClick(e) {
+    e.preventDefault();
+
+    const state = Filters.get();
+    const role = state.role ?? state.Role ?? state.ROLE;
+    const cur = currentPage();                // e.g., "naab.html"
+    const prev = prevInFlow(role, cur);       // e.g., "year.html"
+
+    if (prev) {
+      // Clear the filter key that belongs to the page we’re going back to
+      const keyToClear = e.currentTarget.dataset.backKey || PAGE_TO_KEY[prev.toLowerCase()];
+      if (keyToClear) {
+        const s = Filters.get();
+        delete s[keyToClear];  // remove that choice
+        localStorage.setItem('licensureFilters', JSON.stringify(s));
+        document.dispatchEvent(new CustomEvent('filters:change', { detail: { state: s } }));
+      }
+
+      if (prev !== cur) {
+        window.location.href = prev;
+        return;
+      }
+    }
+
+    // Fallback if flow isn't known
+    window.history.back();
+  }
+
+
   function initBindings(root = document) {
     root.querySelectorAll('[data-filter]').forEach(btn => {
       if (btn.__fsBound) return;
@@ -200,6 +249,20 @@
       btn.__fsBoundClear = true;
       btn.addEventListener('click', handleClearClick);
     });
+    root.querySelectorAll('[data-back]').forEach(btn => {
+    if (btn.__fsBoundBack) return;
+    btn.__fsBoundBack = true;
+    btn.addEventListener('click', handleBackClick);
+
+    // Auto-hide on the first step of the flow
+    const state = Filters.get();
+    const role = state.role ?? state.Role ?? state.ROLE;
+    const cur = currentPage();
+    const prev = prevInFlow(role, cur);
+    if (!prev || prev === cur) {
+      btn.classList.add('hidden'); // nothing to go back to
+    }
+  });
   }
 
   // ---------- boot ----------
