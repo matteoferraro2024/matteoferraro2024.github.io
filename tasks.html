@@ -80,7 +80,7 @@
       }
 
       async function loadTasks() {
-        const res = await fetch('tasks_data.json');
+        const res = await fetch('task_data.json');
         taskData = await res.json();
         renderTasks(taskData);
       }

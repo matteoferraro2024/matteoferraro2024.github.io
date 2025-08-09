@@ -12,6 +12,31 @@
 (() => {
   const STORE_KEY = 'licensureFilters';
 
+  // One-time migration from old key name
+(function migrateOldKey(){
+  const old = localStorage.getItem('filterState');
+  const cur = localStorage.getItem(STORAGE_KEY);
+  if (old && !cur) {
+    localStorage.setItem(STORAGE_KEY, old);
+    localStorage.removeItem('filterState');
+  }
+})();
+
+// ---- CLEAN HELPERS (expose on window) ----
+window.LicensureFilters = {
+  get() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
+    catch { return {}; }
+  },
+  set(update) {
+    const cur = this.get();
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...cur, ...update }));
+  },
+  clear() {
+    localStorage.removeItem(STORAGE_KEY);
+  }
+};
+
   // ---------- storage ----------
   const read = () => {
     try { return JSON.parse(sessionStorage.getItem(STORE_KEY)) || {}; }
