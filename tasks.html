@@ -1,190 +1,267 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Task Results</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orienta&display=swap" rel="stylesheet">
+
+  <!-- Font + Tailwind -->
+  <link href="https://fonts.googleapis.com/css2?family=Orienta&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="./filterState.js" defer></script>
   <script>
     tailwind.config = {
       theme: {
         extend: {
-          fontFamily: {
-            orienta: ['Orienta', 'sans-serif'],
-          },
-          colors: {
-            brandGrey: '#6B7280',
-            bgDark: '#000000',
-          }
+          fontFamily: { orienta: ['Orienta', 'sans-serif'] },
+          colors: { brandGrey: '#6B7280', brandYellow: '#fedc4b' }
         }
       }
     };
   </script>
-  <style>
-    body {
-      font-family: 'Orienta', sans-serif;
-      background-color: #000;
-      color: #fff;
-    }
 
-    .tap {
-      -webkit-tap-highlight-color: transparent;
-    }
+  <!-- Your state helper -->
+  <script src="./filterState.js" defer></script>
+
+  <style>
+    body { font-family: 'Orienta', sans-serif; background:#0b0b0b; color:#fff; }
+    .tap { -webkit-tap-highlight-color: transparent; }
   </style>
 </head>
-
 <body class="min-h-screen">
-  <header
-    class="sticky top-0 z-50 bg-black/80 backdrop-blur supports-[backdrop-filter]:bg-black/60 border-b border-white/10">
-    <div class="mx-auto max-w-4xl px-4 py-3 flex items-center justify-between">
 
+  <!-- Top bar -->
+  <header class="sticky top-0 z-50 bg-black/80 backdrop-blur supports-[backdrop-filter]:bg-black/60 border-b border-white/10">
+    <div class="mx-auto max-w-4xl px-4 py-3 flex items-center justify-between">
       <div class="flex items-center gap-2">
-        <!-- Back Button -->
-        <button type="button" data-back aria-label="Go back"
-          class="tap inline-flex items-center gap-2 rounded px-3 py-2 text-sm font-semibold bg-white text-black hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-white/50">
+        <!-- Back -->
+        <button type="button" id="backBtn" aria-label="Go back"
+          class="tap inline-flex items-center gap-2 rounded px-3 py-2 text-sm font-semibold bg-white text-black hover:bg-brandYellow focus:outline-none focus:ring-2 focus:ring-white/50">
           ← Back
         </button>
 
-        <!-- Restart Button -->
-        <button data-clear-filters data-next="index.html"
-          class="tap inline-flex items-center gap-2 rounded px-3 py-2 bg-white text-black font-semibold hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-white/50">
+        <!-- Restart -->
+        <button type="button" id="restartBtn"
+          class="tap inline-flex items-center gap-2 rounded px-3 py-2 text-sm font-semibold bg-white text-black hover:bg-brandYellow focus:outline-none focus:ring-2 focus:ring-white/50">
           Restart
         </button>
       </div>
 
-      <!-- Toggle Button -->
-      <button id="toggleButton" onclick="toggleGreyTasks()"
-        class="tap inline-flex items-center gap-2 rounded px-3 py-2 text-sm font-semibold bg-white text-black hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-white/50">
+      <!-- Toggle unmatched -->
+      <button id="toggleButton" type="button"
+        class="tap inline-flex items-center gap-2 rounded px-3 py-2 text-sm font-semibold bg-white text-black hover:bg-brandYellow focus:outline-none focus:ring-2 focus:ring-white/50">
         SHOW ALL
       </button>
     </div>
   </header>
 
-
   <main class="mx-auto max-w-4xl px-4 py-6">
     <h1 class="text-2xl md:text-3xl font-bold mb-2">CHOOSE A TASK TO PRACTICE AN EXERCISE:</h1>
-    <p class="text-white/80 mb-6">Select one:</p>
+    <p id="selectPrompt" class="text-white/80 mb-6">Select one:</p>
+
+    <!-- Zero-results helper -->
+    <section id="noResults" class="hidden rounded-xl border border-white/10 bg-white/5 p-4 md:p-5 mb-6">
+      <p class="text-base md:text-lg font-semibold mb-2">There are no tasks that directly meet your criteria.</p>
+      <p class="text-white/80 mb-4">Let’s broaden your search. Which criteria is more important for you?</p>
+      <div id="keepButtons" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+    </section>
 
     <div id="taskList" class="divide-y divide-white/10"></div>
   </main>
 
   <script>
-    // --- FILTERS (read from storage set by previous pages) ---
+
+// ---- DEBUG MODE ----
+const DEBUG = true;
+const log = (...a)=>DEBUG && console.log('[tasks]', ...a);
+window.addEventListener('error', e => console.error('window.onerror:', e.message, e.filename, e.lineno));
+window.addEventListener('unhandledrejection', e => console.error('unhandledrejection:', e.reason));
+
+
+    // ---------- Minimal storage wrapper ----------
+    const STORAGE_KEY = 'licensureFilters';
+
+    function filtersGet() {
+  if (window.LicensureFilters?.get) {
+    const s = window.LicensureFilters.get();
+    log('filtersGet (LicensureFilters):', s);
+    return s;
+  }
+  const s = JSON.parse(localStorage.getItem('licensureFilters') || '{}');
+  log('filtersGet (localStorage):', s);
+  return s;
+}
+    function filtersSet(next) {
+      if (window.LicensureFilters?.set) window.LicensureFilters.set(next);
+      else localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      document.dispatchEvent(new CustomEvent('filters:change'));
+    }
     function readFilters() {
-      // Prefer the helper if present (handles old->new key migration)
-      const state = window.LicensureFilters ? window.LicensureFilters.get() : (
-        JSON.parse(localStorage.getItem('licensureFilters') || '{}')
-      );
-
-      // Normalize values
-      const competency = state.Competency != null ? Number(state.Competency) : null;
-      const level = state.Level || null;
-      const naab = Array.isArray(state.NAAB) ? state.NAAB :
-        (state.NAAB ? [state.NAAB] : []);
-
-      return { competency, level, naab };
+      const state = filtersGet();
+      return {
+        competency: state.Competency != null ? Number(state.Competency) : null,
+        level: state.Level || null,
+        naab: Array.isArray(state.NAAB) ? state.NAAB : (state.NAAB ? [state.NAAB] : []),
+        raw: state
+      };
+    }
+    function getRole() {
+      const s = filtersGet();
+      return s.Role || localStorage.getItem('selectedRole') || null;
     }
 
+    // Keep-only helper: remove all other criteria, persist, refresh, re-render
+    function keepOnly(keepKey) {
+  log('keepOnly clicked:', keepKey);
+  const state = filtersGet();
+  const before = JSON.parse(JSON.stringify(state));
+  ['Competency','Level','NAAB'].forEach(k => { if (k !== keepKey) delete state[k]; });
+  filtersSet(state);
+  filters = readFilters();
+  log('state before:', before, 'after keepOnly:', state, 'computed filters:', filters);
+  renderTasks(taskData);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+    // ---------- Page controls ----------
+    document.getElementById('backBtn').addEventListener('click', () => {
+      if (history.length > 1) history.back();
+      else window.location.href = 'index.html';
+    });
+    document.getElementById('restartBtn').addEventListener('click', () => {
+      if (window.LicensureFilters?.set) window.LicensureFilters.set({});
+      else localStorage.setItem(STORAGE_KEY, JSON.stringify({}));
+      localStorage.removeItem('selectedRole');
+      window.location.href = 'index.html';
+    });
+
+    // ---------- Data + render ----------
     let filters = readFilters();
-
-
-    // --- STATE ---
-    let showGrey = false;     // UPDATED: default hide non-matching
+    let showGrey = false;
     let taskData = [];
 
-    function getNaabArray(naabRaw) {
-      if (Array.isArray(naabRaw)) return naabRaw;
-      if (typeof naabRaw === 'string') {
-        try {
-          const fixed = naabRaw.replace(/'/g, '"');
-          const parsed = JSON.parse(fixed);
-          return Array.isArray(parsed) ? parsed : [];
-        } catch {
-          return naabRaw
-            .replace(/[\[\]\s]/g, '')
-            .split(',')
-            .filter(Boolean);
-        }
+    function getNaabArray(raw) {
+      if (Array.isArray(raw)) return raw;
+      if (typeof raw === 'string') {
+        try { return JSON.parse(raw.replace(/'/g, '"')) || []; }
+        catch { return raw.replace(/[\[\]\s'"]/g, '').split(',').filter(Boolean); }
       }
       return [];
     }
 
     async function loadTasks() {
-      const res = await fetch('task_data.json');
-      taskData = await res.json();
-      // Ensure toggle button text matches initial state
-      document.getElementById('toggleButton').innerText = showGrey ? 'HIDE' : 'SHOW ALL';
-      renderTasks(taskData);
-    }
+  log('loadTasks: fetching task_data.json…');
+  const r = await fetch('task_data.json');
+  log('fetch status=', r.status);
+  const json = await r.json();
+  taskData = json;
+  log('loaded tasks:', taskData.length, 'role=', getRole(), 'filters=', filters);
+  document.getElementById('toggleButton').innerText = showGrey ? 'HIDE' : 'SHOW ALL';
+  renderTasks(taskData);
+}
 
-    function renderTasks(data) {
-      const taskList = document.getElementById('taskList');
-      taskList.innerHTML = '';
+    function buildKeepButtons(matchedCount) {
+      const prompt = document.getElementById('selectPrompt');
+      const panel  = document.getElementById('noResults');
+      const wrap   = document.getElementById('keepButtons');
 
-      // When filters are changed anywhere (Back / Restart / re-select), update and re-render
-document.addEventListener('filters:change', () => {
-  filters = readFilters();     // your existing helper that reads from localStorage
-  renderTasks(taskData);       // re-run your renderer with the fresh filters
+      if (matchedCount > 0) {
+        prompt.classList.remove('hidden');
+        panel.classList.add('hidden');
+        wrap.replaceChildren();
+        return;
+      }
+
+      prompt.classList.add('hidden');
+      panel.classList.remove('hidden');
+      wrap.replaceChildren();
+
+      const role = (getRole() || '').toLowerCase();
+      let pair;
+      if (role === 'student')            pair = ['Competency', 'Level'];
+      else if (role === 'instructor')    pair = ['NAAB', 'Level'];
+      else if (role === 'administrator') pair = ['NAAB', 'Competency'];
+      else {
+        const picks = [];
+        if (filters.competency != null) picks.push('Competency');
+        if (filters.level)              picks.push('Level');
+        if (Array.isArray(filters.naab) && filters.naab.length) picks.push('NAAB');
+        pair = [...new Set([...picks, 'Competency', 'Level', 'NAAB'])].slice(0, 2);
+      }
+
+      const labels = {
+        Competency: { title: 'Keep Competency', desc: 'Stick with this competency; relax the other criterion.' },
+        Level:      { title: 'Keep Level',      desc: 'Stick with this level; relax the other criterion.' },
+        NAAB:       { title: 'Keep NAAB',       desc: 'Stick with this NAAB criterion; relax the other.' }
+      };
+
+      pair.forEach(keepKey => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'tap w-full rounded-lg border border-white/10 bg-white/10 hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/30 px-4 py-3 text-left';
+        btn.innerHTML = `
+          <div class="text-base md:text-lg font-semibold">${labels[keepKey].title}</div>
+          <div class="text-sm text-white/70 mt-0.5">${labels[keepKey].desc}</div>
+        `;
+        btn.addEventListener('click', () => {
+  log('Keep button pressed for', keepKey);
+  keepOnly(keepKey);
 });
 
+    function renderTasks(data) {
+      log('renderTasks start. filters=', filters);
+      const list = document.getElementById('taskList');
+      list.innerHTML = '';
 
-      // UPDATED: split into matched and unmatched first to "pop to front"
       const matched = [];
       const unmatched = [];
 
       data.forEach((task, index) => {
         const naabArr = getNaabArray(task.NAAB);
 
-        // each criterion only filters if the user actually picked something for it
         const matchCompetency = (filters.competency != null && filters.competency !== '')
-          ? task.Competency === Number(filters.competency)
-          : true;
+          ? Number(task.Competency) === Number(filters.competency) : true;
 
         const matchLevel = (filters.level != null && filters.level !== '')
-          ? task.Level === filters.level
-          : true;
+          ? task.Level === filters.level : true;
 
         const matchNaab = (Array.isArray(filters.naab) && filters.naab.length > 0)
-          ? filters.naab.some(code => naabArr.includes(code))
-          : true;
+          ? filters.naab.some(code => naabArr.includes(code)) : true;
 
-        const meetsFilter = matchCompetency && matchLevel && matchNaab;
-
-        (meetsFilter ? matched : unmatched).push({ task, index, meetsFilter });
+        const meets = matchCompetency && matchLevel && matchNaab;
+        (meets ? matched : unmatched).push({ task, index, meets });
       });
 
-      // Render matched first, then unmatched (original order preserved within each group)
-      [...matched, ...unmatched].forEach(({ task, index, meetsFilter }) => {
-        const taskList = document.getElementById('taskList');
-        const fontColor = meetsFilter ? task.Color : '#6B7280';
+      log('renderTasks matched=', matched.length, 'unmatched=', unmatched.length);
+
+      // Zero-match UX
+      buildKeepButtons(matched.length);
+
+      // Render matched (colored) first, then unmatched (grey)
+      [...matched, ...unmatched].forEach(({ task, index, meets }) => {
+        const fontColor = meets ? task.Color : '#6B7280';
         const hasDetails = Boolean(task['TASK DETAILS']);
         const detailId = `details-${index}`;
 
-        const wrapper = document.createElement('div');
-        wrapper.className = 'py-4';
-        wrapper.dataset.match = String(meetsFilter);
+        const wrap = document.createElement('div');
+        wrap.className = 'py-4';
+        wrap.dataset.match = String(meets);
 
-        // UPDATED: button has no flex gap; arrow is placed immediately after text with a single space
         const row = document.createElement('button');
+        row.type = 'button';
         row.className = 'tap w-full text-left';
         row.setAttribute('aria-controls', detailId);
         row.setAttribute('aria-expanded', 'false');
         row.onclick = () => toggleDetails(detailId, row);
 
-        const textSpan = document.createElement('span');
-        textSpan.className = 'text-base md:text-lg';
-        textSpan.style.color = fontColor;
-        textSpan.textContent = task.Task;
+        const text = document.createElement('span');
+        text.className = 'text-base md:text-lg';
+        text.style.color = fontColor;
+        text.textContent = task.Task;
+        row.appendChild(text);
 
-        row.appendChild(textSpan);
-
-        let arrow = null;
         if (hasDetails) {
-          row.appendChild(document.createTextNode(' ')); // single space between text and arrow
-          arrow = document.createElement('span');
+          row.appendChild(document.createTextNode(' '));
+          const arrow = document.createElement('span');
           arrow.style.color = fontColor;
           arrow.textContent = '↓';
           arrow.dataset.arrow = 'true';
@@ -201,49 +278,41 @@ document.addEventListener('filters:change', () => {
           details.appendChild(p);
         }
 
-        // UPDATED: hide non-matching by default
-        if (!meetsFilter && !showGrey) {
-          wrapper.classList.add('hidden');
-        }
+        if (!meets && !showGrey) wrap.classList.add('hidden');
 
-        wrapper.appendChild(row);
-        if (hasDetails) wrapper.appendChild(details);
-        taskList.appendChild(wrapper);
+        wrap.appendChild(row);
+        if (hasDetails) wrap.appendChild(details);
+        list.appendChild(wrap);
       });
     }
 
-    function toggleDetails(id, buttonEl) {
+    function toggleDetails(id, btn) {
       const panel = document.getElementById(id);
       if (!panel) return;
       const isHidden = panel.classList.contains('hidden');
       panel.classList.toggle('hidden');
-      if (buttonEl) {
-        buttonEl.setAttribute('aria-expanded', String(isHidden));
-        const arrow = buttonEl.querySelector('[data-arrow]');
-        if (arrow) arrow.textContent = isHidden ? '↑' : '↓';
-      }
+      btn?.setAttribute('aria-expanded', String(isHidden));
+      const arrow = btn?.querySelector('[data-arrow]');
+      if (arrow) arrow.textContent = isHidden ? '↑' : '↓';
     }
 
-    function resetFilters() {
-      window.location.href = 'index.html';
-    }
-
-    function toggleGreyTasks() {
+    document.getElementById('toggleButton').addEventListener('click', () => {
       showGrey = !showGrey;
       document.getElementById('toggleButton').innerText = showGrey ? 'HIDE' : 'SHOW ALL';
-
       const items = document.getElementById('taskList').children;
       for (const el of items) {
         const matched = el.dataset.match === 'true';
-        if (!matched) {
-          if (showGrey) el.classList.remove('hidden');
-          else el.classList.add('hidden');
-        }
+        if (!matched) el.classList.toggle('hidden', !showGrey);
       }
-    }
+    });
+
+    // If anything else changes filters elsewhere on the site
+    document.addEventListener('filters:change', () => {
+      filters = readFilters();
+      renderTasks(taskData);
+    });
 
     loadTasks();
   </script>
 </body>
-
 </html>
