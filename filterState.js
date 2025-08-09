@@ -267,6 +267,8 @@
 
   }
 
+  window.LicensureFiltersRebind = initBindings;
+
   // ---------- boot ----------
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => initBindings());

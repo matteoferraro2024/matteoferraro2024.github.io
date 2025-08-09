@@ -6,186 +6,166 @@
   <title>Competency Description</title>
   <link href="https://fonts.googleapis.com/css2?family=Orienta&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Make sure this is the updated filterState.js that exposes window.LicensureFiltersRebind -->
   <script src="./filterState.js" defer></script>
   <style>
-    body {
-      font-family: 'Orienta', sans-serif;
-    }
+    body { font-family: 'Orienta', sans-serif; }
   </style>
 </head>
 <body class="bg-neutral-900 text-white min-h-screen flex flex-col items-center justify-start px-6 pt-6 pb-10 text-center">
-
   <div id="descContainer" class="w-full max-w-md flex flex-col items-center gap-4"></div>
 
   <script>
-   const data = [
-    {
-      img: '01.png',
-      label: 'Assess Regulatory Design Requirements',
-      desc: [
+    // --- Data (unchanged) ---
+    const data = [
+      { img: '01.png', label: 'Assess Regulatory Design Requirements', desc: [
         'Identify local, state, and federal authorities having jurisdiction over a project.',
         'Understand the regulatory and jurisdictional approval process applicable to a project in order to obtain the necessary approvals.',
         'Determine the specific regulations, codes, and rules (e.g., zoning rules, building and environmental codes, historic preservation requirements, design covenants, etc.) that apply to a project.'
-      ]
-    },
-    {
-      img: '02.png',
-      label: 'Analyze Site and Existing Conditions',
-      desc: [
+      ]},
+      { img: '02.png', label: 'Analyze Site and Existing Conditions', desc: [
         'Identify characteristics of the site and surrounding context.',
         'Evaluate environmental, historical, and existing site conditions that may impact design or construction.',
         'Analyze site opportunities and constraints that may impact the program or design strategy.'
-      ]
-    },
-    {
-      img: '03.png',
-      label: 'Establish Project Goals and Programming',
-      desc: [
+      ]},
+      { img: '03.png', label: 'Establish Project Goals and Programming', desc: [
         'Identify stakeholder goals, values, and requirements.',
         'Establish spatial, functional, and performance criteria for the project.',
         'Define project scope, priorities, and success metrics.'
-      ]
-    },
-    {
-      img: '04.png',
-      label: 'Incorporate Environmental and Sustainability Principles',
-      desc: [
+      ]},
+      { img: '04.png', label: 'Incorporate Environmental and Sustainability Principles', desc: [
         'Evaluate environmental context and impacts.',
         'Incorporate sustainable design principles and systems.',
         'Design for performance outcomes related to energy, water, and material use.'
-      ]
-    },
-    {
-      img: '05.png',
-      label: 'Address Social and Ethical Issues',
-      desc: [
+      ]},
+      { img: '05.png', label: 'Address Social and Ethical Issues', desc: [
         'Incorporate equity, accessibility, and inclusion in design.',
         'Consider health, safety, and welfare of users and the public.',
         'Respond to social and cultural context.'
-      ]
-    },
-    {
-      img: '06.png',
-      label: 'Develop a Design Based on Programmatic Requirements',
-      desc: [
+      ]},
+      { img: '06.png', label: 'Develop a Design Based on Programmatic Requirements', desc: [
         'Translate programmatic requirements into design solutions.',
         'Synthesize spatial, functional, and experiential considerations.',
         'Iterate and refine design concepts using appropriate media.'
-      ]
-    },
-    {
-      img: '07.png',
-      label: 'Prepare Design Documentation',
-      desc: [
+      ]},
+      { img: '07.png', label: 'Prepare Design Documentation', desc: [
         'Produce drawings and documentation that convey design intent.',
         'Coordinate documentation across disciplines.',
         'Ensure clarity, accuracy, and consistency in design documents.'
-      ]
-    },
-    {
-      img: '08.png',
-      label: 'Develop the Design',
-      desc: [
+      ]},
+      { img: '08.png', label: 'Develop the Design', desc: [
         'Advance the design from schematic to detailed level.',
         'Integrate building systems, materials, and assemblies.',
         'Respond to cost, schedule, and constructability considerations.'
-      ]
-    },
-    {
-      img: '09.png',
-      label: 'Administer the Contract During Construction',
-      desc: [
+      ]},
+      { img: '09.png', label: 'Administer the Contract During Construction', desc: [
         'Interpret contract documents and respond to requests for information.',
         'Review submittals, shop drawings, and other contractor documents.',
         'Observe construction and evaluate conformance with contract documents.'
-      ]
-    },
-    {
-      img: '10.png',
-      label: 'Evaluate Construction for Conformance',
-      desc: [
+      ]},
+      { img: '10.png', label: 'Evaluate Construction for Conformance', desc: [
         'Monitor progress and quality of construction.',
         'Identify nonconforming work and recommend corrective action.',
         'Document construction observations and communications.'
-      ]
-    },
-    {
-      img: '11.png',
-      label: 'Manage Contracts',
-      desc: [
+      ]},
+      { img: '11.png', label: 'Manage Contracts', desc: [
         'Understand contractual relationships among project participants.',
         'Administer agreements with clients and consultants.',
         'Advise on contract modifications and resolution of disputes.'
-      ]
-    },
-    {
-      img: '12.png',
-      label: 'Plan and Manage Projects',
-      desc: [
+      ]},
+      { img: '12.png', label: 'Plan and Manage Projects', desc: [
         'Develop work plans, schedules, and budgets.',
         'Manage project teams, resources, and communication.',
         'Monitor progress and adjust plans as needed.'
-      ]
-    },
-    {
-      img: '13.png',
-      label: 'Manage Practice',
-      desc: [
+      ]},
+      { img: '13.png', label: 'Manage Practice', desc: [
         'Understand practice structures, roles, and responsibilities.',
         'Implement policies and procedures for quality management.',
         'Manage risk and compliance with legal requirements.'
-      ]
-    },
-    {
-      img: '14.png',
-      label: 'Comply with Legal Requirements',
-      desc: [
+      ]},
+      { img: '14.png', label: 'Comply with Legal Requirements', desc: [
         'Understand laws and regulations governing architectural practice.',
         'Comply with codes, licensing, and insurance requirements.',
         'Manage legal and professional liability.'
-      ]
-    },
-    {
-      img: '15.png',
-      label: 'Demonstrate Ethical Practice',
-      desc: [
+      ]},
+      { img: '15.png', label: 'Demonstrate Ethical Practice', desc: [
         'Adhere to professional codes of ethics and conduct.',
         'Promote equity, sustainability, and social responsibility.',
         'Maintain transparency and accountability in practice.'
-      ]
-    },
-    {
-      img: '16.png',
-      label: 'Manage Business Operations',
-      desc: [
+      ]},
+      { img: '16.png', label: 'Manage Business Operations', desc: [
         'Understand financial management and business planning.',
         'Support marketing, client development, and strategic planning.',
         'Contribute to operational efficiency and profitability.'
-      ]
-    }
-  ];
+      ]}
+    ];
 
+    // --- Read index from query ---
     const params = new URLSearchParams(window.location.search);
-    const index = parseInt(params.get('index'), 10);
-    const competency = data[index];
+    const index = Number.parseInt(params.get('index'), 10);
+    const valid = Number.isInteger(index) && index >= 0 && index < data.length;
+    const competency = valid ? data[index] : null;
 
+    // --- Decide next page based on saved role ---
+    function getState() {
+      try {
+        if (window.LicensureFilters && window.LicensureFilters.get) {
+          return window.LicensureFilters.get();
+        }
+        return JSON.parse(localStorage.getItem('licensureFilters') || '{}');
+      } catch { return {}; }
+    }
+    const state = getState();
+    const role = String(state.role || state.Role || state.ROLE || localStorage.getItem('selectedRole') || '');
+    const nextByRole = {
+      'Student': '/year.html',
+      'Instructor': '/year.html',
+      'Admin': '/tasks.html',
+      'Administrator': '/tasks.html'
+    };
+    const nextPage = nextByRole[role] || '/year.html';
+
+    // --- Render ---
     const container = document.getElementById('descContainer');
-    container.innerHTML = `
-      <h2 class="text-xl font-bold leading-tight">WHAT COMPETENCY<br />ARE YOU INTERESTED IN?</h2>
-      <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wide">${competency.domain}</h3>
-      <img src="/comp_icons/${competency.img}" alt="${competency.label}" class="w-24 h-24 mx-auto" />
-      <h4 class="text-lg font-bold tracking-tight">${competency.label}</h4>
-      <p class="text-sm text-left text-gray-200 leading-relaxed">
-        <strong class="block text-white mb-1">Access Regulatory Design Requirements</strong>
-        <ul class="list-disc list-inside space-y-1">
-          ${competency.desc.map(line => `<li>${line}</li>`).join('')}
-        </ul>
-      </p>
-      <div class="flex gap-4 mt-6">
-        <a href="/competencies.html" class="bg-gray-100 text-black px-4 py-2 rounded font-bold text-sm">BACK</a>
-        <a href="#" data-filter data-key="Competency" data-value="${index + 1}" class="bg-gray-100 text-black px-4 py-2 rounded font-bold text-sm">SELECT</a>
-      </div>
-    `;
+
+    if (!competency) {
+      container.innerHTML = `
+        <p class="text-sm text-red-300">Invalid or missing competency. <a href="/competencies.html" class="underline">Go back</a>.</p>
+      `;
+    } else {
+      container.innerHTML = `
+        <h2 class="text-xl font-bold leading-tight">WHAT COMPETENCY<br />ARE YOU INTERESTED IN?</h2>
+
+        <img src="/comp_icons/${competency.img}" alt="${competency.label}" class="w-24 h-24 mx-auto" />
+        <h4 class="text-lg font-bold tracking-tight">${competency.label}</h4>
+
+        <div class="text-sm text-left text-gray-200 leading-relaxed w-full max-w-md">
+          <strong class="block text-white mb-2">${competency.label}</strong>
+          <ul class="list-disc list-inside space-y-1">
+            ${competency.desc.map(line => `<li>${line}</li>`).join('')}
+          </ul>
+        </div>
+
+        <div class="flex gap-4 mt-6">
+          <a href="/competencies.html" class="bg-gray-100 text-black px-4 py-2 rounded font-bold text-sm">BACK</a>
+
+          <!-- SELECT saves Competency and navigates using data-next -->
+          <button type="button"
+                  data-filter
+                  data-key="Competency"
+                  data-value="${index + 1}"
+                  data-next="${nextPage}"
+                  class="bg-gray-100 text-black px-4 py-2 rounded font-bold text-sm">
+            SELECT
+          </button>
+        </div>
+      `;
+    }
+
+    // Rebind the newly injected [data-filter] control
+    if (window.LicensureFiltersRebind) {
+      window.LicensureFiltersRebind(container);
+    }
   </script>
 </body>
 </html>
