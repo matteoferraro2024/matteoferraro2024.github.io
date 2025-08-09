@@ -40,14 +40,6 @@
     "TASK DETAILS": ""
   },
   {
-    "Task": "",
-    "Competency": "",
-    "Color": "",
-    "Level": "",
-    "NAAB": "",
-    "TASK DETAILS": ""
-  },
-  {
     "Task": "Develop professional and leadership skills within firm",
     "Competency": 12,
     "Color": "#32C4EC",
@@ -104,14 +96,6 @@
     "TASK DETAILS": "If a construction management program is accessible for partnership with the school, students will simulate a bidding process at the end of the semester.  Architecture students will learn about procedures of bidding, provide the building to be bidded on, and administer the bidding process.  The students in a Cost Estimating class will prepare a competitive bid for the building as their final assessment."
   },
   {
-    "Task": "",
-    "Competency": "",
-    "Color": "",
-    "Level": "",
-    "NAAB": "",
-    "TASK DETAILS": ""
-  },
-  {
     "Task": "Comply with laws and regulations governing the practice of architecture",
     "Competency": 14,
     "Color": "#32C4EC",
@@ -141,14 +125,6 @@
     "Color": "#32C4EC",
     "Level": "Advanced",
     "NAAB": [],
-    "TASK DETAILS": ""
-  },
-  {
-    "Task": "",
-    "Competency": "",
-    "Color": "",
-    "Level": "",
-    "NAAB": "",
     "TASK DETAILS": ""
   },
   {
@@ -190,14 +166,6 @@
     "Level": "Beginner",
     "NAAB": "['S3','S4']",
     "TASK DETAILS": "Software education may be incremental throughout the program’s curriculum.  At the advanced level, students should be proficient in a CAD software as well as a BIM software.  One of the student’s advanced studios should be utilizing BIM, though each semester should encourage a discussion to use it or not."
-  },
-  {
-    "Task": "",
-    "Competency": "",
-    "Color": "",
-    "Level": "",
-    "NAAB": "",
-    "TASK DETAILS": ""
   },
   {
     "Task": "Coordinate design work of consultants",
@@ -320,14 +288,6 @@
     "TASK DETAILS": "Students should actively incorporate sustainability technology into their designs - with a level of detail to showcase competency in system technology."
   },
   {
-    "Task": "",
-    "Competency": "",
-    "Color": "",
-    "Level": "",
-    "NAAB": "",
-    "TASK DETAILS": ""
-  },
-  {
     "Task": "Determine design fee budget",
     "Competency": 16,
     "Color": "#B76EAB",
@@ -424,14 +384,6 @@
     "TASK DETAILS": "As a minor assignment, students may receive a few contractor profiles and then provide a summary of qualifications, pros/cons to the client for their decision."
   },
   {
-    "Task": "",
-    "Competency": "",
-    "Color": "",
-    "Level": "",
-    "NAAB": "",
-    "TASK DETAILS": ""
-  },
-  {
     "Task": "Determine impact of applicable zoning and development ordinances to determine project constraints",
     "Competency": 1,
     "Color": "#7A78B9",
@@ -454,14 +406,6 @@
     "Level": "Beginner",
     "NAAB": "['S3','S5']",
     "TASK DETAILS": "Projects should be submitted for simulated township approvals.  Examples may be to complete a zoning application and submit a site plan to the instructor, host a review for historic preservation with institutional experts, members of a local board, or practicing architects with experience working in historic districts.  Floor plans should be submitted for a plan review prior to final review for approval.  Advanced studios may integrate a code analysis component."
-  },
-  {
-    "Task": "",
-    "Competency": "",
-    "Color": "",
-    "Level": "",
-    "NAAB": "",
-    "TASK DETAILS": ""
   },
   {
     "Task": "Gather information about community concerns and issues that may impact proposed project",
@@ -552,14 +496,6 @@
     "TASK DETAILS": ""
   },
   {
-    "Task": "",
-    "Competency": "",
-    "Color": "",
-    "Level": "",
-    "NAAB": "",
-    "TASK DETAILS": ""
-  },
-  {
     "Task": "Evaluate results of feasibility studies to determine project’s financial viability",
     "Competency": 6,
     "Color": "#7A78B9",
@@ -592,28 +528,12 @@
     "TASK DETAILS": "Sites should include unique features such as wetlands/environmentally sensitive areas, seismically active areas, municipal easements, flood-risk, or soil conditions."
   },
   {
-    "Task": "",
-    "Competency": "",
-    "Color": "",
-    "Level": "",
-    "NAAB": "",
-    "TASK DETAILS": ""
-  },
-  {
     "Task": "Determine impact of existing utilities infrastructure on site",
     "Competency": 2,
     "Color": "#ABD162",
     "Level": "Beginner",
     "NAAB": "['S3','S5']",
     "TASK DETAILS": "Students should interface with consequences of design solutions - such as exterior lighting plans, traffic plans, connections to utilities, drainage plans, etc."
-  },
-  {
-    "Task": "",
-    "Competency": "",
-    "Color": "",
-    "Level": "",
-    "NAAB": "",
-    "TASK DETAILS": ""
   },
   {
     "Task": "Develop sustainability goals based on existing environmental conditions",
@@ -696,14 +616,6 @@
     "TASK DETAILS": "Throughout the curriculum, studios should increase their detail of site constraints into zoning and development ordinances, as applicable.  Existing municipal ordinances should be used (modified as required) to give students the hands-on experience of a zoning analysis / code review.\nSites should include unique features such as wetlands/environmentally sensitive areas, seismically active areas, municipal easements, flood-risk, or soil conditions.\nOne studio in the curriculum should have a deep investigation on sites.  In this studio, students should gain practice of evaluating a site and determining the requirements for a site survey."
   },
   {
-    "Task": "",
-    "Competency": "",
-    "Color": "",
-    "Level": "",
-    "NAAB": "",
-    "TASK DETAILS": ""
-  },
-  {
     "Task": "Perform building code analysis",
     "Competency": 6,
     "Color": "#ABD162",
@@ -752,14 +664,6 @@
     "TASK DETAILS": "Students will practice budgeting their hourly rate for their design work during exercises throughout the semester.  They will have conversations with the instructor when their work exceeded their estimate and why.  At the end of the semester, students will reflect on budget of the semester and consider operating costs for profitability."
   },
   {
-    "Task": "",
-    "Competency": "",
-    "Color": "",
-    "Level": "",
-    "NAAB": "",
-    "TASK DETAILS": ""
-  },
-  {
     "Task": "Communicate design ideas to the client graphically",
     "Competency": 7,
     "Color": "#EF6976",
@@ -792,27 +696,11 @@
     "TASK DETAILS": ""
   },
   {
-    "Task": "",
-    "Competency": "",
-    "Color": "",
-    "Level": "",
-    "NAAB": "",
-    "TASK DETAILS": ""
-  },
-  {
     "Task": "Communicate design ideas to the client using hand drawings",
     "Competency": 7,
     "Color": "#EF6976",
     "Level": "Intermediate",
     "NAAB": "['S3','S4']",
-    "TASK DETAILS": ""
-  },
-  {
-    "Task": "",
-    "Competency": "",
-    "Color": "",
-    "Level": "",
-    "NAAB": "",
     "TASK DETAILS": ""
   },
   {
@@ -832,14 +720,6 @@
     "TASK DETAILS": ""
   },
   {
-    "Task": "",
-    "Competency": "",
-    "Color": "",
-    "Level": "",
-    "NAAB": "",
-    "TASK DETAILS": ""
-  },
-  {
     "Task": "Complete field reports to document field observations from construction site visit",
     "Competency": 10,
     "Color": "#F59165",
@@ -853,14 +733,6 @@
     "Color": "#F59165",
     "Level": "Intermediate",
     "NAAB": "['S4']",
-    "TASK DETAILS": ""
-  },
-  {
-    "Task": "",
-    "Competency": "",
-    "Color": "",
-    "Level": "",
-    "NAAB": "",
     "TASK DETAILS": ""
   },
   {
