@@ -135,11 +135,25 @@
   }
 
   function handleBackClick(_e) {
-    // clear the filter for THIS page (if mapped), then route to previous step in the selected role's flow
+    // clear the filter for THIS page (if mapped)
     const page = getPageName();
     const key = PAGE_KEYS[page];
     if (key) Filters.remove(key);
 
+    // figure out where we are in the flow
+    const role = getRoleKey();
+    const flow = FLOWS[role];
+    if (flow) {
+      const i = flow.findIndex(p => p.toLowerCase() === page);
+      // If user is on the FIRST step of the flow, back should return to index and reset role
+      if (i === 0) {
+        Filters.remove('role');
+        window.location.href = 'index.html';
+        return;
+      }
+    }
+
+    // Otherwise go to the previous step in flow if available
     const prev = prevInFlow();
     if (prev) window.location.href = prev;
     else window.history.back();
