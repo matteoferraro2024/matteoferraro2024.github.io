@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Task Results</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Orienta&display=swap" rel="stylesheet" />
@@ -20,7 +20,7 @@
   <script src="./filterState.js" defer></script>
   <style>
     body { font-family: 'Orienta', sans-serif; background:#0b0b0b; color:#fff; }
-    .tap { -webkit-tap-highlight-color: transparent; }
+    .tap { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
   </style>
 </head>
 <body class="min-h-screen">
@@ -59,43 +59,52 @@
   <script>
     // ---- DEBUG ----
     const DEBUG = true;
-    const log = (...a)=>DEBUG && console.log('[tasks]', ...a);
+    const log = (...a)=>DEBUG && console.log('[tasks-mobile]', ...a);
     window.addEventListener('error', e => console.error('window.onerror:', e.message, e.filename, e.lineno));
     window.addEventListener('unhandledrejection', e => console.error('unhandledrejection:', e.reason));
 
-    // ---------- Storage layer (merge: LicensureFilters + localStorage; local overrides) ----------
-    const STORAGE_KEY = 'licensureFilters';
+    // ---- Mobile-robust activation helper ----
+    function onActivate(el, handler) {
+      // Avoid double-fire by gating repeated activation within a short window
+      let armed = true;
+      const fire = (ev) => {
+        if (!armed) return;
+        armed = false;
+        try { handler(ev); } finally {
+          setTimeout(()=> armed = true, 250);
+        }
+      };
+      // Pointer events first (works across mouse/touch/pen)
+      el.addEventListener('pointerup', fire, { passive: true });
+      // Fallbacks for older Safari
+      el.addEventListener('touchend', fire, { passive: true });
+      el.addEventListener('click', fire);
+    }
 
-    function lsRead() {
-      try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch { return {}; }
-    }
-    function lsWrite(obj) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(obj || {}));
-    }
+    // ---------- Storage layer (write-through; LS overrides) ----------
+    const STORAGE_KEY = 'licensureFilters';
+    const lsRead  = () => { try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch { return {}; } };
+    const lsWrite = (obj) => localStorage.setItem(STORAGE_KEY, JSON.stringify(obj || {}));
 
     function filtersGet() {
       const fromAPI = (window.LicensureFilters?.get ? window.LicensureFilters.get() : {}) || {};
       const fromLS  = lsRead();
-      // localStorage wins (so we can hotfix write-only APIs)
       const merged = Object.assign({}, fromAPI, fromLS);
-      log('filtersGet -> merged:', merged, '(api:', fromAPI, 'ls:', fromLS, ')');
+      log('filtersGet -> merged:', merged);
       return merged;
     }
-
     function filtersSet(next) {
-      // write-through to both stores
       try { window.LicensureFilters?.set && window.LicensureFilters.set(next); } catch(e){ console.warn('LF.set failed', e); }
       lsWrite(next);
       document.dispatchEvent(new CustomEvent('filters:change'));
     }
-
     function readFilters() {
-      const state = filtersGet();
+      const s = filtersGet();
       return {
-        competency: state.Competency != null ? Number(state.Competency) : null,
-        level: state.Level || null,
-        naab: Array.isArray(state.NAAB) ? state.NAAB : (state.NAAB ? [state.NAAB] : []),
-        raw: state
+        competency: s.Competency != null ? Number(s.Competency) : null,
+        level: s.Level || null,
+        naab: Array.isArray(s.NAAB) ? s.NAAB : (s.NAAB ? [s.NAAB] : []),
+        raw: s
       };
     }
     function getRole() {
@@ -104,7 +113,7 @@
     }
 
     function keepOnly(keepKey) {
-      log('keepOnly clicked:', keepKey);
+      log('keepOnly:', keepKey);
       const state = filtersGet();
       const before = JSON.parse(JSON.stringify(state));
       ['Competency','Level','NAAB'].forEach(k => { if (k !== keepKey) delete state[k]; });
@@ -112,16 +121,17 @@
       filters = readFilters();
       log('state before:', before, 'after keepOnly:', state, 'computed filters:', filters);
       renderTasks(taskData);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Bring results into view on mobile
+      document.getElementById('taskList')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     // ---------- Page controls ----------
-    document.getElementById('backBtn').addEventListener('click', () => {
+    onActivate(document.getElementById('backBtn'), () => {
       if (history.length > 1) history.back();
       else window.location.href = 'index.html';
     });
-    document.getElementById('restartBtn').addEventListener('click', () => {
-      filtersSet({}); // clears both
+    onActivate(document.getElementById('restartBtn'), () => {
+      filtersSet({});
       localStorage.removeItem('selectedRole');
       window.location.href = 'index.html';
     });
@@ -189,12 +199,12 @@
       pair.forEach(keepKey => {
         const btn = document.createElement('button');
         btn.type = 'button';
-        btn.className = 'tap w-full rounded-lg border border-white/10 bg-white/10 hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/30 px-4 py-3 text-left';
+        btn.className = 'tap w-full rounded-lg border border-white/10 bg-white/10 active:bg-white/20 hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/30 px-4 py-3 text-left';
         btn.innerHTML = `
           <div class="text-base md:text-lg font-semibold">${labels[keepKey].title}</div>
           <div class="text-sm text-white/70 mt-0.5">${labels[keepKey].desc}</div>
         `;
-        btn.addEventListener('click', () => { log('Keep button pressed for', keepKey); keepOnly(keepKey); });
+        onActivate(btn, () => { log('Keep pressed:', keepKey); keepOnly(keepKey); });
         wrap.appendChild(btn);
       });
     }
@@ -241,7 +251,7 @@
         row.className = 'tap w-full text-left';
         row.setAttribute('aria-controls', detailId);
         row.setAttribute('aria-expanded', 'false');
-        row.onclick = () => toggleDetails(detailId, row);
+        onActivate(row, () => toggleDetails(detailId, row));
 
         const text = document.createElement('span');
         text.className = 'text-base md:text-lg';
@@ -288,7 +298,7 @@
       if (arrow) arrow.textContent = isHidden ? '↑' : '↓';
     }
 
-    document.getElementById('toggleButton').addEventListener('click', () => {
+    onActivate(document.getElementById('toggleButton'), () => {
       showGrey = !showGrey;
       document.getElementById('toggleButton').innerText = showGrey ? 'HIDE' : 'SHOW ALL';
       const items = document.getElementById('taskList').children;
