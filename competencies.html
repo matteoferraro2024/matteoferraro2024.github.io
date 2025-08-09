@@ -231,7 +231,7 @@
     const cardId = `hoverCard${index}`;
 
     div.innerHTML = `
-      <a href="${href}" class="flex flex-col items-center cursor-pointer">
+      <a href="${href}" data-filter data-key="Competencies" data-value="${item.label}" class="flex flex-col items-center cursor-pointer">
         <img src="/comp_icons/${item.img}" alt="${item.label}" class="w-12 h-12 sm:w-16 sm:h-16 mb-1" />
         <div class="text-sm sm:text-base font-semibold text-center">${item.label}</div>
       </a>
@@ -289,7 +289,23 @@
     }
   });
 </script>
-<script src="/js/filterState.js"></script>
+<script src="./filterState.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('[data-filter]').forEach(el => {
+    if (el.__fsBound) return;
+    el.__fsBound = true;
+    el.addEventListener('click', () => {
+      const { key, value } = el.dataset;
+      const state = JSON.parse(localStorage.getItem('filterState') || '{}');
+      state[key] = value;
+      localStorage.setItem('filterState', JSON.stringify(state));
+      // anchor will proceed to its href (desc.html/info.html)
+    }, { passive: true });
+  });
+});
+</script>
+
 </body>
 
 </html>
