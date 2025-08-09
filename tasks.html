@@ -23,7 +23,6 @@
     </script>
     <style>
       body { font-family: 'Orienta', sans-serif; background-color: #000; color: #fff; }
-      /* improve tap targets on mobile */
       .tap { -webkit-tap-highlight-color: transparent; }
     </style>
   </head>
@@ -34,8 +33,9 @@
         <button onclick="resetFilters()" class="tap inline-flex items-center gap-2 rounded px-3 py-2 text-sm font-semibold bg-white text-black hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-white/50">
           ← Return
         </button>
+        <!-- UPDATED: the label is set in JS based on default hidden state -->
         <button id="toggleButton" onclick="toggleGreyTasks()" class="tap inline-flex items-center gap-2 rounded px-3 py-2 text-sm font-semibold bg-white text-black hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-white/50">
-          HIDE
+          SHOW
         </button>
       </div>
     </header>
@@ -56,20 +56,17 @@
       };
 
       // --- STATE ---
-      let showGrey = true;      // when false, hide non-matching tasks
-      let taskData = [];        // cache of tasks JSON
+      let showGrey = false;     // UPDATED: default hide non-matching
+      let taskData = [];
 
-      // Normalize NAAB value which might arrive as a JSON string like "['S3','S5']"
       function getNaabArray(naabRaw) {
         if (Array.isArray(naabRaw)) return naabRaw;
         if (typeof naabRaw === 'string') {
           try {
-            // Convert single quotes to double quotes then parse
             const fixed = naabRaw.replace(/'/g, '"');
             const parsed = JSON.parse(fixed);
             return Array.isArray(parsed) ? parsed : [];
-          } catch (e) {
-            // Fallback: loose match by splitting on commas and stripping brackets/spaces
+          } catch {
             return naabRaw
               .replace(/[\[\]\s]/g, '')
               .split(',')
@@ -82,12 +79,18 @@
       async function loadTasks() {
         const res = await fetch('task_data.json');
         taskData = await res.json();
+        // Ensure toggle button text matches initial state
+        document.getElementById('toggleButton').innerText = showGrey ? 'HIDE' : 'SHOW';
         renderTasks(taskData);
       }
 
       function renderTasks(data) {
         const taskList = document.getElementById('taskList');
         taskList.innerHTML = '';
+
+        // UPDATED: split into matched and unmatched first to "pop to front"
+        const matched = [];
+        const unmatched = [];
 
         data.forEach((task, index) => {
           const naabArr = getNaabArray(task.NAAB);
@@ -96,40 +99,44 @@
             task.Level === filters.level &&
             filters.naab.some(code => naabArr.includes(code))
           );
+          (meetsFilter ? matched : unmatched).push({ task, index, meetsFilter });
+        });
 
-          const fontColor = meetsFilter ? task.Color : '#6B7280'; // grey when unmatched
+        // Render matched first, then unmatched (original order preserved within each group)
+        [...matched, ...unmatched].forEach(({ task, index, meetsFilter }) => {
+          const taskList = document.getElementById('taskList');
+          const fontColor = meetsFilter ? task.Color : '#6B7280';
           const hasDetails = Boolean(task['TASK DETAILS']);
           const detailId = `details-${index}`;
 
-          // container per task
           const wrapper = document.createElement('div');
           wrapper.className = 'py-4';
           wrapper.dataset.match = String(meetsFilter);
 
-          // row: task text + optional arrow
+          // UPDATED: button has no flex gap; arrow is placed immediately after text with a single space
           const row = document.createElement('button');
-          row.className = 'tap w-full text-left flex items-start gap-2';
+          row.className = 'tap w-full text-left';
           row.setAttribute('aria-controls', detailId);
           row.setAttribute('aria-expanded', 'false');
           row.onclick = () => toggleDetails(detailId, row);
 
-          const taskText = document.createElement('span');
-          taskText.className = 'text-base md:text-lg';
-          taskText.style.color = fontColor;
-          taskText.textContent = task.Task;
+          const textSpan = document.createElement('span');
+          textSpan.className = 'text-base md:text-lg';
+          textSpan.style.color = fontColor;
+          textSpan.textContent = task.Task;
 
-          row.appendChild(taskText);
+          row.appendChild(textSpan);
 
+          let arrow = null;
           if (hasDetails) {
-            const arrow = document.createElement('span');
-            arrow.className = 'ml-1 select-none';
+            row.appendChild(document.createTextNode(' ')); // single space between text and arrow
+            arrow = document.createElement('span');
             arrow.style.color = fontColor;
             arrow.textContent = '↓';
             arrow.dataset.arrow = 'true';
             row.appendChild(arrow);
           }
 
-          // details panel (reduced hierarchy)
           const details = document.createElement('div');
           details.id = detailId;
           details.className = 'hidden mt-1 pl-4 max-w-prose';
@@ -140,7 +147,7 @@
             details.appendChild(p);
           }
 
-          // initial hide of unmatched if showGrey is false
+          // UPDATED: hide non-matching by default
           if (!meetsFilter && !showGrey) {
             wrapper.classList.add('hidden');
           }
@@ -158,13 +165,12 @@
         panel.classList.toggle('hidden');
         if (buttonEl) {
           buttonEl.setAttribute('aria-expanded', String(isHidden));
-          const arrow = Array.from(buttonEl.querySelectorAll('[data-arrow]'))[0];
+          const arrow = buttonEl.querySelector('[data-arrow]');
           if (arrow) arrow.textContent = isHidden ? '↑' : '↓';
         }
       }
 
       function resetFilters() {
-        // Clear any stored filters here later if needed
         window.location.href = 'index.html';
       }
 
@@ -176,11 +182,8 @@
         for (const el of items) {
           const matched = el.dataset.match === 'true';
           if (!matched) {
-            if (showGrey) {
-              el.classList.remove('hidden');
-            } else {
-              el.classList.add('hidden');
-            }
+            if (showGrey) el.classList.remove('hidden');
+            else el.classList.add('hidden');
           }
         }
       }
