@@ -51,17 +51,17 @@
 
     <!-- Desktop 4×4 Grid with SVG clusters (md+) -->
     <section id="gridDesktop"
-      class="hidden md:grid relative grid-cols-4 auto-rows-[1fr] gap-4 p-1 md:p-2 overflow-visible">
+      class="hidden md:grid relative grid-cols-4 auto-rows-[1fr] gap-4 p-1 md:p-2 overflow-hidden">
       <!-- SVG overlay for regions -->
       <svg id="groupBorders" class="absolute inset-0 w-full h-full pointer-events-none z-0"
            xmlns="http://www.w3.org/2000/svg"
            fill="none" shape-rendering="crispEdges"></svg>
       <!-- Labels container -->
-      <div id="groupLabels" class="absolute inset-0 z-20 pointer-events-none"></div>
+      <div id="groupLabels" class="absolute inset-0 z-10 pointer-events-none"></div>
     </section>
 
     <!-- Mobile list (smaller screens) uses desc.html navigation -->
-    <section id="mobileList" class="md:hidden divide-y divide-white/10 rounded-xl border border-white/10 bg-black/20 overflow-hidden"></section>
+    <section id="mobileList" class="md:hidden divide-y divide-white/10 rounded-xl border border-white/10 bg-black/20"></section>
   </main>
 
   <script>
@@ -381,7 +381,7 @@
             const cardId = `hoverCard-${compId}`;
             const card = document.createElement('div');
             card.id = cardId;
-            card.className = 'hover-card fixed z-[9999] w-80 sm:w-96 bg-white text-black p-4 rounded shadow-lg hidden flex-col gap-2 text-left pointer-events-none';
+            card.className = 'hover-card fixed z-[9999] w-80 sm:w-96 bg-gray-100 text-black p-4 rounded shadow-lg hidden flex-col gap-2 text-left';
             card.innerHTML = `
               <div class="font-bold uppercase text-base">COMPETENCY ${String(compId).padStart(2, '0')}</div>
               <div class="font-semibold">${comp.label}</div>

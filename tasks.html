@@ -44,14 +44,14 @@
         </button>
       </div>
 
-      <button id="toggleButton" type="button" aria-pressed="false"
+      <button id="toggleButton" type="button"
         class="tap inline-flex items-center gap-2 rounded px-3 py-2 text-sm font-semibold bg-white text-black hover:bg-brandYellow focus:outline-none focus:ring-2 focus:ring-white/50">
-        Show All
+        SHOW ALL
       </button>
     </div>
   </header>
 
-  <main class="mx-auto max-w-4xl px-4 pt-8 pb-6">
+  <main class="mx-auto max-w-4xl px-4 py-6">
     <h1 class="text-2xl md:text-3xl font-bold mb-2">CHOOSE A TASK TO PRACTICE AN EXERCISE:</h1>
     <p id="selectPrompt" class="text-white/80 mb-6">Select one:</p>
 
@@ -125,9 +125,7 @@
       });
       onActivate(document.getElementById('toggleButton'), () => {
         showGrey = !showGrey;
-        const btn = document.getElementById('toggleButton');
-        btn.innerText = showGrey ? 'Hide' : 'Show All';
-        btn.setAttribute('aria-pressed', String(showGrey));
+        document.getElementById('toggleButton').innerText = showGrey ? 'HIDE' : 'SHOW ALL';
         const items = document.getElementById('taskList').children;
         for (const el of items) {
           const matched = el.dataset.match === 'true';
@@ -144,7 +142,8 @@
     function getNaabArray(raw) {
       if (Array.isArray(raw)) return raw;
       if (typeof raw === 'string') {
-        try { return JSON.parse(v.replace(/'/g,'"')).map(x => String(x).trim()); } catch {}
+        try { return JSON.parse(raw.replace(/'/g, '\"')) || []; }
+        catch { return raw.replace(/[\\[\\]\\s'\\\"]/g, '').split(',').filter(Boolean); }
       }
       return [];
     }
