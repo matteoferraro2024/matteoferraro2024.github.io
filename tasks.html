@@ -144,8 +144,7 @@
     function getNaabArray(raw) {
       if (Array.isArray(raw)) return raw;
       if (typeof raw === 'string') {
-        try { return JSON.parse(raw.replace(/'/g, '\"')) || []; }
-        catch { return raw.replace(/[\\[\\]\\s'\\\"]/g, '').split(',').filter(Boolean); }
+        try { return JSON.parse(v.replace(/'/g,'"')).map(x => String(x).trim()); } catch {}
       }
       return [];
     }
