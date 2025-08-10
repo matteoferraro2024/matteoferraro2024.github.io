@@ -496,7 +496,7 @@
         btn.setAttribute('data-key', 'Competency');
         btn.setAttribute('data-value', String(compId));
         btn.setAttribute('data-next', `desc.html?index=${index}`);
-        btn.className = 'w-full bg-gray-200 text-black font-semibold text-left px-4 py-3 rounded-md flex items-center gap-3 rounded-md hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-brandYellow/40';
+        btn.className = "w-full bg-gray-200 text-black font-semibold py-3 px-4 rounded-md hover:bg-brandYellow hover:text-black transition-all group relative";
 
         btn.innerHTML = `
   <img src="comp_icons/${item.img}" alt="" class="w-12 h-12 shrink-0" />
