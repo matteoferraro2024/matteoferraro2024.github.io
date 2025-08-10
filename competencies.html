@@ -65,8 +65,8 @@
     <p class="block md:hidden mt-2 mb-4 text-sm text-white/70">Tap a competency for more information.</p>
 
     <!-- Desktop 4×4 Grid with SVG clusters (md+) -->
-    <section id="gridDesktop"
-      class="hidden md:grid relative grid-cols-4 auto-rows-[1fr] gap-4 p-1 md:p-2 overflow-hidden">
+    <section id="gridDesktop" class="hidden md:grid relative grid-cols-4 gap-6 p-2 overflow-hidden"
+      style="grid-template-rows: repeat(4, 1fr);">
       <!-- SVG overlay for regions -->
       <svg id="groupBorders" class="absolute inset-0 w-full h-full pointer-events-none z-0"
         xmlns="http://www.w3.org/2000/svg" fill="none" shape-rendering="crispEdges"></svg>
@@ -78,6 +78,24 @@
     <section id="mobileList" class="md:hidden divide-y divide-white/10 rounded-xl border border-white/2 bg-black/20">
     </section>
   </main>
+
+  <script>
+    function fitGridToViewport() {
+      const grid = document.getElementById('gridDesktop');
+      if (!grid) return;
+
+      // distance from the top of the viewport to the top of the grid
+      const top = grid.getBoundingClientRect().top + window.scrollY;
+      // how much space is left from the top of the grid to the bottom of the viewport
+      const available = window.innerHeight - (grid.getBoundingClientRect().top);
+      // a little breathing room at the bottom
+      const paddingBottom = 16;
+
+      grid.style.height = Math.max(0, available - paddingBottom) + 'px';
+    }
+    window.addEventListener('load', fitGridToViewport);
+    window.addEventListener('resize', fitGridToViewport);
+  </script>
 
   <script>
     // ---------------- Data (long titles kept for hover + mobile) ----------------
@@ -241,6 +259,9 @@
       const grid = document.getElementById('gridDesktop');
       if (!grid) return;
       if (window.innerWidth < 768) return; // only desktop sizing
+      const MIN_ROW = 190, ROWS = 4, GAP = 24; // match your gap-6 (≈24px)
+      const minGridHeight = ROWS * MIN_ROW + GAP * (ROWS - 1);
+      grid.style.minHeight = minGridHeight + 'px';
       const top = grid.getBoundingClientRect().top;
       const padBottom = 16;
       const h = Math.max(560, Math.floor(window.innerHeight - top - padBottom));
@@ -382,11 +403,10 @@
             a.setAttribute('data-key', 'Competency');
             a.setAttribute('data-value', String(compId));
             a.className = [
-              'elevate group w-full h-full rounded-xl',
-              'flex flex-col items-center justify-center gap-2',
-              'bg-transparent transition',
-              'focus:outline-none focus-visible:ring-2 focus-visible:ring-brandYellow',
-              'relative'
+              'group relative isolate w-full h-full rounded-2xl',
+              'flex flex-col items-center justify-center gap-3',
+              'px-6 py-5',                 // comfy internal padding
+              'focus:outline-none focus-visible:ring-2 focus-visible:ring-brandYellow'
             ].join(' ');
 
             // Halo border (no fill)
@@ -400,12 +420,13 @@
             const img = document.createElement('img');
             img.src = `comp_icons/${comp.img}`;
             img.alt = comp.label;
-            img.className = 'w-16 h-16 md:w-20 md:h-20 object-contain transition-transform duration-150 ease-out group-hover:scale-105';
+            img.className = 'object-contain shrink-0 w-[min(80px,9vh)] h-[min(80px,9vh)]';
+
             a.appendChild(img);
 
             // DESKTOP CAPTION: short label (your list)
             const caption = document.createElement('div');
-            caption.className = 'text-[11px] md:text-[12px] leading-tight text-center text-white/90 group-hover:text-brandYellow';
+            caption.className = 'px-2 text-center leading-tight text-white/90 group-hover:text-brandYellow text-[clamp(11px,1.7vh,13px)]';
             caption.textContent = SHORT_LABELS[idx] || comp.label;
             a.appendChild(caption);
 
@@ -468,101 +489,101 @@
     }
 
     // Mobile list that routes to desc.html like the original (long titles preserved)
-function renderMobile() {
-  const mobileRoot = document.getElementById('mobileList');
-  if (!mobileRoot) return;
+    function renderMobile() {
+      const mobileRoot = document.getElementById('mobileList');
+      if (!mobileRoot) return;
 
-  // outermost wrapper: transparent, just spacing
-  mobileRoot.innerHTML = '';
-  mobileRoot.classList.add('flex','flex-col','gap-6','mx-[-12px]','mt-4','bg-transparent', 'border-0', 'shadow-none');
+      // outermost wrapper: transparent, just spacing
+      mobileRoot.innerHTML = '';
+      mobileRoot.classList.add('flex', 'flex-col', 'gap-6', 'mx-[-12px]', 'mt-4', 'bg-transparent', 'border-0', 'shadow-none');
 
-  const groups = [
-    { title: 'Design & Documenting Domain', start: 0, end: 7 },     // 8
-    { title: 'Construction Administration Domain', start: 8, end: 9 }, // 2
-    { title: 'Project & Practice Management Domain', start: 10, end: 15 } // 6
-  ];
+      const groups = [
+        { title: 'Design & Documenting Domain', start: 0, end: 7 },     // 8
+        { title: 'Construction Administration Domain', start: 8, end: 9 }, // 2
+        { title: 'Project & Practice Management Domain', start: 10, end: 15 } // 6
+      ];
 
-  const makeBtn = (item, index) => {
-    const compId = index + 1;
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.setAttribute('data-filter', '');
-    btn.setAttribute('data-key', 'Competency');
-    btn.setAttribute('data-value', String(compId));
-    btn.setAttribute('data-next', `desc.html?index=${index}`);
+      const makeBtn = (item, index) => {
+        const compId = index + 1;
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.setAttribute('data-filter', '');
+        btn.setAttribute('data-key', 'Competency');
+        btn.setAttribute('data-value', String(compId));
+        btn.setAttribute('data-next', `desc.html?index=${index}`);
 
-    // light grey tile (fill + subtle stroke) — no right arrow
-    btn.className = [
-      'w-full text-left px-5 py-4 rounded-2xl',
-      'flex items-center gap-3 justify-start',
-      'bg-gray-200 text-black font-semibold',
-      'border border-black/10 shadow-sm',
-      'hover:bg-[#fedc4b] active:scale-[.995]',
-      'focus:outline-none focus:ring-2 focus:ring-black/10',
-      'focus:ring-offset-2 focus:ring-offset-neutral-900'
-    ].join(' ');
+        // light grey tile (fill + subtle stroke) — no right arrow
+        btn.className = [
+          'w-full text-left px-5 py-4 rounded-2xl',
+          'flex items-center gap-3 justify-start',
+          'bg-gray-200 text-black font-semibold',
+          'border border-black/10 shadow-sm',
+          'hover:bg-[#fedc4b] active:scale-[.995]',
+          'focus:outline-none focus:ring-2 focus:ring-black/10',
+          'focus:ring-offset-2 focus:ring-offset-neutral-900'
+        ].join(' ');
 
-    btn.innerHTML = `
+        btn.innerHTML = `
       <img src="comp_icons/${item.img}" alt="" class="w-12 h-12 shrink-0" />
       <div class="text-base leading-snug">${SHORT_LABELS[index] || item.label}</div>
     `;
 
-    btn.addEventListener('click', () => {
-      if (!btn.dataset.nextHandled) window.location.href = `desc.html?index=${index}`;
-    });
+        btn.addEventListener('click', () => {
+          if (!btn.dataset.nextHandled) window.location.href = `desc.html?index=${index}`;
+        });
 
-    return btn;
-  };
+        return btn;
+      };
 
-  groups.forEach(({ title, start, end }) => {
- // Domain container (solid tone, no “darker” stacking)
-const card = document.createElement('section');
-card.className = [
-  'relative isolate',          // prevents blending with parent
-  'mx-4 rounded-[28px]',
-  'bg-neutral-800',            // ← solid, not bg-neutral-800/60
-  'ring-1 ring-white/15',      // crisp light stroke (instead of border)
-  'px-4 py-5'
-].join(' ');
+      groups.forEach(({ title, start, end }) => {
+        // Domain container (solid tone, no “darker” stacking)
+        const card = document.createElement('section');
+        card.className = [
+          'relative isolate',          // prevents blending with parent
+          'mx-4 rounded-[28px]',
+          'bg-neutral-800',            // ← solid, not bg-neutral-800/60
+          'ring-1 ring-white/15',      // crisp light stroke (instead of border)
+          'px-4 py-5'
+        ].join(' ');
 
-  // Small uppercase title
-  const h = document.createElement('h2');
-  h.className = 'px-1 pb-3 text-[12px] leading-4 font-semibold tracking-widest text-white/80 uppercase';
-  h.textContent = title;
+        // Small uppercase title
+        const h = document.createElement('h2');
+        h.className = 'px-1 pb-3 text-[12px] leading-4 font-semibold tracking-widest text-white/80 uppercase';
+        h.textContent = title;
 
-  // Vertical list with roomy gaps (your light-grey pill buttons go here)
-  const list = document.createElement('div');
-  list.className = 'flex flex-col gap-6';
+        // Vertical list with roomy gaps (your light-grey pill buttons go here)
+        const list = document.createElement('div');
+        list.className = 'flex flex-col gap-6';
 
-  for (let i = start; i <= end && i < DATA.length; i++) {
-    list.appendChild(makeBtn(DATA[i], i)); // uses your existing button styling
-  }
+        for (let i = start; i <= end && i < DATA.length; i++) {
+          list.appendChild(makeBtn(DATA[i], i)); // uses your existing button styling
+        }
 
-  card.appendChild(h);
-  card.appendChild(list);
-  mobileRoot.appendChild(card);
-});
+        card.appendChild(h);
+        card.appendChild(list);
+        mobileRoot.appendChild(card);
+      });
 
 
 
-  // rebind dataset-driven navigation if you use it
-  if (window.LicensureFiltersRebind) {
-    window.LicensureFiltersRebind(mobileRoot);
-  }
-}
+      // rebind dataset-driven navigation if you use it
+      if (window.LicensureFiltersRebind) {
+        window.LicensureFiltersRebind(mobileRoot);
+      }
+    }
 
-  // ensure filter binding runs if you use a helper
-  if (window.LicensureFiltersRebind) {
-    window.LicensureFiltersRebind(mobileRoot);
-  }
+    // ensure filter binding runs if you use a helper
+    if (window.LicensureFiltersRebind) {
+      window.LicensureFiltersRebind(mobileRoot);
+    }
 
     // ---------------- Init & events ----------------
     (function init() {
       renderDesktop();
-       if (window.LicensureFiltersRebind) {
-    const grid = document.getElementById('gridDesktop');
-    window.LicensureFiltersRebind(grid);
-  }
+      if (window.LicensureFiltersRebind) {
+        const grid = document.getElementById('gridDesktop');
+        window.LicensureFiltersRebind(grid);
+      }
       renderMobile();
       sizeGridToViewport();
       requestAnimationFrame(drawGroupsAndLabels);
