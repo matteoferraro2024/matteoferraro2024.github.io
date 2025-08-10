@@ -62,6 +62,7 @@
 
   <main class="mx-auto max-w-6xl px-5 sm:px-8 pt-16 pb-6 md:pb-8">
     <h1 class="text-xl sm:text-2xl font-semibold tracking-wide mb-4 md:mb-6">SELECT A COMPETENCY :</h1>
+    <p class="block md:hidden mt-2 mb-4 text-sm text-white/70">Tap a competency for more information.</p>
 
     <!-- Desktop 4×4 Grid with SVG clusters (md+) -->
     <section id="gridDesktop"
@@ -502,7 +503,6 @@
             <img src="comp_icons/${item.img}" alt="" class="w-12 h-12 shrink-0" />
             <div class="flex-1">
               <div class="text-base">${SHORT_LABELS[index] || item.label}</div>
-              <div class="text-xs text-white/60">Tap to view details</div>
             </div>
             <span class="text-white/70">›</span>
           </div>
