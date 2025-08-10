@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  />
+  <title>Choose NAAB ↔ NCARB</title>
+
+  <!-- Google Font: Orienta -->
+  <link href="https://fonts.googleapis.com/css2?family=Orienta&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CDN (fine for prototyping; build locally for production) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    :root { color-scheme: dark; }
+    body { font-family: 'Orienta', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+  </style>
+</head>
+
+<body class="bg-neutral-900 text-white min-h-screen">
+  <!-- Top bar -->
+  <header class="sticky top-0 z-40 bg-black/70 backdrop-blur border-b border-white/10">
+    <div class="max-w-7xl mx-auto px-4 lg:px-8 py-3 flex items-center justify-between">
+      <button type="button" data-back
+        class="flex items-center gap-2 text-sm text-white/80 bg-neutral-800 px-3 py-2 rounded-md hover:bg-[#fedc4b] hover:text-black focus:outline-none focus:ring-2 focus:ring-[#fedc4b]/50">
+        <span aria-hidden="true">←</span> Back
+      </button>
+      <div class="text-sm text-white/60">Select where the <span class="font-semibold text-white">row</span> and <span class="font-semibold text-white">column</span> meet.</div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 lg:px-8 py-8">
+    <h1 class="text-3xl md:text-4xl font-semibold tracking-tight">Select a cell to see tasks</h1>
+    <p class="mt-2 text-white/70 max-w-2xl">
+      Click a table <span class="text-white">cell</span> to set both filters. Click a
+      <span class="text-white">row header</span> or a <span class="text-white">column header</span> to set a single filter.
+    </p>
+
+    <!-- Mobile controls -->
+    <section class="mt-8 md:hidden">
+      <div class="rounded-xl border border-white/10 bg-neutral-800/40 p-4 space-y-4">
+        <h2 class="text-xl font-semibold">Select the following:</h2>
+
+        <div class="space-y-1">
+          <label for="naabSelect" class="text-sm text-white/70">NAAB Criteria</label>
+          <div class="relative">
+            <select id="naabSelect"
+              class="w-full appearance-none rounded-lg bg-neutral-800 border border-white/10 px-3 py-2 pr-9 text-white/90 focus:outline-none focus:ring-2 focus:ring-[#fedc4b]">
+              <option value="">Select a NAAB criteria</option>
+            </select>
+            <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2">▾</span>
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <label for="compSelect" class="text-sm text-white/70">NCARB Competency</label>
+          <div class="relative">
+            <select id="compSelect" disabled
+              class="w-full appearance-none rounded-lg bg-neutral-800 border border-white/10 px-3 py-2 pr-9 text-white/90 disabled:text-white/40 disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-[#fedc4b]">
+              <option value="">Select a competency</option>
+            </select>
+            <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2">▾</span>
+          </div>
+          <p id="mobileHint" class="text-xs text-white/60 mt-1">Choose a NAAB code to filter the competencies list.</p>
+        </div>
+
+        <div class="flex items-center gap-3 pt-2">
+          <button id="mobileConfirm" disabled
+            class="rounded-md bg-neutral-700 px-4 py-2 text-sm hover:bg-[#fedc4b] hover:text-black disabled:opacity-50 disabled:hover:bg-neutral-700">
+            Confirm
+          </button>
+          <button id="mobileClear" class="text-sm text-white/70 hover:text-white/90 underline underline-offset-4">
+            Clear
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Desktop table -->
+    <section class="mt-10 hidden md:block">
+      <div class="overflow-x-auto rounded-xl border border-white/10">
+        <table id="matrix" class="w-full border-separate border-spacing-0">
+          <!-- built by JS -->
+        </table>
+      </div>
+      <div class="flex items-center gap-3 text-sm text-white/60 mt-3">
+        <span class="inline-block h-3 w-3 rounded-sm bg-[#fedc4b] align-middle"></span>
+        <span>Clickable match</span>
+        <span class="inline-block h-3 w-3 rounded-sm bg-white/10 ml-4 align-middle"></span>
+        <span>Not mapped</span>
+        <button id="clearTable" class="ml-auto text-white/70 hover:text-white/90 underline underline-offset-4">Clear filters</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Minimal toast -->
+  <div id="toast" class="fixed bottom-4 left-1/2 -translate-x-1/2 hidden">
+    <div class="rounded-lg bg-black/80 backdrop-blur px-4 py-2 text-sm border border-white/10">
+      Filters saved
+    </div>
+  </div>
+
+  <script>
+    /******************************
+     * DATA (replace ALIGN with your real matrix)
+     ******************************/
+    const NAAB_CODES = [
+      'P1','P2','P3','P4','P5','P6','P7','P8',
+      'S1','S2','S3','S4','S5','S6'
+    ];
+
+    const COMPETENCIES = [
+      { id: 1,  short: '01', label: 'Identity Regulations' },
+      { id: 2,  short: '02', label: 'Existing Conditions & Feasibility' },
+      { id: 3,  short: '03', label: 'Goals & Programming' },
+      { id: 4,  short: '04', label: 'Environmental & Sustainability' },
+      { id: 5,  short: '05', label: 'Social Impact' },
+      { id: 6,  short: '06', label: 'Designing' },
+      { id: 7,  short: '07', label: 'Documenting' },
+      { id: 8,  short: '08', label: 'Design Development' },
+      { id: 9,  short: '09', label: 'Construction Administration' },
+      { id: 10, short: '10', label: 'Construction Evaluation' },
+      { id: 11, short: '11', label: 'Contracts' },
+      { id: 12, short: '12', label: 'Project Planning' },
+      { id: 13, short: '13', label: 'Project Management' },
+      { id: 14, short: '14', label: 'Legal Practice' },
+      { id: 15, short: '15', label: 'Ethical Practice' },
+      { id: 16, short: '16', label: 'Business Management' }
+    ];
+
+    /**
+     * ALIGN is the mapping of NAAB -> array of competency IDs that align.
+     * This SAMPLE set is just for demo. Swap with your real matrix.
+     */
+    const ALIGN = {
+      P1:  [1,2,3,11,14],
+      P2:  [2,3,4,6,7,12],
+      P3:  [3,4,5,6,8,12],
+      P4:  [4,5,6,7,8,9],
+      P5:  [6,7,8,9,10],
+      P6:  [7,8,9,10,13],
+      P7:  [9,10,11,13,15],
+      P8:  [1,11,12,13,16],
+      S1:  [1,3,5,6,7,8,15],
+      S2:  [2,4,6,7,8,9,10],
+      S3:  [5,6,7,11,15],
+      S4:  [6,8,9,10,12,13],
+      S5:  [11,12,13,14,15,16],
+      S6:  [1,6,9,12,14,16]
+    };
+
+    // Optional automatic navigation after save
+    const NEXT_PAGE = 'tasks.html';
+    const AUTO_NAV = false; // set to true if you want to navigate after any selection
+
+    /******************************
+     * STORAGE HELPERS
+     ******************************/
+    const STORAGE_KEY = 'LicensureFilters';
+
+    function filtersGet() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+      catch { return {}; }
+    }
+
+    function filtersSet(next) {
+      const current = filtersGet();
+      const merged = { ...current, ...next };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+      showToast('Filters saved');
+      if (AUTO_NAV && (merged.NAAB?.length || merged.Competency)) {
+        // If both set, great; otherwise continue chain on next page if you prefer
+        setTimeout(() => { window.location.href = NEXT_PAGE; }, 250);
+      }
+    }
+
+    function clearFilters() {
+      localStorage.removeItem(STORAGE_KEY);
+      showToast('Filters cleared');
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.querySelector('div').textContent = msg;
+      t.classList.remove('hidden');
+      clearTimeout(showToast._tid);
+      showToast._tid = setTimeout(() => t.classList.add('hidden'), 1200);
+    }
+
+    /******************************
+     * DESKTOP: BUILD TABLE
+     ******************************/
+    function buildMatrix() {
+      const table = document.getElementById('matrix');
+      table.innerHTML = '';
+
+      // THEAD
+      const thead = document.createElement('thead');
+      const hr = document.createElement('tr');
+
+      // Top-left corner cell
+      const corner = document.createElement('th');
+      corner.className = "sticky left-0 top-0 z-20 bg-neutral-900/95 backdrop-blur px-3 py-2 text-left text-xs font-semibold border-b border-white/10";
+      corner.textContent = 'NAAB ↔ Competency';
+      hr.appendChild(corner);
+
+      // Column headers
+      COMPETENCIES.forEach(col => {
+        const th = document.createElement('th');
+        th.scope = 'col';
+        th.className = "top-0 sticky z-10 bg-neutral-900/95 backdrop-blur px-3 py-2 text-xs font-semibold border-b border-white/10 whitespace-nowrap align-bottom";
+        th.innerHTML = `
+          <button data-col="${col.id}" class="group w-full text-left">
+            <div class="text-white/90 group-hover:text-[#111] group-hover:bg-[#fedc4b] transition rounded-md px-2 py-1">
+              <span class="font-bold">${col.short}</span> · ${col.label}
+            </div>
+          </button>`;
+        hr.appendChild(th);
+      });
+
+      thead.appendChild(hr);
+      table.appendChild(thead);
+
+      // TBODY
+      const tbody = document.createElement('tbody');
+
+      NAAB_CODES.forEach(code => {
+        const tr = document.createElement('tr');
+
+        // Row header (sticky left)
+        const th = document.createElement('th');
+        th.scope = 'row';
+        th.className = "sticky left-0 z-10 bg-neutral-900/95 backdrop-blur px-3 py-2 text-xs border-r border-white/10 font-semibold";
+        th.innerHTML = `
+          <button data-row="${code}" class="group w-full text-left">
+            <div class="text-white/90 group-hover:text-[#111] group-hover:bg-[#fedc4b] transition rounded-md px-2 py-1">
+              ${code}
+            </div>
+          </button>`;
+        tr.appendChild(th);
+
+        // Cells
+        COMPETENCIES.forEach(col => {
+          const match = (ALIGN[code] || []).includes(col.id);
+          const td = document.createElement('td');
+          td.className = "border-t border-white/10";
+          td.innerHTML = `
+            <button
+              ${match ? '' : 'disabled'}
+              data-cell-row="${code}" data-cell-col="${col.id}"
+              class="w-full h-12 lg:h-14 ${match ? 'bg-[#fedc4b] text-black hover:opacity-90' : 'bg-white/5 text-white/40 cursor-not-allowed'}
+                     transition rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[#fedc4b]/60">
+            </button>`;
+          tr.appendChild(td);
+        });
+
+        tbody.appendChild(tr);
+      });
+
+      table.appendChild(tbody);
+
+      // Wire up events
+      table.addEventListener('click', (e) => {
+        const btn = e.target.closest('button');
+        if (!btn) return;
+
+        // Column header click → set Competency only
+        if (btn.dataset.col) {
+          const compId = Number(btn.dataset.col);
+          filtersSet({ Competency: compId });
+          return;
+        }
+
+        // Row header click → set NAAB only
+        if (btn.dataset.row) {
+          const naab = btn.dataset.row;
+          filtersSet({ NAAB: [naab] });
+          return;
+        }
+
+        // Cell click → set both (if enabled)
+        if (btn.dataset.cellRow && !btn.disabled) {
+          const naab = btn.dataset.cellRow;
+          const compId = Number(btn.dataset.cellCol);
+          filtersSet({ NAAB: [naab], Competency: compId });
+        }
+      });
+    }
+
+    /******************************
+     * MOBILE: LINKED SELECTS
+     ******************************/
+    function buildMobile() {
+      const naabSel = document.getElementById('naabSelect');
+      const compSel = document.getElementById('compSelect');
+      const confirm = document.getElementById('mobileConfirm');
+      const clearBtn = document.getElementById('mobileClear');
+
+      // Populate NAAB
+      NAAB_CODES.forEach(code => {
+        const opt = document.createElement('option');
+        opt.value = code;
+        opt.textContent = code;
+        naabSel.appendChild(opt);
+      });
+
+      // Populate ALL comps (placeholder; will be filtered)
+      function loadCompetencyOptions(list) {
+        compSel.innerHTML = '<option value="">Select a competency</option>';
+        list.forEach(col => {
+          const opt = document.createElement('option');
+          opt.value = col.id;
+          opt.textContent = `${col.short} · ${col.label}`;
+          compSel.appendChild(opt);
+        });
+      }
+      loadCompetencyOptions(COMPETENCIES);
+
+      // When NAAB changes, filter comps
+      naabSel.addEventListener('change', () => {
+        const code = naabSel.value;
+        const allowed = (ALIGN[code] || []);
+        const filtered = COMPETENCIES.filter(c => allowed.includes(c.id));
+        compSel.disabled = !code;
+        loadCompetencyOptions(filtered);
+        compSel.value = '';
+
+        // Enable confirm only if both chosen
+        confirm.disabled = !(code && compSel.value);
+      });
+
+      // When competency changes, enable confirm
+      compSel.addEventListener('change', () => {
+        confirm.disabled = !(naabSel.value && compSel.value);
+      });
+
+      confirm.addEventListener('click', () => {
+        const naab = naabSel.value;
+        const compId = Number(compSel.value);
+        if (!naab || !compId) return;
+        filtersSet({ NAAB: [naab], Competency: compId });
+      });
+
+      clearBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        naabSel.value = '';
+        compSel.value = '';
+        compSel.disabled = true;
+        confirm.disabled = true;
+        clearFilters();
+      });
+    }
+
+    /******************************
+     * BACK BUTTON
+     ******************************/
+    document.addEventListener('click', (e) => {
+      const back = e.target.closest('[data-back]');
+      if (!back) return;
+      if (history.length > 1) history.back();
+      else window.location.href = 'index.html';
+    });
+
+    /******************************
+     * CLEAR LINKS
+     ******************************/
+    document.getElementById('clearTable')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      clearFilters();
+    });
+
+    /******************************
+     * INIT
+     ******************************/
+    buildMatrix();
+    buildMobile();
+  </script>
+</body>
+</html>

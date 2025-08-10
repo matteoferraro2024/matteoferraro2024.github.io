@@ -46,13 +46,14 @@
 
       <button id="toggleButton" type="button"
         class="tap inline-flex items-center gap-2 rounded px-3 py-2 text-sm font-semibold bg-white text-black hover:bg-brandYellow focus:outline-none focus:ring-2 focus:ring-white/50">
-        Show All
+        SHOW ALL
       </button>
     </div>
   </header>
 
   <main class="mx-auto max-w-4xl px-4 py-6">
     <h1 class="text-2xl md:text-3xl font-bold mb-2">CHOOSE A TASK TO PRACTICE AN EXERCISE:</h1>
+    <p id="selectPrompt" class="text-white/80 mb-6">Select one:</p>
 
     <!-- Zero-results helper -->
     <section id="noResults" class="hidden rounded-xl border border-white/10 bg-white/5 p-4 md:p-5 mb-6">
@@ -124,7 +125,7 @@
       });
       onActivate(document.getElementById('toggleButton'), () => {
         showGrey = !showGrey;
-        document.getElementById('toggleButton').innerText = showGrey ? 'Hide' : 'Show All';
+        document.getElementById('toggleButton').innerText = showGrey ? 'HIDE' : 'SHOW ALL';
         const items = document.getElementById('taskList').children;
         for (const el of items) {
           const matched = el.dataset.match === 'true';
@@ -185,9 +186,9 @@
       }
 
       const labels = {
-        Competency: { title: 'Competency'},
-        Level:      { title: 'Ability Level'},
-        NAAB:       { title: 'NAAB Criteria'}
+        Competency: { title: 'Keep Competency', desc: 'Stick with this competency; relax the other criterion.' },
+        Level:      { title: 'Keep Level',      desc: 'Stick with this level; relax the other criterion.' },
+        NAAB:       { title: 'Keep NAAB',       desc: 'Stick with this NAAB criterion; relax the other.' }
       };
 
       pair.forEach(keepKey => {
@@ -196,6 +197,7 @@
         btn.className = 'tap w-full rounded-lg border border-white/10 bg-white/10 active:bg-white/20 hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/30 px-4 py-3 text-left';
         btn.innerHTML = `
           <div class="text-base md:text-lg font-semibold">${labels[keepKey].title}</div>
+          <div class="text-sm text-white/70 mt-0.5">${labels[keepKey].desc}</div>
         `;
         onActivate(btn, () => keepOnly(keepKey));
         wrap.appendChild(btn);

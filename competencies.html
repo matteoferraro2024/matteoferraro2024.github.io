@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -31,205 +30,152 @@
   <script src="./filterState.js" defer></script>
 
   <style>
-    body {
-      font-family: 'Orienta', sans-serif;
-      background: #212120;
-    }
-
-    .elevate {
-      position: relative;
-      z-index: 30;
-    }
-
-    .cell-wrap {
-      transition: background-color .15s ease;
-    }
-
-    .hover-card {
-      pointer-events: none;
-    }
+    body { font-family: 'Orienta', sans-serif; background:#212120; }
+    .elevate { position: relative; z-index: 30; }
+    .cell-wrap { transition: background-color .15s ease; }
+    .hover-card { pointer-events: none; }
   </style>
 </head>
-
 <body class="min-h-screen text-white">
-  <!-- Top bar -->
-  <header
-    class="sticky top-0 z-50 bg-black/80 backdrop-blur supports-[backdrop-filter]:bg-black/60 border-b border-white/10">
-    <div class="mx-auto max-w-4xl px-4 py-3 flex items-center justify-between">
-      <div class="flex items-center gap-2">
-        <button type="button" id="backBtn" aria-label="Go back"
-          class="tap inline-flex items-center gap-2 rounded px-3 py-2 text-sm font-semibold bg-white text-black hover:bg-brandYellow focus:outline-none focus:ring-2 focus:ring-white/50">
-          ← Back
-        </button>
-      </div>
-    </div>
-  </header>
+  <!-- Back Button -->
+  <button type="button" id="backBtn" aria-label="Go back"
+    class="fixed top-4 left-4 z-50 flex items-center gap-2 text-sm text-black/70
+           bg-gray-200 px-3 py-2 rounded-md
+           hover:bg-brandYellow hover:text-black focus:outline-none focus:ring-2 focus:ring-black/10">
+    <span aria-hidden="true">←</span>
+    <span>Back</span>
+  </button>
 
   <main class="mx-auto max-w-6xl px-5 sm:px-8 pt-16 pb-6 md:pb-8">
-    <h1 class="text-xl sm:text-2xl font-semibold tracking-wide mb-4 md:mb-6">SELECT A COMPETENCY :</h1>
-    <p class="mt-2 mb-4 text-sm text-white/70 block md:hidden">
-      Tap one to view its details.
-    </p>
+    <h1 class="text-xl sm:text-2xl font-semibold tracking-wide mb-4 md:mb-6">SELECT A COMPETENCY</h1>
+
     <!-- Desktop 4×4 Grid with SVG clusters (md+) -->
     <section id="gridDesktop"
       class="hidden md:grid relative grid-cols-4 auto-rows-[1fr] gap-4 p-1 md:p-2 overflow-hidden">
       <!-- SVG overlay for regions -->
       <svg id="groupBorders" class="absolute inset-0 w-full h-full pointer-events-none z-0"
-        xmlns="http://www.w3.org/2000/svg" fill="none" shape-rendering="crispEdges"></svg>
+           xmlns="http://www.w3.org/2000/svg"
+           fill="none" shape-rendering="crispEdges"></svg>
       <!-- Labels container -->
       <div id="groupLabels" class="absolute inset-0 z-10 pointer-events-none"></div>
     </section>
 
     <!-- Mobile list (smaller screens) uses desc.html navigation -->
-    <section id="mobileList" class="md:hidden divide-y divide-white/10 rounded-xl border border-white/10 bg-black/20">
-    </section>
+    <section id="mobileList" class="md:hidden divide-y divide-white/10 rounded-xl border border-white/10 bg-black/20"></section>
   </main>
 
   <script>
     // ---------------- Data (long titles kept for hover + mobile) ----------------
     const DATA = [
-      {
-        img: '01.png', label: 'Assess regulatory design requirements', desc: [
-          'Identify local, state, and federal authorities having jurisdiction over a project.',
-          'Understand the regulatory and jurisdictional approval process applicable to a project in order to obtain the necessary approvals.',
-          'Determine the specific regulations, codes, and rules (e.g., zoning rules, building and environmental codes, historic preservation requirements, design covenants, etc.) that apply to a project.'
-        ]
-      },
-      {
-        img: '02.png', label: 'Evaluate existing project conditions', desc: [
-          'Assess existing site and building conditions',
-          'Evaluate project feasibility based on budget, schedule, constraints, and risks.',
-          'Assess how a proposed project aligns with planning and zoning policies in place and impacts the broader context (e.g. neighborhood, community, environmental, etc.).'
-        ]
-      },
-      {
-        img: '03.png', label: 'Develop a program that establishes project criteria', desc: [
-          'Translate client vision and goals into requirements (e.g. spatial, planning, material, technical, etc.) that outline the specific objectives and design criteria for a project, and that meet the project’s feasibility requirements.',
-          'Review precedents relevant to the history, function, organization, and technical requirements of related projects and integrate findings into a building program.',
-          'Evaluate and integrate collected feedback and input from users, the community, and any other stakeholders.'
-        ]
-      },
-      {
-        img: '04.png', label: 'Create design solutions that support public and environmental well-being', desc: [
-          'Implement design strategies that minimize environmental impact, safeguard environmental sustainability, ensure longevity and durability of projects, and adapt to evolving environmental and societal conditions.',
-          'Implement design strategies that support the health, safety, and welfare of building occupants and the neighboring community.',
-          'Advise clients and consultants regarding the sustainability and resiliency of design options in accordance with relevant codes, regulations, ratings, industry standards, and technical information.'
-        ]
-      },
-      {
-        img: '05.png', label: 'Integrate socio-demographic considerations and universal design principles.', desc: [
-          'Implement design strategies that address diverse cultural, social, and functional considerations, ensuring built environments are inclusive, accessible, and adaptive.',
-          'Understand how diversity, equity, inclusivity, and justice principles impact architectural projects and practice.',
-          'Utilize meaningful engagement processes that incorporate diverse perspectives into design solutions.'
-        ]
-      },
-      {
-        img: '06.png', label: 'Create design solutions that address project requirements', desc: [
-          'Apply design principles, applicable codes and regulations, and knowledge of materials, systems, and constructability to achieve programmatic requirements and goals for the site and building.',
-          'Evaluate design for conformance with a project’s program, including the client’s objectives and regulatory requirements.',
-          'Analyze cost estimates for conformance with proposed design solution and project budget in order to advise clients about alternatives for managing initial and long-term project costs.'
-        ]
-      },
-      {
-        img: '07.png', label: 'Create deliverables that convey a design solution', desc: [
-          'Communicate the proposed design to clients and other stakeholders using appropriate and responsive methods (e.g., written, verbal, graphic, modeling techniques, etc.).',
-          'Develop comprehensive and coordinated Instruments of Service (e.g., plans, sections, elevations and/or details, models, etc.) that convey design intent and project requirements, can be used to obtain approvals and permits, and guide the construction of a project.',
-          'Develop specifications that describe the materials, qualitative requirements, and execution.'
-        ]
-      },
-      {
-        img: '08.png', label: 'Coordinate the integration of building systems into a project design', desc: [
-          'Understand and integrate appropriate building and engineering systems utilizing project consultants and specialists (e.g., acoustic, structural, civil, mechanical, electrical, plumbing, etc.).',
-          'Coordinate selected systems into the building design and identify and resolve conflicts.'
-        ]
-      },
-      {
-        img: '09.png', label: 'Prepare and administer documentation of the construction phase', desc: [
-          'Advise clients on the impact (e.g., process, cost, time, quality control, etc.) of a selected procurement method on the delivery of the project.',
-          'Assist in bidding and negotiation for selected procurement method.',
-          'Apply appropriate systems for record-keeping, document control, and revision status.',
-          'Provide appropriate responses for questions from the client, authority-having jurisdiction, contractors, and suppliers (e.g., requests for information, substitution requests, change order requests, etc.).',
-          'Review and act on a contractor’s application for payment.',
-          'Perform closeout activities and deliver final documents to client and other parties as required.'
-        ]
-      },
-      {
-        img: '10.png', label: 'Evaluate the progress of construction for conformance with contract documents and design intent', desc: [
-          'Complete site visits and participate in meetings at appropriate intervals to observe construction progress and assist in interpreting the construction documents.',
-          'Evaluate the work performed in relation to the construction schedule; if they are not in alignment, coordinate with the client and contractor in the development of a solution.',
-          'Review, evaluate, and take appropriate action on shop drawings, submittals, testing and inspection reports, and samples.',
-          'Advise and assist the client with project closeout procedures (e.g., substantial and final completion, review and preparation of close-out materials, etc.).',
-          'Evaluate the performance of a project after completion compared to the design intent.'
-        ]
-      },
-      {
-        img: '11.png', label: 'Execute contracts for professional services', desc: [
-          'Explain basic types of contracts between various project parties (e.g., Owner-Architect, ArchitectConsultant, Owner-Contractor, etc.) and how to establish scope, schedule, and fees for services',
-          'Understand the appropriateness of different agreements in relation to scale and type of project, including alternatives for partial services.',
-          'Understand basic risk implications of common contract terms and conditions for the various contract parties.'
-        ]
-      },
-      {
-        img: '12.png', label: 'Implement a work plan according to a project’s scope, schedule, and budget', desc: [
-          'Collaborate with the client and consultants to align expectations for design scope, schedule, and budget.',
-          'Monitor work plan throughout a project and report on progress.',
-          'Organize tasks and resources to deliver a project according to contractual requirements.',
-          'Facilitate the appropriate approval processes throughout design and documentation efforts.',
-        ]
-      },
-      {
-        img: '13.png', label: 'Organize and coordinate an interdisciplinary project team', desc: [
-          'Identify qualified consultants and team members for a project based on project requirements.',
-          'Facilitate communication and collaboration of consultants, clients, and relevant stakeholders throughout a project.',
-          'Implement processes to assess the quality of work throughout a project.'
-        ]
-      },
-      {
-        img: '14.png', label: 'Implement processes to assess the quality of work throughout a project', desc: [
-          'Comply with the laws and rules of architectural practice in the jurisdiction(s) in which they practice.',
-          'Solicit services in compliance with professional and legal practice requirements.',
-          'Understand the regulatory requirements for continuing professional development.'
-        ]
-      },
-      {
-        img: '15.png', label: 'Understand ethical and professional standards that govern architectural practice', desc: [
-          'Understand the role of the architect in society and the duties and responsibilities to clients, building occupants, co-professionals, and the public',
-          'Provide services that they, in collaboration with consultants, can effectively deliver.',
-          'Identify and manage risks arising from conflicts of interest.'
-        ]
-      },
-      {
-        img: '16.png', label: 'Understand foundational business principles to operate a practice.', desc: [
-          'Monitor the financial health of the business to ensure a proper level of service can be provided throughout a project.',
-          'Assess and mitigate business risks (e.g., professional liability insurance).',
-          'Allocate firm resources and staff to ensure adequate delivery of services to clients.'
-        ]
-      },
+      { img:'01.png', label:'Assess regulatory design requirements', desc:[
+        'Identify local, state, and federal authorities having jurisdiction over a project.',
+        'Understand the regulatory and jurisdictional approval process applicable to a project in order to obtain the necessary approvals.',
+        'Determine the specific regulations, codes, and rules (e.g., zoning rules, building and environmental codes, historic preservation requirements, design covenants, etc.) that apply to a project.'
+      ]},
+      { img:'02.png', label:'Evaluate existing project conditions', desc:[
+        'Assess existing site and building conditions',
+        'Evaluate project feasibility based on budget, schedule, constraints, and risks.',
+        'Assess how a proposed project aligns with planning and zoning policies in place and impacts the broader context (e.g. neighborhood, community, environmental, etc.).'
+      ]},
+      { img:'03.png', label:'Develop a program that establishes project criteria', desc:[
+        'Translate client vision and goals into requirements (e.g. spatial, planning, material, technical, etc.) that outline the specific objectives and design criteria for a project, and that meet the project’s feasibility requirements.',
+        'Review precedents relevant to the history, function, organization, and technical requirements of related projects and integrate findings into a building program.',
+        'Evaluate and integrate collected feedback and input from users, the community, and any other stakeholders.'
+      ]},
+      { img:'04.png', label:'Create design solutions that support public and environmental well-being', desc:[
+        'Implement design strategies that minimize environmental impact, safeguard environmental sustainability, ensure longevity and durability of projects, and adapt to evolving environmental and societal conditions.',
+        'Implement design strategies that support the health, safety, and welfare of building occupants and the neighboring community.',
+        'Advise clients and consultants regarding the sustainability and resiliency of design options in accordance with relevant codes, regulations, ratings, industry standards, and technical information.'
+      ]},
+      { img:'05.png', label:'Integrate socio-demographic considerations and universal design principles.', desc:[
+        'Implement design strategies that address diverse cultural, social, and functional considerations, ensuring built environments are inclusive, accessible, and adaptive.',
+        'Understand how diversity, equity, inclusivity, and justice principles impact architectural projects and practice.',
+        'Utilize meaningful engagement processes that incorporate diverse perspectives into design solutions.'
+      ]},
+      { img:'06.png', label:'Create design solutions that address project requirements', desc:[
+        'Apply design principles, applicable codes and regulations, and knowledge of materials, systems, and constructability to achieve programmatic requirements and goals for the site and building.',
+        'Evaluate design for conformance with a project’s program, including the client’s objectives and regulatory requirements.',
+        'Analyze cost estimates for conformance with proposed design solution and project budget in order to advise clients about alternatives for managing initial and long-term project costs.'
+      ]},
+      { img:'07.png', label:'Create deliverables that convey a design solution', desc:[
+        'Communicate the proposed design to clients and other stakeholders using appropriate and responsive methods (e.g., written, verbal, graphic, modeling techniques, etc.).',
+        'Develop comprehensive and coordinated Instruments of Service (e.g., plans, sections, elevations and/or details, models, etc.) that convey design intent and project requirements, can be used to obtain approvals and permits, and guide the construction of a project.',
+        'Develop specifications that describe the materials, qualitative requirements, and execution.'
+      ]},
+      { img:'08.png', label:'Coordinate the integration of building systems into a project design', desc:[
+        'Understand and integrate appropriate building and engineering systems utilizing project consultants and specialists (e.g., acoustic, structural, civil, mechanical, electrical, plumbing, etc.).',
+        'Coordinate selected systems into the building design and identify and resolve conflicts.'
+      ]},
+      { img:'09.png', label:'Prepare and administer documentation of the construction phase', desc:[
+        'Advise clients on the impact (e.g., process, cost, time, quality control, etc.) of a selected procurement method on the delivery of the project.',
+        'Assist in bidding and negotiation for selected procurement method.',
+        'Apply appropriate systems for record-keeping, document control, and revision status.',
+        'Provide appropriate responses for questions from the client, authority-having jurisdiction, contractors, and suppliers (e.g., requests for information, substitution requests, change order requests, etc.).',
+        'Review and act on a contractor’s application for payment.',
+        'Perform closeout activities and deliver final documents to client and other parties as required.'
+      ]},
+      { img:'10.png', label:'Evaluate the progress of construction for conformance with contract documents and design intent', desc:[
+        'Complete site visits and participate in meetings at appropriate intervals to observe construction progress and assist in interpreting the construction documents.',
+        'Evaluate the work performed in relation to the construction schedule; if they are not in alignment, coordinate with the client and contractor in the development of a solution.',
+        'Review, evaluate, and take appropriate action on shop drawings, submittals, testing and inspection reports, and samples.',
+        'Advise and assist the client with project closeout procedures (e.g., substantial and final completion, review and preparation of close-out materials, etc.).',
+        'Evaluate the performance of a project after completion compared to the design intent.'
+      ]},
+      { img:'11.png', label:'Execute contracts for professional services', desc:[
+        'Explain basic types of contracts between various project parties (e.g., Owner-Architect, ArchitectConsultant, Owner-Contractor, etc.) and how to establish scope, schedule, and fees for services',
+        'Understand the appropriateness of different agreements in relation to scale and type of project, including alternatives for partial services.',
+        'Understand basic risk implications of common contract terms and conditions for the various contract parties.'
+      ]},
+      { img:'12.png', label:'Implement a work plan according to a project’s scope, schedule, and budget', desc:[
+        'Collaborate with the client and consultants to align expectations for design scope, schedule, and budget.',
+        'Monitor work plan throughout a project and report on progress.',
+        'Organize tasks and resources to deliver a project according to contractual requirements.',
+        'Facilitate the appropriate approval processes throughout design and documentation efforts.',
+      ]},
+      { img:'13.png', label:'Organize and coordinate an interdisciplinary project team', desc:[
+        'Identify qualified consultants and team members for a project based on project requirements.',
+        'Facilitate communication and collaboration of consultants, clients, and relevant stakeholders throughout a project.',
+        'Implement processes to assess the quality of work throughout a project.'
+      ]},
+      { img:'14.png', label:'Implement processes to assess the quality of work throughout a project', desc:[
+        'Comply with the laws and rules of architectural practice in the jurisdiction(s) in which they practice.',
+        'Solicit services in compliance with professional and legal practice requirements.',
+        'Understand the regulatory requirements for continuing professional development.'
+      ]},
+      { img:'15.png', label:'Understand ethical and professional standards that govern architectural practice', desc:[
+        'Understand the role of the architect in society and the duties and responsibilities to clients, building occupants, co-professionals, and the public',
+        'Provide services that they, in collaboration with consultants, can effectively deliver.',
+        'Identify and manage risks arising from conflicts of interest.'
+      ]},
+      { img:'16.png', label:'Understand foundational business principles to operate a practice.', desc:[
+        'Monitor the financial health of the business to ensure a proper level of service can be provided throughout a project.',
+        'Assess and mitigate business risks (e.g., professional liability insurance).',
+        'Allocate firm resources and staff to ensure adequate delivery of services to clients.'
+      ]},
     ];
 
     // Short captions: desktop tile text ONLY (not hover, not mobile)
     const SHORT_LABELS = [
-      'IDENTIFY REGULATIONS',
-      'EXISTING CONDITIONS & FEASIBILITY',
-      'GOALS & PROGRAMMING',
-      'ENVIRONMENTAL & SUSTAINABILITY',
-      'SOCIAL IMPACT',
-      'DESIGNING',
-      'DOCUMENTING',
-      'DESIGN DEVELOPMENT',
-      'CONSTRUCTION ADMINISTRATION',
-      'CONSTRUCTION EVALUATION',
-      'CONTRACTS',
-      'PROJECT PLANNING',
-      'PROJECT MANAGEMENT',
-      'LEGAL PRACTICE',
-      'ETHICAL PRACTICE',
-      'BUSINESS MANAGEMENT',
-
+      'Identify Regulations',
+      'Existing Conditions & Feasibility',
+      'Goals & Programming',
+      'Environmental & Sustainability',
+      'Social Impact',
+      'Designing',
+      'Documenting',
+      'Design Development',
+      'Construction Administration',
+      'Construction Evaluation',
+      'Contracts',
+      'Project Planning',
+      'Project Management',
+      'Legal Practice',
+      'Ethical Practice',
+      'Business Management',
     ];
 
     // Domain mapping (for v4 visuals)
-    function domainOf(id) {
+    function domainOf(id){
       if (id >= 1 && id <= 8) return 'DD';     // Design & Documenting
       if (id >= 9 && id <= 10) return 'CA';    // Construction Admin
       return 'PPM';                             // Practice & Project Mgmt (11–16)
@@ -237,10 +183,10 @@
 
     // Group rects (v4)
     const G = {
-      DD: { r1: 1, c1: 1, r2: 2, c2: 4, label: 'Design & Documenting Domain' },
-      CA: { r1: 3, c1: 1, r2: 3, c2: 2, label: 'Construction Administration Domain' },
-      PPM_TOP: { r1: 3, c1: 3, r2: 3, c2: 4, label: 'Practice & Project Management Domain' },
-      PPM_BOT: { r1: 4, c1: 1, r2: 4, c2: 4, label: '' }
+      DD:       { r1:1, c1:1, r2:2, c2:4, label:'DESIGN & DOCUMENTING DOMAIN' },
+      CA:       { r1:3, c1:1, r2:3, c2:2, label:'CONSTRUCTION ADMINISTRATION DOMAIN' },
+      PPM_TOP:  { r1:3, c1:3, r2:3, c2:4, label:'PRACTICE AND PROJECT MANAGEMENT DOMAIN' },
+      PPM_BOT:  { r1:4, c1:1, r2:4, c2:4, label:'' }
     };
 
     // Next page logic (preserves flow; role decides)
@@ -251,18 +197,9 @@
       return 'year.html'; // Students & Instructors
     }
 
-    function readRoleFromState() {
-      try {
-        const s = JSON.parse(localStorage.getItem('licensureFilters') || '{}');
-        return String(s.role || s.Role || s.ROLE || localStorage.getItem('selectedRole') || '');
-      } catch {
-        return String(localStorage.getItem('selectedRole') || '');
-      }
-    }
-
-    function updateNextTargets() {
-      const role = readRoleFromState();
-      const next = nextPageForRole(role); // already returns 'tasks.html' if role starts with 'admin'
+    function updateNextTargets(){
+      const role = localStorage.getItem('selectedRole') || '';
+      const next = nextPageForRole(role);
       document.querySelectorAll('#gridDesktop [data-filter]').forEach(a => {
         a.dataset.next = next;
       });
@@ -278,7 +215,7 @@
       grid.style.height = h + 'px';
     }
 
-    function getCellRect(r, c) {
+    function getCellRect(r,c){
       const grid = document.getElementById('gridDesktop');
       const cell = grid.querySelector(`[data-r="${r}"][data-c="${c}"]`);
       const gRect = grid.getBoundingClientRect();
@@ -293,7 +230,7 @@
       };
     }
 
-    function drawGroupsAndLabels() {
+    function drawGroupsAndLabels(){
       const grid = document.getElementById('gridDesktop');
       const svg = document.getElementById('groupBorders');
       const labelsRoot = document.getElementById('groupLabels');
@@ -310,9 +247,9 @@
       const inset = 6;
       const fill = 'rgba(0,0,0,0.18)';
 
-      function drawRect(r1, c1, r2, c2, label) {
-        const TL = getCellRect(r1, c1);
-        const BR = getCellRect(r2, c2);
+      function drawRect(r1,c1,r2,c2,label){
+        const TL = getCellRect(r1,c1);
+        const BR = getCellRect(r2,c2);
         const x1 = TL.left + inset, y1 = TL.top + inset, x2 = BR.right - inset, y2 = BR.bottom - inset;
 
         const d = ['M', x1, y1, 'H', x2, 'V', y2, 'H', x1, 'V', y1, 'Z'].join(' ');
@@ -322,29 +259,29 @@
         p.setAttribute('stroke', stroke);
         p.setAttribute('stroke-width', width);
         p.setAttribute('vector-effect', 'non-scaling-stroke');
-        p.setAttribute('stroke-linejoin', 'miter');
-        p.setAttribute('stroke-linecap', 'square');
+        p.setAttribute('stroke-linejoin','miter');
+        p.setAttribute('stroke-linecap','square');
         svg.appendChild(p);
 
-        if (label) {
+        if (label){
           const lab = document.createElement('span');
           lab.className = 'text-[10px] font-bold tracking-wide px-2 py-0.5 rounded bg-black/70 inline-block';
           lab.textContent = label;
           lab.style.position = 'absolute';
           lab.style.left = (x1 + 8) + 'px';
-          lab.style.top = (y1 + 6) + 'px';
+          lab.style.top  = (y1 + 6) + 'px';
           labelsRoot.appendChild(lab);
         }
       }
 
-      function drawL(label) {
+      function drawL(label){
         const tL = getCellRect(G.PPM_TOP.r1, G.PPM_TOP.c1);
         const tR = getCellRect(G.PPM_TOP.r2, G.PPM_TOP.c2);
         const bL = getCellRect(G.PPM_BOT.r1, G.PPM_BOT.c1);
         const bR = getCellRect(G.PPM_BOT.r2, G.PPM_BOT.c2);
 
         const x1 = tL.left + inset;
-        const y1 = tL.top + inset;
+        const y1 = tL.top  + inset;
         const x2 = tR.right - inset;
         const y2 = bR.bottom - inset;
         const x0 = bL.left + inset;
@@ -357,17 +294,17 @@
         p.setAttribute('stroke', stroke);
         p.setAttribute('stroke-width', width);
         p.setAttribute('vector-effect', 'non-scaling-stroke');
-        p.setAttribute('stroke-linejoin', 'miter');
-        p.setAttribute('stroke-linecap', 'square');
+        p.setAttribute('stroke-linejoin','miter');
+        p.setAttribute('stroke-linecap','square');
         svg.appendChild(p);
 
-        if (label) {
+        if (label){
           const lab = document.createElement('span');
           lab.className = 'text-[10px] font-bold tracking-wide px-2 py-0.5 rounded bg-black/70 inline-block';
           lab.textContent = label;
           lab.style.position = 'absolute';
           lab.style.left = (x1 + 8) + 'px';
-          lab.style.top = (y1 + 6) + 'px';
+          lab.style.top  = (y1 + 6) + 'px';
           labelsRoot.appendChild(lab);
         }
       }
@@ -379,38 +316,38 @@
     }
 
     // Build desktop grid (v4 visuals + original behavior)
-    function renderDesktop() {
+    function renderDesktop(){
       const grid = document.getElementById('gridDesktop');
       if (!grid) return;
 
       // Build 4x4 cells
-      for (let r = 1; r <= 4; r++) {
-        for (let c = 1; c <= 4; c++) {
+      for (let r=1; r<=4; r++){
+        for (let c=1; c<=4; c++){
           const wrap = document.createElement('div');
-          wrap.style.gridArea = `${r} / ${c} / ${r + 1} / ${c + 1}`;
+          wrap.style.gridArea = `${r} / ${c} / ${r+1} / ${c+1}`;
           wrap.className = 'cell-wrap relative overflow-hidden rounded-xl z-20 p-2';
           wrap.dataset.r = r; wrap.dataset.c = c;
 
           // Reserve top space for labels on top rows of labeled groups
           const labelTopRows = [
-            { r1: G.DD.r1, c1: G.DD.c1, c2: G.DD.c2 },
-            { r1: G.CA.r1, c1: G.CA.c1, c2: G.CA.c2 },
-            { r1: G.PPM_TOP.r1, c1: G.PPM_TOP.c1, c2: G.PPM_TOP.c2 },
+            { r1:G.DD.r1, c1:G.DD.c1, c2:G.DD.c2 },
+            { r1:G.CA.r1, c1:G.CA.c1, c2:G.CA.c2 },
+            { r1:G.PPM_TOP.r1, c1:G.PPM_TOP.c1, c2:G.PPM_TOP.c2 },
           ];
           labelTopRows.forEach(g => {
             if (r === g.r1 && c >= g.c1 && c <= g.c2) wrap.style.paddingTop = '32px';
           });
 
-          const idx = (r - 1) * 4 + (c - 1); // 0..15
+          const idx = (r-1)*4 + (c-1); // 0..15
           const comp = DATA[idx];
           const compId = idx + 1;
 
-          if (comp) {
+          if (comp){
             // Anchor wired for filterState.js
             const a = document.createElement('a');
             a.href = '#';
-            a.setAttribute('data-filter', '');
-            a.setAttribute('data-key', 'Competency');
+            a.setAttribute('data-filter','');
+            a.setAttribute('data-key','Competency');
             a.setAttribute('data-value', String(compId));
             a.className = [
               'elevate group w-full h-full rounded-xl',
@@ -499,7 +436,7 @@
     }
 
     // Mobile list that routes to desc.html like the original (long titles preserved)
-    function renderMobile() {
+    function renderMobile(){
       const mobileRoot = document.getElementById('mobileList');
       if (!mobileRoot) return;
 
@@ -507,8 +444,8 @@
         const compId = index + 1;
         const row = document.createElement('a');
         row.href = `desc.html?index=${index}`;
-        row.setAttribute('data-filter', '');
-        row.setAttribute('data-key', 'Competency');
+        row.setAttribute('data-filter','');
+        row.setAttribute('data-key','Competency');
         row.setAttribute('data-value', String(compId));
         row.setAttribute('data-next', row.href);
         row.className = 'block px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brandYellow/40';
@@ -518,6 +455,7 @@
             <img src="comp_icons/${item.img}" alt="" class="w-12 h-12 shrink-0" />
             <div class="flex-1">
               <div class="text-base">${SHORT_LABELS[index] || item.label}</div>
+              <div class="text-xs text-white/60">Tap to view details</div>
             </div>
             <span class="text-white/70">›</span>
           </div>
@@ -533,7 +471,7 @@
       else window.location.href = 'index.html';
     });
 
-    (function init() {
+    (function init(){
       renderDesktop();
       renderMobile();
       sizeGridToViewport();
@@ -545,5 +483,4 @@
     window.addEventListener('orientationchange', () => { sizeGridToViewport(); drawGroupsAndLabels(); });
   </script>
 </body>
-
 </html>
