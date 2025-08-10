@@ -490,25 +490,28 @@
 
       DATA.forEach((item, index) => {
         const compId = index + 1;
-        const row = document.createElement('a');
-        row.href = `desc.html?index=${index}`;
-        row.setAttribute('data-filter', '');
-        row.setAttribute('data-key', 'Competency');
-        row.setAttribute('data-value', String(compId));
-        row.setAttribute('data-next', row.href);
-        row.className = 'block px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brandYellow/40';
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.setAttribute('data-filter', '');
+        btn.setAttribute('data-key', 'Competency');
+        btn.setAttribute('data-value', String(compId));
+        btn.setAttribute('data-next', `desc.html?index=${index}`);
+        btn.className = 'w-full text-left px-4 py-3 flex items-center gap-3 rounded-md hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-brandYellow/40';
 
-        row.innerHTML = `
-          <div class="flex items-center gap-3">
-            <img src="comp_icons/${item.img}" alt="" class="w-12 h-12 shrink-0" />
-            <div class="flex-1">
-              <div class="text-base">${SHORT_LABELS[index] || item.label}</div>
-            </div>
-            <span class="text-white/70">›</span>
-          </div>
-        `;
+        btn.innerHTML = `
+  <img src="comp_icons/${item.img}" alt="" class="w-12 h-12 shrink-0" />
+  <div class="flex-1">
+    <div class="text-base">${SHORT_LABELS[index] || item.label}</div>
+  </div>
+  <span class="text-white/70" aria-hidden="true">›</span>
+`;
 
-        mobileRoot.appendChild(row);
+        // (Optional) direct navigation fallback if your filter binder hasn’t run yet
+        btn.addEventListener('click', () => {
+          if (!btn.dataset.nextHandled) window.location.href = `desc.html?index=${index}`;
+        });
+
+        mobileRoot.appendChild(btn);
       });
     }
 
