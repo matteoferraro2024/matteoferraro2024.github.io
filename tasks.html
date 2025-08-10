@@ -46,7 +46,7 @@
 
       <button id="toggleButton" type="button"
         class="tap inline-flex items-center gap-2 rounded px-3 py-2 text-sm font-semibold bg-white text-black hover:bg-brandYellow focus:outline-none focus:ring-2 focus:ring-white/50">
-        SHOW ALL
+        Show All
       </button>
     </div>
   </header>
@@ -124,7 +124,7 @@
       });
       onActivate(document.getElementById('toggleButton'), () => {
         showGrey = !showGrey;
-        document.getElementById('toggleButton').innerText = showGrey ? 'HIDE' : 'SHOW ALL';
+        document.getElementById('toggleButton').innerText = showGrey ? 'Hide' : 'Show All';
         const items = document.getElementById('taskList').children;
         for (const el of items) {
           const matched = el.dataset.match === 'true';
