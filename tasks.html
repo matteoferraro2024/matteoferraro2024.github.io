@@ -53,12 +53,11 @@
 
   <main class="mx-auto max-w-4xl px-4 py-6">
     <h1 class="text-2xl md:text-3xl font-bold mb-2">CHOOSE A TASK TO PRACTICE AN EXERCISE :</h1>
-    <p id="selectPrompt" class="text-white/80 mb-6">Select one:</p>
 
     <!-- Zero-results helper -->
     <section id="noResults" class="hidden rounded-xl border border-white/10 bg-white/5 p-4 md:p-5 mb-6">
       <p class="text-base md:text-lg font-semibold mb-2">There are no tasks that directly meet your criteria.</p>
-      <p class="text-white/80 mb-4">Let’s broaden your search. Which criteria is more important for you?</p>
+      <p class="text-white/80 mb-4">Let’s broaden your search. Which criteria are you more interested in?</p>
       <div id="keepButtons" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
     </section>
 
@@ -186,9 +185,9 @@
       }
 
       const labels = {
-        Competency: { title: 'Keep Competency', desc: 'Stick with this competency; relax the other criterion.' },
-        Level:      { title: 'Keep Level',      desc: 'Stick with this level; relax the other criterion.' },
-        NAAB:       { title: 'Keep NAAB',       desc: 'Stick with this NAAB criterion; relax the other.' }
+        Competency: { title: 'NCARB Competency'},
+        Level:      { title: 'Ability Level'},
+        NAAB:       { title: 'NAAB Criteria'}
       };
 
       pair.forEach(keepKey => {
@@ -197,7 +196,6 @@
         btn.className = 'tap w-full rounded-lg border border-white/10 bg-white/10 active:bg-white/20 hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/30 px-4 py-3 text-left';
         btn.innerHTML = `
           <div class="text-base md:text-lg font-semibold">${labels[keepKey].title}</div>
-          <div class="text-sm text-white/70 mt-0.5">${labels[keepKey].desc}</div>
         `;
         onActivate(btn, () => keepOnly(keepKey));
         wrap.appendChild(btn);
