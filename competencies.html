@@ -237,22 +237,6 @@
       PPM_BOT: { r1: 4, c1: 1, r2: 4, c2: 4, label: '' }
     };
 
-    // Next page logic (preserves flow; role decides)
-    function nextPageForRole(role) {
-      if (!role) return 'year.html';
-      const r = String(role).toLowerCase();
-      if (r.startsWith('admin')) return 'tasks.html';
-      return 'year.html'; // Students & Instructors
-    }
-
-    function updateNextTargets() {
-      const role = localStorage.getItem('selectedRole') || '';
-      const next = nextPageForRole(role);
-      document.querySelectorAll('#gridDesktop [data-filter]').forEach(a => {
-        a.dataset.next = next;
-      });
-    }
-
     function sizeGridToViewport() {
       const grid = document.getElementById('gridDesktop');
       if (!grid) return;
@@ -580,9 +564,12 @@ card.className = [
 
     (function init() {
       renderDesktop();
+       if (window.LicensureFiltersRebind) {
+    const grid = document.getElementById('gridDesktop');
+    window.LicensureFiltersRebind(grid);
+  }
       renderMobile();
       sizeGridToViewport();
-      updateNextTargets();
       requestAnimationFrame(drawGroupsAndLabels);
     })();
 
