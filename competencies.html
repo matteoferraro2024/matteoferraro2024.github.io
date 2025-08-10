@@ -484,49 +484,67 @@
     }
 
     // Mobile list that routes to desc.html like the original (long titles preserved)
-    function renderMobile() {
-      const mobileRoot = document.getElementById('mobileList');
-      if (!mobileRoot) return;
+function renderMobile() {
+  const mobileRoot = document.getElementById('mobileList');
+  if (!mobileRoot) return;
 
-      // turn the list into a stacked column with gaps (so you don't have to edit HTML)
-      mobileRoot.classList.add('flex', 'flex-col', 'gap-4', 'px-5', 'mt-4');
+  // stack containers with spacing
+  mobileRoot.innerHTML = '';
+  mobileRoot.classList.add('flex','flex-col','gap-6','px-5','mt-4');
 
-      DATA.forEach((item, index) => {
-        const compId = index + 1;
+  const groups = [
+    { title: 'Design & Documenting Domain', start: 0, end: 7 },   // first 8
+    { title: 'Construction Administration Domain', start: 8, end: 9 }, // next 2
+    { title: 'Project & Practice Management Domain', start: 10, end: 15 } // last 6
+  ];
 
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.setAttribute('data-filter', '');
-        btn.setAttribute('data-key', 'Competency');
-        btn.setAttribute('data-value', String(compId));
-        btn.setAttribute('data-next', `desc.html?index=${index}`);
-
-        // pill style to match your site
-        btn.className = [
-          'w-full text-left px-5 py-4',
-          'rounded-2xl bg-gray-200 text-black font-semibold',
-          'flex items-center justify-between gap-3',
-          'border border-black/10 shadow-sm',
-          'hover:bg-[#fedc4b] active:scale-[.995]',
-          'focus:outline-none focus:ring-2 focus:ring-black/10 focus:ring-offset-2 focus:ring-offset-neutral-900'
-        ].join(' ');
-
-        btn.innerHTML = `
-      <div class="flex items-center gap-3">
-        <img src="comp_icons/${item.img}" alt="" class="w-12 h-12 shrink-0" />
-        <div class="text-base leading-snug">${SHORT_LABELS[index] || item.label}</div>
-      </div>
-      <span class="text-black/60" aria-hidden="true">›</span>
+  const makeBtn = (item, index) => {
+    const compId = index + 1;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.setAttribute('data-filter', '');
+    btn.setAttribute('data-key', 'Competency');
+    btn.setAttribute('data-value', String(compId));
+    btn.setAttribute('data-next', `desc.html?index=${index}`);
+    btn.className = [
+      'w-full text-left px-5 py-4 rounded-xl',
+      'flex items-center gap-3',
+      'bg-transparent border-0 shadow-none',          // buttons are transparent
+      'hover:bg-white/5 active:bg-white/10',
+      'focus:outline-none focus:ring-2 focus:ring-brandYellow/40'
+    ].join(' ');
+    btn.innerHTML = `
+      <img src="comp_icons/${item.img}" alt="" class="w-12 h-12 shrink-0" />
+      <div class="text-base leading-snug">${SHORT_LABELS[index] || item.label}</div>
     `;
+    btn.addEventListener('click', () => {
+      if (!btn.dataset.nextHandled) window.location.href = `desc.html?index=${index}`;
+    });
+    return btn;
+  };
 
-        btn.addEventListener('click', () => {
-          if (!btn.dataset.nextHandled) window.location.href = `desc.html?index=${index}`;
-        });
+  groups.forEach(({ title, start, end }) => {
+    // container card with fill + stroke
+    const card = document.createElement('section');
+    card.className = 'rounded-2xl border border-white/10 bg-white/5 p-3';
+    card.innerHTML = `<h2 class="px-2 pb-2 text-xs font-semibold tracking-wide text-white/80 uppercase">${title}</h2>`;
 
-        mobileRoot.appendChild(btn);
-      });
+    const list = document.createElement('div');
+    list.className = 'flex flex-col gap-3';
+
+    for (let i = start; i <= end && i < DATA.length; i++) {
+      list.appendChild(makeBtn(DATA[i], i));
     }
 
+    card.appendChild(list);
+    mobileRoot.appendChild(card);
+  });
+
+  // ensure filter binding runs if you use a helper
+  if (window.LicensureFiltersRebind) {
+    window.LicensureFiltersRebind(mobileRoot);
+  }
+}
 
     // ---------------- Init & events ----------------
     document.getElementById('backBtn').addEventListener('click', () => {
