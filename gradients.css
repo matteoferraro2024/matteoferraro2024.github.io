@@ -1,0 +1,39 @@
+/* gradients.css — subtle, contrast-safe page background */
+:root{
+  /* Defaults (overridden per page via inline styles if needed) */
+  --bg-base: #0b0b0b;   /* your page's solid background */
+  --bg-accent: #fedc4b; /* your existing gold accent */
+}
+
+.bg-page-gradient{
+  /* Solid color fallback + layered gradients */
+  background-color: var(--bg-base);
+  background-image:
+    radial-gradient(1200px 600px at 50% -200px,
+      color-mix(in oklab, var(--bg-accent) 18%, transparent) 0%,
+      transparent 70%),
+    radial-gradient(900px 700px at 80% 120%,
+      color-mix(in oklab, var(--bg-base) 85%, white 15%) 0%,
+      transparent 60%),
+    linear-gradient(to bottom,
+      color-mix(in oklab, var(--bg-base) 92%, white 8%) 0%,
+      var(--bg-base) 45%,
+      color-mix(in oklab, var(--bg-base) 85%, black 15%) 100%);
+  background-attachment: fixed, fixed, fixed;
+  background-repeat: no-repeat;
+}
+
+/* Fallback when color-mix isn’t supported */
+@supports not (color: color-mix(in oklab, black, white)){
+  .bg-page-gradient{
+    background-image:
+      radial-gradient(1200px 600px at 50% -200px, rgba(254,220,75,0.08), transparent 70%),
+      radial-gradient(900px 700px at 80% 120%, rgba(255,255,255,0.06), transparent 60%),
+      linear-gradient(to bottom, rgba(255,255,255,0.03), transparent 40%);
+  }
+}
+
+/* Mobile perf: avoid fixed backgrounds on low-end devices */
+@media (max-width: 640px){
+  .bg-page-gradient{ background-attachment: scroll, scroll, scroll; }
+}

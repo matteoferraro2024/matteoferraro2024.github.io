@@ -27,7 +27,7 @@
 
     <!-- Left: Description -->
     <div class="lg:col-span-4 space-y-4">
-      <h1 class="text-xl md:text-2xl font-bold tracking-wide mb-4 md:mb-6">SELECT THE NAAB CRITERIA</h1>
+      <h1 class="text-xl md:text-2xl font-bold tracking-wide mb-4 md:mb-6"><span data-role-label class="uppercase text-[#fedc4b]"></span>SELECT THE NAAB CRITERIA</span></h1>
       <p class="text-sm text-gray-400 leading-snug mb-6">
         The National Architectural Accrediting Board requires accredited programs to demonstrate specific criteria – grouped as two categories Program Criteria (PC) and Student Criteria (SC) – in their curriculum.
       </p>
@@ -70,22 +70,26 @@
     </div>
   </div>
 <script>
-  // Save NAAB selection and let the href do the navigation
-  document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('[data-filter]').forEach(el => {
-      if (el.__fsBound) return;
-      el.__fsBound = true;
+document.addEventListener('DOMContentLoaded', () => {
+  const slot = document.querySelector('[data-role-label]');
+  if (!slot) return;
 
-      el.addEventListener('click', () => {
-        const { key, value } = el.dataset;
-        const state = JSON.parse(localStorage.getItem('filterState') || '{}');
-        state[key] = value;
-        localStorage.setItem('filterState', JSON.stringify(state));
-        // no preventDefault — anchor will follow its href
-      }, { passive: true });
-    });
-  });
+  // Prefer the helper from filterState.js; fall back to raw localStorage.
+  const state = (window.LicensureFilters?.get?.() ??
+                JSON.parse(localStorage.getItem('licensureFilters') || '{}')) || {};
+  const rawRole = state.role || state.Role || state.ROLE;
+  const labelMap = { Student: 'Student', Instructor: 'Instructor', Admin: 'Administrator' };
+
+  // Only show when NAAB is the first page after index (i.e., Admin flow)
+  if (String(rawRole).toLowerCase() === 'admin') {
+    slot.textContent = `${labelMap[rawRole]}, `;
+    slot.hidden = false;
+  } else {
+    slot.hidden = true;
+  }
+});
 </script>
+
 
 </body>
 </html>

@@ -61,7 +61,7 @@
   </button>
 
   <main class="mx-auto max-w-6xl px-5 sm:px-8 pt-4 pb-6 md:pb-8">
-    <h1 class="text-xl md:text-2xl font-bold tracking-wide mt-12 md:mt-0 mb-0 md:mb-6">SELECT A COMPETENCY</h1>
+    <h1 class="text-xl md:text-2xl font-bold tracking-wide mt-12 md:mt-0 mb-0 md:mb-6"><span data-role-label class="uppercase text-[#fedc4b]"></span>SELECT A COMPETENCY</h1>
     <p class="block md:hidden mt-2 mb-6 text-sm text-gray-400 leading-snug">Tap a competency for more information.</p>
 
     <!-- Desktop 4×4 Grid with SVG clusters (md+) -->
@@ -592,6 +592,28 @@
     window.addEventListener('resize', () => { sizeGridToViewport(); drawGroupsAndLabels(); });
     window.addEventListener('orientationchange', () => { sizeGridToViewport(); drawGroupsAndLabels(); });
   </script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const slot = document.querySelector('[data-role-label]');
+  if (!slot) return;
+
+  // Prefer the helper from filterState.js; fall back to raw localStorage.
+  const state = (window.LicensureFilters?.get?.() ??
+                JSON.parse(localStorage.getItem('licensureFilters') || '{}')) || {};
+  const rawRole = state.role || state.Role || state.ROLE;
+  const labelMap = { Student: 'Student', Instructor: 'Instructor', Admin: 'Administrator' };
+
+  // Only show when NAAB is the first page after index (i.e., Admin flow)
+  if (String(rawRole).toLowerCase() === 'student') {
+    slot.textContent = `${labelMap[rawRole]}, `;
+    slot.hidden = false;
+  } else {
+    slot.hidden = true;
+  }
+});
+</script>
+
 </body>
 
 </html>

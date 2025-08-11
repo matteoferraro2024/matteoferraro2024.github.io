@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -23,14 +24,24 @@
   <script src="./filterState.js" defer></script>
 
   <style>
-    body { font-family: 'Orienta', sans-serif; background:#212121; color:#fff; }
-    .tap { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+    body {
+      font-family: 'Orienta', sans-serif;
+      background: #212121;
+      color: #fff;
+    }
+
+    .tap {
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
   </style>
 </head>
-<body class="bg-gradient-to-b from-[#212121] to-[#0F0F0F] min-h-screen">
+
+<body class="min-h-screen">
 
   <!-- Top bar -->
-  <header class="sticky top-0 z-50 bg-[#1B1B1A] backdrop-blur supports-[backdrop-filter]:bg-[#1B1B1A] border-b border-white/10">
+  <header
+    class="sticky top-0 z-50 bg-[#1B1B1A] backdrop-blur supports-[backdrop-filter]:bg-[#1B1B1A] border-b border-white/10">
     <div class="mx-auto max-w-4xl px-4 py-3 flex items-center justify-between">
       <div class="flex items-center gap-2">
         <button type="button" id="backBtn" aria-label="Go back"
@@ -43,21 +54,27 @@
           Restart
         </button>
       </div>
-
-      <button id="toggleButton" type="button"
-        class="tap inline-flex items-center gap-2 rounded px-3 py-2 text-sm font-semibold bg-white text-slate-900 hover:bg-brandYellow focus:outline-none focus:ring-2 focus:ring-white/50">
-        Show All
-      </button>
     </div>
   </header>
 
   <main class="mx-auto max-w-4xl px-4 py-6">
-    <h1 id="selectPrompt" class="text-xl md:text-2xl font-bold tracking-wide mb-4 md:mb-6">CHOOSE A TASK TO PRACTICE AN EXERCISE :</h1>
+    <div class="mb-4 md:mb-6 flex flex-wrap items-center justify-between gap-3">
+      <h1 id="selectPrompt" class="text-xl md:text-2xl font-bold tracking-wide m-0">
+        CHOOSE A TASK TO PRACTICE AN EXERCISE :
+      </h1>
+
+      <button id="toggleButton" type="button"
+        class="tap inline-flex items-center gap-2 rounded px-3 py-2 text-sm font-semibold bg-white text-slate-900 hover:bg-brandYellow">
+        Show All
+      </button>
+    </div>
 
     <!-- Zero-results helper -->
     <section id="noResults" class="hidden bg-[#1B1B1A] border border-[#5F5F5E] p-4 md:p-5 mb-6">
-      <p class="text-xl md:text-2xl font-bold tracking-wide mb-4 md:mb-6">There are no tasks that directly meet your criteria.</p>
-      <p class="text-sm text-gray-400 leading-snug mb-6">Let’s broaden your search. Which criteria are you more interested in?</p>
+      <p class="text-xl md:text-2xl font-bold tracking-wide mb-4 md:mb-6">There are no tasks that directly meet your
+        criteria.</p>
+      <p class="text-sm text-gray-400 leading-snug mb-6">Let’s broaden your search. Which criteria are you more
+        interested in?</p>
       <div id="keepButtons" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
     </section>
 
@@ -68,23 +85,23 @@
     // ---- Mobile-safe activation (pointerup + click fallback; de-duped) ----
     function onActivate(el, handler) {
       let armed = true;
-      const fire = (ev) => { if (!armed) return; armed = false; try { handler(ev); } finally { setTimeout(()=>armed=true, 220); } };
+      const fire = (ev) => { if (!armed) return; armed = false; try { handler(ev); } finally { setTimeout(() => armed = true, 220); } };
       el.addEventListener('pointerup', fire, { passive: true });
       el.addEventListener('click', fire);
     }
 
     // ---- Storage (write-through; localStorage wins) ----
     const STORAGE_KEY = 'licensureFilters';
-    function lsRead()  { try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch { return {}; } }
-    function lsWrite(o){ localStorage.setItem(STORAGE_KEY, JSON.stringify(o || {})); }
+    function lsRead() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch { return {}; } }
+    function lsWrite(o) { localStorage.setItem(STORAGE_KEY, JSON.stringify(o || {})); }
 
     function filtersGet() {
       const api = (window.LicensureFilters?.get ? window.LicensureFilters.get() : {}) || {};
-      const ls  = lsRead();
+      const ls = lsRead();
       return Object.assign({}, api, ls); // ls overrides on same keys
     }
     function filtersSet(next) {
-      try { window.LicensureFilters?.set && window.LicensureFilters.set(next); } catch {}
+      try { window.LicensureFilters?.set && window.LicensureFilters.set(next); } catch { }
       lsWrite(next);
       document.dispatchEvent(new CustomEvent('filters:change'));
     }
@@ -105,7 +122,7 @@
     // ---- Keep-only action ----
     function keepOnly(keepKey) {
       const state = filtersGet();
-      ['Competency','Level','NAAB'].forEach(k => { if (k !== keepKey) delete state[k]; });
+      ['Competency', 'Level', 'NAAB'].forEach(k => { if (k !== keepKey) delete state[k]; });
       filtersSet(state);
       filters = readFilters();
       renderTasks(taskData);
@@ -157,8 +174,8 @@
 
     function buildKeepButtons(matchedCount) {
       const prompt = document.getElementById('selectPrompt');
-      const panel  = document.getElementById('noResults');
-      const wrap   = document.getElementById('keepButtons');
+      const panel = document.getElementById('noResults');
+      const wrap = document.getElementById('keepButtons');
 
       if (matchedCount > 0) {
         prompt.classList.remove('hidden');
@@ -173,21 +190,21 @@
 
       const role = (getRole() || '').toLowerCase();
       let pair;
-      if (role === 'student')            pair = ['Competency', 'Level'];
-      else if (role === 'instructor')    pair = ['NAAB', 'Level'];
+      if (role === 'student') pair = ['Competency', 'Level'];
+      else if (role === 'instructor') pair = ['NAAB', 'Level'];
       else if (role === 'administrator') pair = ['NAAB', 'Competency'];
       else {
         const picks = [];
         if (filters.competency != null) picks.push('Competency');
-        if (filters.level)              picks.push('Level');
+        if (filters.level) picks.push('Level');
         if (Array.isArray(filters.naab) && filters.naab.length) picks.push('NAAB');
         pair = [...new Set([...picks, 'Competency', 'Level', 'NAAB'])].slice(0, 2);
       }
 
       const labels = {
-        Competency: { title: 'NCARB Competency'},
-        Level:      { title: 'Ability Level'},
-        NAAB:       { title: 'NAAB Criteria'}
+        Competency: { title: 'NCARB Competency' },
+        Level: { title: 'Ability Level' },
+        NAAB: { title: 'NAAB Criteria' }
       };
 
       pair.forEach(keepKey => {
@@ -238,16 +255,32 @@
         wrap.className = 'py-4';
         wrap.dataset.match = String(meets);
 
+        // Hide grey (unmatched) by default
+        if (!meets && !showGrey) wrap.classList.add('hidden');
+
         const row = document.createElement('button');
         row.type = 'button';
-        row.className = 'tap w-full text-left';
         row.setAttribute('aria-controls', detailId);
         row.setAttribute('aria-expanded', 'false');
-        onActivate(row, () => toggleDetails(detailId, row));
 
         const text = document.createElement('span');
-        text.className = 'text-base md:text-lg';
-        text.style.color = fontColor;
+
+        if (hasDetails) {
+          // Expandable: pointer + hover bold/underline
+          row.className = 'tap w-full text-left group cursor-pointer';
+          onActivate(row, () => toggleDetails(detailId, row));
+          text.className = 'text-base md:text-lg transition group-hover:underline group-hover:font-bold';
+          text.style.color = fontColor;
+        } else {
+          // Non-expandable: not clickable, subtly darkened
+          row.className = 'tap w-full text-left';
+          row.setAttribute('aria-disabled', 'true');
+          row.style.cursor = 'default';
+          text.className = 'text-base md:text-lg';
+          text.style.color = fontColor;
+          text.style.opacity = '0.75';
+        }
+
         text.textContent = task.Task;
         row.appendChild(text);
 
@@ -260,20 +293,19 @@
           row.appendChild(arrow);
         }
 
-        const details = document.createElement('div');
-        details.id = detailId;
-        details.className = 'hidden mt-1 pl-4 max-w-prose';
+        // Always append the row
+        wrap.appendChild(row);
+
+        // Details panel only for expandable rows
         if (hasDetails) {
-          const p = document.createElement('p');
-          p.className = 'text-sm leading-relaxed text-white/80';
-          p.textContent = task['TASK DETAILS'];
-          details.appendChild(p);
+          const details = document.createElement('div');
+          details.id = detailId;
+          details.className = 'mt-2 pl-4 text-sm hidden';
+          details.textContent = task['TASK DETAILS'] || '';
+          wrap.appendChild(details);
         }
 
-        if (!meets && !showGrey) wrap.classList.add('hidden');
-
-        wrap.appendChild(row);
-        if (hasDetails) wrap.appendChild(details);
+        // Add the whole item to the list
         list.appendChild(wrap);
       });
     }
@@ -300,4 +332,5 @@
     }
   </script>
 </body>
+
 </html>

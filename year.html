@@ -37,7 +37,7 @@
 
   <div class="max-w-4xl w-full text-center">
     <h1 class="text-xl md:text-2xl font-bold tracking-wide mb-2 md:mb-2">
-      WHAT ABILITY LEVEL ARE YOU LOOKING FOR?
+      <span data-role-label class="uppercase text-[#fedc4b]"></span>WHAT ABILITY LEVEL ARE YOU LOOKING FOR?
     </h1>
     <p class="text-sm text-gray-400 leading-snug mb-3">Select one:</p>
 
@@ -65,6 +65,26 @@
     </div>
   </div>
   <!-- fixed path + minimal fallback click handler -->
+   <script>
+document.addEventListener('DOMContentLoaded', () => {
+  const slot = document.querySelector('[data-role-label]');
+  if (!slot) return;
+
+  // Prefer the helper from filterState.js; fall back to raw localStorage.
+  const state = (window.LicensureFilters?.get?.() ??
+                JSON.parse(localStorage.getItem('licensureFilters') || '{}')) || {};
+  const rawRole = state.role || state.Role || state.ROLE;
+  const labelMap = { Student: 'Student', Instructor: 'Instructor', Admin: 'Administrator' };
+
+  // Only show when NAAB is the first page after index (i.e., Admin flow)
+  if (String(rawRole).toLowerCase() === 'instructor') {
+    slot.textContent = `${labelMap[rawRole]}, `;
+    slot.hidden = false;
+  } else {
+    slot.hidden = true;
+  }
+});
+</script>
 </body>
 
 </html>
