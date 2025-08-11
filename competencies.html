@@ -60,12 +60,12 @@
     <span>Back</span>
   </button>
 
-  <main class="mx-auto max-w-6xl px-5 sm:px-8 pt-16 pb-6 md:pb-8">
-    <h1 class="text-xl md:text-2xl font-bold tracking-wide mb-4 md:mb-6">SELECT A COMPETENCY :</h1>
+  <main class="mx-auto max-w-6xl px-5 sm:px-8 pt-4 pb-6 md:pb-8">
+    <h1 class="text-xl md:text-2xl font-bold tracking-wide mb-0 md:mb-6">SELECT A COMPETENCY :</h1>
     <p class="block md:hidden mt-2 mb-6 text-sm text-gray-400 leading-snug">Tap a competency for more information.</p>
 
     <!-- Desktop 4×4 Grid with SVG clusters (md+) -->
-    <section id="gridDesktop" class="hidden md:grid relative grid-cols-4 gap-6 p-2 overflow-hidden"
+    <section id="gridDesktop" class="hidden md:grid relative grid-cols-4 gap-2 p-2 overflow-hidden"
       style="grid-template-rows: repeat(4, 1fr);">
       <!-- SVG overlay for regions -->
       <svg id="groupBorders" class="absolute inset-0 w-full h-full pointer-events-none z-0"
@@ -318,7 +318,7 @@
 
         if (label) {
           const lab = document.createElement('span');
-          lab.className = 'text-[10px] font-bold tracking-wide px-2 py-0.5 rounded bg-black/70 inline-block';
+          lab.className = 'text-sm text-gray-400 tracking-wide px-2 py-0.5 inline-block';
           lab.textContent = label;
           lab.style.position = 'absolute';
           lab.style.left = (x1 + 8) + 'px';
@@ -353,7 +353,7 @@
 
         if (label) {
           const lab = document.createElement('span');
-          lab.className = 'text-[10px] font-bold tracking-wide px-2 py-0.5 rounded bg-black/70 inline-block';
+          lab.className = 'text-sm text-gray-400 tracking-wide px-2 py-0.5 rounded inline-block';
           lab.textContent = label;
           lab.style.position = 'absolute';
           lab.style.left = (x1 + 8) + 'px';
