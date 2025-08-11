@@ -403,7 +403,7 @@
             a.setAttribute('data-key', 'Competency');
             a.setAttribute('data-value', String(compId));
             a.className = [
-              'group relative isolate w-full h-full rounded-2xl',
+              'group relative isolate w-full h-full',
               'flex flex-col items-center justify-center gap-3',
               'px-6 py-5',                 // comfy internal padding
               'focus:outline-none focus-visible:ring-2 focus-visible:ring-brandYellow'
@@ -540,7 +540,7 @@
         const card = document.createElement('section');
         card.className = [
           'relative isolate',          // prevents blending with parent
-          'mx-4 rounded-[28px]',
+          'mx-4',
           'bg-neutral-800',            // ← solid, not bg-neutral-800/60
           'ring-1 ring-white/15',      // crisp light stroke (instead of border)
           'px-4 py-5'
