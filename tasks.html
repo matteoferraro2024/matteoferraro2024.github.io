@@ -34,6 +34,59 @@
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
     }
+
+    /* Custom checkbox: gray stroke, transparent fill, white check */
+    .task-checkbox {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 1.1rem;
+      /* 16px */
+      height: 1.1rem;
+      border: 1px solid #9CA3AF;
+      /* gray-400 */
+      border-radius: 0.25rem;
+      /* ~rounded */
+      background: transparent;
+      /* no fill */
+      display: inline-block;
+      position: relative;
+      vertical-align: top;
+    }
+
+    .task-checkbox:checked {
+      background: transparent;
+      /* stay transparent when checked */
+    }
+
+    /* Draw the checkmark */
+    .task-checkbox::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      width: 0.56rem;
+      /* thickness/size of the tick */
+      height: 1.1rem;
+      margin: auto;
+      border-right: 4px solid #fff;
+      /* bold + white */
+      border-bottom: 4px solid #fff;
+      /* bold + white */
+      transform: rotate(45deg) scale(0);
+      transform-origin: center;
+      transition: transform 120ms ease-in-out;
+    }
+
+    /* Show the tick when checked */
+    .task-checkbox:checked::after {
+      transform: rotate(45deg) scale(1);
+    }
+
+    /* Accessible focus */
+    .task-checkbox:focus-visible {
+      outline: 2px solid #fedc4b;
+      /* brandYellow */
+      outline-offset: 2px;
+    }
   </style>
 </head>
 
@@ -258,6 +311,21 @@
         // Hide grey (unmatched) by default
         if (!meets && !showGrey) wrap.classList.add('hidden');
 
+        // Row layout: [ checkbox ] [ button with text (+ arrow if expandable) ]
+        const line = document.createElement('div');
+        line.className = 'flex items-start gap-3';
+        wrap.appendChild(line);
+
+        // Checkbox (manual toggle allowed)
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = `chk-${index}`;
+        checkbox.className = 'task-checkbox mt-1 shrink-0 cursor-pointer';
+        checkbox.setAttribute('aria-label', `Select task: ${task.Task}`);
+        checkbox.addEventListener('click', (e) => e.stopPropagation());
+        line.appendChild(checkbox);
+
+        // Task button
         const row = document.createElement('button');
         row.type = 'button';
         row.setAttribute('aria-controls', detailId);
@@ -268,14 +336,18 @@
         if (hasDetails) {
           // Expandable: pointer + hover bold/underline
           row.className = 'tap w-full text-left group cursor-pointer';
-          onActivate(row, () => toggleDetails(detailId, row));
+          onActivate(row, () => {
+            checkbox.checked = true;          // auto-check on click
+            toggleDetails(detailId, row);
+          });
           text.className = 'text-base md:text-lg transition group-hover:underline group-hover:font-bold';
           text.style.color = fontColor;
         } else {
-          // Non-expandable: not clickable, subtly darkened
+          // Non-expandable: default cursor; click still checks box
           row.className = 'tap w-full text-left';
           row.setAttribute('aria-disabled', 'true');
           row.style.cursor = 'default';
+          onActivate(row, () => { checkbox.checked = true; }); // auto-check on click
           text.className = 'text-base md:text-lg';
           text.style.color = fontColor;
           text.style.opacity = '0.75';
@@ -293,19 +365,19 @@
           row.appendChild(arrow);
         }
 
-        // Always append the row
-        wrap.appendChild(row);
+        // Add button to the line
+        line.appendChild(row);
 
-        // Details panel only for expandable rows
+        // Details panel aligns under text (indent equals checkbox + gap)
         if (hasDetails) {
           const details = document.createElement('div');
           details.id = detailId;
-          details.className = 'mt-2 pl-4 text-sm hidden';
+          details.className = 'mt-2 pl-7 text-sm hidden'; // 1rem (checkbox) + 0.75rem (gap) = ~pl-7
           details.textContent = task['TASK DETAILS'] || '';
           wrap.appendChild(details);
         }
 
-        // Add the whole item to the list
+        // Add the item to the list
         list.appendChild(wrap);
       });
     }
