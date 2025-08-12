@@ -52,15 +52,25 @@
 </head>
 
 <body class="bg-gradient-to-b from-[#212121] to-[#0F0F0F] min-h-screen text-white">
-  <!-- Back Button -->
-  <button type="button" data-back aria-label="Go back" class="fixed top-4 left-4 z-50 flex items-center gap-2 text-sm text-slate-900
-           bg-gray-200 px-3 py-2 rounded-md
-           hover:bg-brandYellow hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-black/10">
-    <span aria-hidden="true">←</span>
-    <span>Back</span>
-  </button>
+  <!-- Top bar -->
+  <header
+    class="sticky top-0 z-50 bg-[#1B1B1A] backdrop-blur supports-[backdrop-filter]:bg-[#1B1B1A] border-b border-white/10 mb-6">
+    <div class="max-w-4xl px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <button type="button" id="backBtn" aria-label="Go back"
+          class="tap inline-flex items-center gap-2 rounded px-3 py-2 text-sm font-semibold bg-white text-slate-900 hover:bg-brandYellow focus:outline-none focus:ring-2 focus:ring-white/50">
+          ← Back
+        </button>
 
-  <main class="mx-auto max-w-6xl px-5 sm:px-8 pt-4 pb-6 md:pb-8">
+        <button type="button" id="restartBtn"
+          class="tap inline-flex items-center gap-2 rounded px-3 py-2 text-sm font-semibold bg-white text-slate-900 hover:bg-brandYellow focus:outline-none focus:ring-2 focus:ring-white/50">
+          Restart
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-6xl px-5 sm:px-8 pb-6 md:pb-8">
     <h1 class="text-xl md:text-2xl font-bold tracking-wide mt-12 md:mt-0 mb-0 md:mb-6"><span data-role-label class="uppercase text-[#fedc4b]"></span>SELECT A COMPETENCY</h1>
     <p class="block md:hidden mt-2 mb-6 text-sm text-gray-400 leading-snug">Tap a competency for more information.</p>
 
@@ -612,6 +622,55 @@ document.addEventListener('DOMContentLoaded', () => {
     slot.hidden = true;
   }
 });
+</script>
+
+<script>
+// Mobile-safe 'activate' helper to avoid double-fires on iOS/Android
+function onActivate(el, handler) {
+  if (!el) return;
+  let armed = true;
+  const fire = (ev) => { if (!armed) return; armed = false; try { handler(ev); } finally { setTimeout(() => (armed = true), 220); } };
+  el.addEventListener('pointerup', fire, { passive: true });
+  el.addEventListener('click', fire);
+}
+
+// Storage helpers (mirror tasks.html behavior)
+const STORAGE_KEY = 'licensureFilters';
+function lsRead(){ try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch { return {}; } }
+function lsWrite(o){ localStorage.setItem(STORAGE_KEY, JSON.stringify(o || {})); }
+function filtersGet(){
+  const api = (window.LicensureFilters?.get ? window.LicensureFilters.get() : {}) || {};
+  const ls = lsRead();
+  return Object.assign({}, api, ls); // local overrides
+}
+function filtersSet(next){
+  try { window.LicensureFilters?.set && window.LicensureFilters.set(next); } catch {}
+  lsWrite(next);
+  document.dispatchEvent(new CustomEvent('filters:change'));
+}
+
+function wireTopBar(){
+  const backBtn = document.getElementById('backBtn');
+  const restartBtn = document.getElementById('restartBtn');
+
+  onActivate(backBtn, () => {
+    if (history.length > 1) history.back();
+    else window.location.href = 'index.html';
+  });
+
+  onActivate(restartBtn, () => {
+    filtersSet({});
+    localStorage.removeItem('selectedRole');
+    window.location.href = 'index.html';
+  });
+}
+
+// Boot safely after DOM is ready
+if (document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', wireTopBar, { once: true });
+} else {
+  wireTopBar();
+}
 </script>
 
 </body>
